@@ -10,8 +10,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.DelayAction;
@@ -1282,31 +1280,6 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
                     }
                 }
             });
-
-            // Kullanıcı isteğiyle: harfleri bağlamak için dial'a her
-            // dokunulduğunda (parmak dial üzerindeyken) karıştır ikonunun
-            // görünürlüğü azalıyor (normal kadar belirgin olmuyor), dokunma
-            // bitince (parmak kaldırılınca) normal görünürlüğüne dönüyor.
-            // Bu, Dial'ın KENDİ harf-bağlama dinleyicisine (inputListener)
-            // DOKUNMADAN, dial'a ayrıca eklenen İKİNCİ bir dinleyici -
-            // Scene2D bir aktördeki tüm dinleyicileri bağımsız çalıştırır,
-            // bu yüzden harf bağlama davranışını etkilemiyor.
-            dial.addListener(new InputListener() {
-                @Override
-                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                    shuffleButton.clearActions();
-                    // libGDX Scene2D Actions API'sinde fadeTo yoktur;
-                    // hedef alfa degeri Actions.alpha ile animasyonlanir.
-                    shuffleButton.addAction(Actions.alpha(0.28f, 0.12f));
-                    return true;
-                }
-
-                @Override
-                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                    shuffleButton.clearActions();
-                    shuffleButton.addAction(Actions.alpha(1f, 0.18f));
-                }
-            });
         }
         // ÖNEMLİ HATA DÜZELTMESİ: bu iki satır artık yukarıdaki "sadece bir
         // kez oluştur" bloğunun DIŞINDA - HER seviyede tekrar çalışıyor.
@@ -1320,6 +1293,22 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
         shuffleButton.setX(dial.getX() + (dial.getWidth() - shuffleButton.getWidth()) * 0.5f);
         shuffleButton.setY(dial.getY() + (dial.getHeight() - shuffleButton.getHeight()) * 0.5f);
         shuffleButton.toFront();
+    }
+
+    // Dial.inputListener touchDown/touchUp icinden cagrilir.
+    // Harf baglama davranisini bozmaz; sadece karistir ikonunun
+    // gorunurlugunu (alfa) animasyonlar. libGDX'te fadeTo yoktur,
+    // hedef alfa Actions.alpha ile verilir.
+    public void onDialPointerDown() {
+        if (shuffleButton == null) return;
+        shuffleButton.clearActions();
+        shuffleButton.addAction(Actions.alpha(0.28f, 0.12f));
+    }
+
+    public void onDialPointerUp() {
+        if (shuffleButton == null) return;
+        shuffleButton.clearActions();
+        shuffleButton.addAction(Actions.alpha(1f, 0.18f));
     }
 
     private void closeShuffleTutorial() {
