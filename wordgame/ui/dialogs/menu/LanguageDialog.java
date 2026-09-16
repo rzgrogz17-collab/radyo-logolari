@@ -1,5 +1,6 @@
 package ogzapp.wordgame.ui.dialogs.menu;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -324,8 +325,17 @@ public class LanguageDialog extends BaseDialog {
         remove();
 
         if(currentLanguage == null || (newCode != null && !currentLanguage.equals(newCode))){
-            screen.setNewLanguage(newCode);
-            if(callback != null)callback.run();
+            final String code = newCode;
+            // Ekran değişimini Stage.act() / dialog kapanış animasyonu
+            // SIRASINDA yapma - aksi halde Actor: Modal sarmalayıcısıyla
+            // çökme oluşuyor. Bir sonraki karede çalıştır.
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    screen.setNewLanguage(code);
+                    if (callback != null) callback.run();
+                }
+            });
         }
 
     }

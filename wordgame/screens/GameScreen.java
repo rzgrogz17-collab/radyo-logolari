@@ -140,10 +140,12 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
             topPanel.btnMenu.setVisible(false);
             topPanel.btnMenu.setTouchable(Touchable.disabled);
         }
-        topPanel.topComboDisplay.setGameScreen(this);
-        // Kullanıcı isteğiyle: "SEVİYE: X" yazısı artık oyun ekranında
-        // GÖRÜNMÜYOR - sadece giriş (IntroScreen) ekranında var.
-        topPanel.topComboDisplay.setLevelLabelVisible(false);
+        if (topPanel.topComboDisplay != null) {
+            topPanel.topComboDisplay.setGameScreen(this);
+            // Kullanıcı isteğiyle: "SEVİYE: X" yazısı artık oyun ekranında
+            // GÖRÜNMÜYOR - sadece giriş (IntroScreen) ekranında var.
+            topPanel.topComboDisplay.setLevelLabelVisible(false);
+        }
         dialAnimationContainer = new DialAnimationContainer(wordConnectGame.resourceManager);
         dialAnimationContainer.setVisible(false);
         stage.addActor(dialAnimationContainer);

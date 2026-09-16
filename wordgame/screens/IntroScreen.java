@@ -153,8 +153,12 @@ public class IntroScreen extends BaseScreen{
         // ekranında görünüyor (oyun ekranında gizlendi) ve devam edilecek
         // seviyeyi (Başlat/Play butonuyla AYNI seviyeyi) gösteriyor - eski
         // koddaki gibi bir önceki oyundan kalma ESKİ/yanlış numarayı değil.
-        topPanel.topComboDisplay.setLevelLabelVisible(true);
-        topPanel.topComboDisplay.setLevelNumber(firstIncompleteLevel + 1);
+        // Splash'ten dil seçimi sonrası Intro'ya geçerken bazı TopPanel
+        // kurulumlarında topComboDisplay henüz yok; null ise çökmesin.
+        if (topPanel.topComboDisplay != null) {
+            topPanel.topComboDisplay.setLevelLabelVisible(true);
+            topPanel.topComboDisplay.setLevelNumber(firstIncompleteLevel + 1);
+        }
 
         logo = new Image(AtlasRegions.splash_logo);
         logo.setOrigin(Align.center);
