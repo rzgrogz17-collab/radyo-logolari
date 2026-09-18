@@ -3,12 +3,15 @@ package ogzapp.wordgame.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.ShaderProgramLoader;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Interpolation;
@@ -391,7 +394,13 @@ public class SplashScreen extends BaseScreen {
             BitmapFont font2 = wordConnectGame.resourceManager.get(ResourceManager.fontSemiBold, BitmapFont.class);
             font2.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-            BitmapFont gameFont = wordConnectGame.resourceManager.get(ResourceManager.fontBoardAndDialFont, BitmapFont.class);
+            // Dial yuvarlak tablodaki harfler + üstteki çözülen kutu harfleri
+            // bu TTF'deki büyük harflerle çizilir. Dosya assets içinde:
+            // fonts/dial ve harflerin bulunduğu kutular için.ttf
+            BitmapFont gameFont = createDialAndBoardFontFromTtf();
+            if (gameFont == null) {
+                gameFont = wordConnectGame.resourceManager.get(ResourceManager.fontBoardAndDialFont, BitmapFont.class);
+            }
             gameFont.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
             ConfigProcessor.muted = GameData.isGameMuted();
@@ -438,6 +447,40 @@ public class SplashScreen extends BaseScreen {
             dispose();
             wordConnectGame.setScreen(new IntroScreen(wordConnectGame));
         }
+    }
+
+    // Dial (yuvarlak tablo) ve çözülen kutu harfleri için TTF.
+    // TTF'yi assets klasörüne şu isimle koyun:
+    // fonts/dial ve harflerin bulunduğu kutular için.ttf
+    private BitmapFont createDialAndBoardFontFromTtf() {
+        String[] paths = new String[] {
+                "fonts/dial ve harflerin bulunduğu kutular için.ttf",
+                "dial ve harflerin bulunduğu kutular için.ttf"
+        };
+        FileHandle ttf = null;
+        for (int i = 0; i < paths.length; i++) {
+            FileHandle file = Gdx.files.internal(paths[i]);
+            if (file.exists()) {
+                ttf = file;
+                break;
+            }
+        }
+        if (ttf == null) return null;
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(ttf);
+        FreeTypeFontParameter param = new FreeTypeFontParameter();
+        String res = ResourceManager.resolvedRes;
+        if ("_hdr".equals(res)) param.size = 120;
+        else if ("_hd".equals(res)) param.size = 60;
+        else param.size = 30;
+        param.minFilter = Texture.TextureFilter.Linear;
+        param.magFilter = Texture.TextureFilter.Linear;
+        param.characters = FreeTypeFontGenerator.DEFAULT_CHARS
+                + "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ"
+                + "abcçdefgğhıijklmnoöprsştuüvyz";
+        BitmapFont font = generator.generateFont(param);
+        generator.dispose();
+        return font;
     }
 
     @Override
