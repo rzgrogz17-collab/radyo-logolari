@@ -142,8 +142,14 @@ public class LuckyWheel extends Group {
         sectorAngles.add(90 - (int)angle);
 
         BitmapFont sliceFont = resourceManager.get(ResourceManager.fontSemiBoldShadow, BitmapFont.class);
+        Color sliceTextColor;
+        if (sliceConfig == GameConfig.dailyGiftSlices) {
+            sliceTextColor = new Color(0x2A2A2AFF);
+        } else {
+            sliceTextColor = index % 2 == 0 ? UIConfig.WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_DARK : UIConfig.WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_LIGHT;
+        }
         Label.LabelStyle shadowStyle = new Label.LabelStyle(sliceFont, new Color(0x000000E6));
-        Label.LabelStyle labelStyle = new Label.LabelStyle(sliceFont, Color.WHITE);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(sliceFont, sliceTextColor);
 
         Label shadow = new Label(slice.text, shadowStyle);
         Label label = new Label(slice.text, labelStyle);

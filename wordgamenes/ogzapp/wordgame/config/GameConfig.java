@@ -295,13 +295,13 @@ public class GameConfig {
      */
     public static Slice[] dailyGiftSlices = new Slice[]{
             new Slice("40",   COINS, 40,   5),
-            new Slice("100",  COINS, 100,  5),
+            new Slice("1",    COINS, 1,    7),
             new Slice("50",   COINS, 50,  25),
             new Slice("PASS", PASS,  0,   13),
-            new Slice("80",   COINS, 80,   7),
-            new Slice("20",   COINS, 20,  25),
-            new Slice("1",    COINS, 1,    7),
             new Slice("PASS", PASS,  0,   13),
+            new Slice("20",   COINS, 20,  25),
+            new Slice("100",  COINS, 100,  5),
+            new Slice("80",   COINS, 80,   7),
     };
 
 
