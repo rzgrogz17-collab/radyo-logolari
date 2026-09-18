@@ -44,8 +44,10 @@ public class CoinView extends Group {
     private Image frameFill;
     private Image frameBorder;
 
-    private static final Color FRAME_FILL_COLOR   = new Color(0x00000066);
-    private static final Color FRAME_BORDER_COLOR = new Color(0xFFFFFFF2);
+    // Menü tablosu gibi buzlu cam: iç dolgu biraz daha belirgin, çerçeve
+    // tam beyaz değil. Siyah/opak beyaz kutu kullanılmaz.
+    private static final Color FRAME_FILL_COLOR   = new Color(0xFFFFFFB8);
+    private static final Color FRAME_EDGE_COLOR   = new Color(0xFFFFFF6A);
     private static final String MAX_COIN_TEXT     = "99999";
 
     public CoinView(BaseScreen screen) {
@@ -77,18 +79,18 @@ public class CoinView extends Group {
         float coinW = coin.getWidth() * coin.getScaleX();
         float coinH = coin.getHeight() * coin.getScaleY();
         float plusW = plus != null ? plus.getWidth() * 0.85f : 0f;
-        float padX = Math.max(8f, coinW * 0.22f);
-        float padY = Math.max(5f, coinH * 0.16f);
-        float gap = Math.max(6f, coinW * 0.14f);
-        float innerW = coinW + gap + numberWidth + (plus != null ? gap * 0.6f + plusW : 0f);
+        float padX = Math.max(6f, coinW * 0.14f);
+        float padY = Math.max(4f, coinH * 0.14f);
+        float gap = Math.max(1f, coinW * 0.03f);
+        float innerW = coinW + gap + numberWidth + (plus != null ? gap * 0.5f + plusW : 0f);
         float innerH = Math.max(coinH, Math.max(numberHeight, plus != null ? plus.getHeight() * 0.7f : 0f));
         float frameW = innerW + padX * 2f;
         float frameH = innerH + padY * 2f;
         setSize(frameW, frameH);
 
-        float radius = frameH * 0.28f;
-        float borderPx = Math.max(1.5f, frameH * 0.045f);
-        frameBorder = new Image(new NinePatchDrawable(createRoundedRectNinePatch(frameH, radius, FRAME_BORDER_COLOR, FRAME_BORDER_COLOR, 0f)));
+        float radius = frameH * 0.5f;
+        float borderPx = Math.max(1.25f, frameH * 0.06f);
+        frameBorder = new Image(new NinePatchDrawable(createRoundedRectNinePatch(frameH, radius, FRAME_EDGE_COLOR, FRAME_EDGE_COLOR, 0f)));
         frameBorder.setSize(frameW, frameH);
         addActor(frameBorder);
 
@@ -169,7 +171,7 @@ public class CoinView extends Group {
         }
 
         float coinW = coin.getWidth() * coin.getScaleX();
-        float gap = Math.max(6f, coinW * 0.14f);
+        float gap = Math.max(1f, coinW * 0.03f);
         label.setX(coin.getX() + coinW + gap);
         label.setY((getHeight() - label.getHeight()) * 0.5f);
         Pools.free(glyphLayout);

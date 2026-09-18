@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Pools;
 
 import ogzapp.wordgame.config.UIConfig;
@@ -46,9 +47,12 @@ public class TopComboAndLevelDisplay extends Group {
         // KOMBO ÖDÜLÜ YAZISINI GİZLE
         comboLabel.setVisible(false);
 
-        // Seviye yazısını biraz aşağı al ve font scale'ini büyüt
-        levelLabel.setY(15f); // istediğiniz değeri ayarlayın
-        levelLabel.setFontScale(1.2f); // biraz büyüt
+        // Seviye yazısını biraz aşağı al ve font scale'ini büyüt.
+        // Ayar butonunun yerinde, sola hizalı durur.
+        levelLabel.setAlignment(Align.left);
+        levelLabel.setY(15f);
+        levelLabel.setFontScale(1.2f);
+        levelLabel.setVisible(true);
 
         // Grubun yüksekliğini sadece levelLabel'a göre ayarla
         setHeight(levelLabel.getHeight() * levelLabel.getFontScaleY() + 20f); // biraz pay bırak
@@ -95,29 +99,25 @@ public class TopComboAndLevelDisplay extends Group {
 
 
 
-    // Kullanıcı isteğiyle: üstteki "SEVİYE: X" yazısı artık SADECE giriş
-    // (IntroScreen) ekranında görünecek, oyun (GameScreen) ekranında
-    // GÖRÜNMEYECEK. comboLabel/blast animasyonunu etkilememek için sadece
-    // levelLabel'ın kendisi gizleniyor, tüm grup değil.
     public void setLevelLabelVisible(boolean visible) {
         levelLabel.setVisible(visible);
     }
 
     public void setLevelNumber(int n) {
+        levelLabel.setVisible(true);
         levelLabel.setText(LanguageManager.format("level", n));
         GlyphLayout levelLayout = Pools.obtain(GlyphLayout.class);
         levelLayout.setText(levelLabel.getStyle().font, levelLabel.getText());
 
-        // Font scale'i sabit 1.2f yap ama çok uzunsa küçült
-        float targetWidth = getWidth() * 0.9f;
-        float textWidth = levelLayout.width * levelLabel.getFontScaleX();
-        if (textWidth > targetWidth) {
+        float targetWidth = getWidth() * 0.98f;
+        float textWidth = levelLayout.width * 1.2f;
+        if (targetWidth > 0 && textWidth > targetWidth) {
             levelLabel.setFontScale(targetWidth / levelLayout.width);
         } else {
-            levelLabel.setFontScale(1.2f); // istediğiniz değer
+            levelLabel.setFontScale(1.2f);
         }
 
-        levelLabel.setX((getWidth() - levelLayout.width * levelLabel.getFontScaleX()) * 0.5f);
+        levelLabel.setX(0f);
         Pools.free(levelLayout);
     }
 

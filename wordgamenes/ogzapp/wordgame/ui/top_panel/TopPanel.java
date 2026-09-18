@@ -43,7 +43,10 @@ public class TopPanel extends Group {
             if(!GameConfig.SKIP_INTRO) {
                 backBtn = new ImageButton(new TextureRegionDrawable(AtlasRegions.back_up), new TextureRegionDrawable(AtlasRegions.back_down));
                 addActor(backBtn);
-                backBtn.setX(0);
+                // Oyun alanında geri ikonu, sol kenardan bir ikon kadar
+                // coin tarafına (sağa) kaydırılır. SEVİYE yazısının
+                // üzerine binmez.
+                backBtn.setX(backBtn.getWidth());
                 backBtn.setY((getHeight() - backBtn.getHeight()) * 0.5f);
                 backBtn.addListener(((GameScreen) screen).gotoIntroScreen);
             }
@@ -65,12 +68,26 @@ public class TopPanel extends Group {
         }
 
         if(topComboDisplay != null ) {
-            float leftMost = coinView.getWidth();
-            float centerWidth = coinView.getX() - leftMost;
-            topComboDisplay.setWidth(centerWidth);
-            topComboDisplay.setX(leftMost);
+            // SEVİYE: X her zaman ayar butonunun yerinde (solda, geri
+            // ikonunun sağında) durur; ortadaki boşluğa taşınmaz.
+            float levelX;
+            if (btnMenu != null) {
+                levelX = btnMenu.getX();
+            } else if (backBtn != null) {
+                levelX = backBtn.getX() + backBtn.getWidth() * 1.2f;
+            } else {
+                levelX = 0;
+            }
+            float levelWidth = Math.max(backBtn != null ? backBtn.getWidth() * 4.6f : getHeight() * 4.6f, 80f);
+            levelWidth = Math.min(levelWidth, Math.max(40f, coinView.getX() - levelX - 8f));
+            topComboDisplay.setWidth(levelWidth);
+            topComboDisplay.setX(levelX);
             topComboDisplay.setComboCount(0, null);
+            topComboDisplay.toFront();
         }
+
+        if (backBtn != null) backBtn.toFront();
+        coinView.toFront();
 
 
     }

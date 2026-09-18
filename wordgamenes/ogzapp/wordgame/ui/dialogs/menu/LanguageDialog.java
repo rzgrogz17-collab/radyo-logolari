@@ -2,8 +2,12 @@ package ogzapp.wordgame.ui.dialogs.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 
@@ -56,21 +61,9 @@ public class LanguageDialog extends BaseDialog {
         }
     };
 
-    // NOT: Kullanıcının verdiği referans görsele göre eski koyu lacivert
-    // "gece modu" pilleri, açık/buzlu cam kartlara çevrildi. Zemin açıldığı
-    // için yazı rengi de KOYUYA çevrildi (beyaz yazı artık okunmazdı).
-    // Kenarlık ÇİZGİSİ kullanıcı isteğiyle kaldırıldı - sadece zemin rengi.
-    //
-    // GÜNCELLEME (kullanıcı isteğiyle, "siyah tablo" referansına göre):
-    // Seçili satır artık DOLU YEŞİL zemin DEĞİL - diğerleriyle AYNI buzlu
-    // cam zemini kullanıyor (hatta biraz daha "buzlu"/yoğun), etrafında
-    // ise siyah referans tablodaki gibi YEŞİL bir ÇERÇEVE (kenarlık) var.
-    // Çerçeve, gerçek bir "stroke" dokusu olmadığı için, aynı rrect
-    // dokusundan biraz DAHA BÜYÜK bir yeşil kopya + üstüne normal boyutta
-    // buzlu-cam kopya bindirerek (aradaki fark kadar) çizgi görünümü elde
-    // ediliyor (bkz. aşağıdaki "border" Image'ı).
+    // Seçili satırın İÇİ yeşil olmaz (diğerleriyle aynı buzlu cam).
+    // Yeşil yalnızca düğmenin DIŞ çerçevesindedir (içi boş stroke).
     private static final Color ITEM_BG_COLOR = new Color(0xFFFFFF66);
-    private static final Color ITEM_BG_SELECTED_COLOR = new Color(0xFFFFFF8A);
     private static final Color ITEM_BORDER_SELECTED_COLOR = new Color(0x3FAE53FF);
     private static final Color ITEM_TEXT_COLOR = new Color(0x2C3540FF);
     private static final Color ITEM_TEXT_SELECTED_COLOR = new Color(0x2C3540FF);
@@ -118,6 +111,12 @@ public class LanguageDialog extends BaseDialog {
         // olarak ortalanıyor - ekstra bir X kayması gerekmiyor.
         float cellWidth = tableWidth * 0.90f;
         float cellHeight = tableWidth * 0.175f;
+        float borderThickness = Math.max(3f, cellHeight * 0.07f);
+        NinePatch selectedStroke = createRoundedStrokeNinePatch(
+                cellHeight + borderThickness * 2f,
+                (cellHeight + borderThickness * 2f) * 0.22f,
+                borderThickness,
+                ITEM_BORDER_SELECTED_COLOR);
 
         for (Map.Entry<String, Locale> entry : GameConfig.availableLanguages.entrySet()) {
             String code = entry.getKey();
@@ -129,28 +128,18 @@ public class LanguageDialog extends BaseDialog {
             cell.setTransform(true);
             cell.setOrigin(Align.center);
 
-            // Kullanıcı isteğiyle: seçili satırın etrafında (siyah referans
-            // tablodaki gibi) YEŞİL bir ÇERÇEVE var. Gerçek bir "sadece
-            // çizgi" dokusu projede olmadığından, AYNI rrect dokusundan
-            // hücreden biraz DAHA BÜYÜK bir yeşil kopya buraya (bg'den
-            // ÖNCE, yani ARKAYA) ekleniyor; üzerine tam boy buzlu-cam bg
-            // bindiğinde sadece kenarlardaki ince pay yeşil çerçeve gibi
-            // görünüyor. Sadece seçili hücrede görünür.
-            float borderThickness = cellHeight * 0.07f;
-            Image border = new Image(NinePatches.rrect);
+            // Yeşil stroke hücrenin DIŞINDA; içi delik olduğu için
+            // yarı saydam buzlu camın altından yeşil sızmaz.
+            Image border = new Image(new NinePatchDrawable(selectedStroke));
             border.setSize(cellWidth + borderThickness * 2f, cellHeight + borderThickness * 2f);
             border.setPosition(-borderThickness, -borderThickness);
-            border.setColor(ITEM_BORDER_SELECTED_COLOR);
             border.setVisible(isSelected);
             cell.addActor(border);
             borderByCode.put(code, border);
 
-            // Kullanıcı isteğiyle kenarlık ÇİZGİSİ kaldırıldı - sadece
-            // açık/hafif saydam "buzlu cam" zemin kaldı, seçili/seçili
-            // olmayan ayrımı yalnızca zemin rengiyle yapılıyor.
             Image bg = new Image(NinePatches.rrect);
             bg.setSize(cellWidth, cellHeight);
-            bg.setColor(isSelected ? ITEM_BG_SELECTED_COLOR : ITEM_BG_COLOR);
+            bg.setColor(ITEM_BG_COLOR);
             cell.addActor(bg);
             bgByCode.put(code, bg);
 
@@ -191,7 +180,9 @@ public class LanguageDialog extends BaseDialog {
 
             cell.addListener(clickListener);
 
-            table.add(cell).size(cellWidth, cellHeight).padBottom(pad);
+            table.add(cell).size(cellWidth, cellHeight)
+                    .padLeft(borderThickness).padRight(borderThickness)
+                    .padTop(borderThickness).padBottom(Math.max(pad, borderThickness * 2f));
             table.row();
         }
         table.pack();
@@ -266,11 +257,45 @@ public class LanguageDialog extends BaseDialog {
         Image bg = bgByCode.get(code);
         Label label = labelByCode.get(code);
         Image border = borderByCode.get(code);
-        if (bg != null) bg.setColor(ITEM_BG_SELECTED_COLOR);
+        if (bg != null) bg.setColor(ITEM_BG_COLOR);
         if (label != null) label.setColor(ITEM_TEXT_SELECTED_COLOR);
         if (border != null) border.setVisible(true);
 
         selectedCode = code;
+    }
+
+    private static NinePatch createRoundedStrokeNinePatch(float height, float radius, float stroke, Color color) {
+        int h = Math.max(8, Math.round(height));
+        int r = Math.max(2, Math.round(radius));
+        int s = Math.max(1, Math.round(stroke));
+        int stretch = 4;
+        int w = r * 2 + stretch;
+        Pixmap pixmap = new Pixmap(w, h, Pixmap.Format.RGBA8888);
+        pixmap.setBlending(Pixmap.Blending.None);
+        pixmap.setColor(0, 0, 0, 0);
+        pixmap.fill();
+        pixmap.setBlending(Pixmap.Blending.SourceOver);
+        fillRoundedRect(pixmap, 0, 0, w, h, r, color);
+        pixmap.setBlending(Pixmap.Blending.None);
+        pixmap.setColor(0, 0, 0, 0);
+        int innerR = Math.max(1, r - s);
+        fillRoundedRect(pixmap, s, s, Math.max(1, w - s * 2), Math.max(1, h - s * 2), innerR, new Color(0, 0, 0, 0));
+        PixmapTextureData texData = new PixmapTextureData(pixmap, pixmap.getFormat(), false, false, true);
+        Texture tex = new Texture(texData);
+        tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        return new NinePatch(tex, r, r, r, r);
+    }
+
+    private static void fillRoundedRect(Pixmap pixmap, int x, int y, int w, int h, int radius, Color color) {
+        if (w <= 0 || h <= 0) return;
+        int rad = Math.min(radius, Math.min(w, h) / 2);
+        pixmap.setColor(color);
+        pixmap.fillRectangle(x + rad, y, Math.max(1, w - rad * 2), h);
+        pixmap.fillRectangle(x, y + rad, w, Math.max(1, h - rad * 2));
+        pixmap.fillCircle(x + rad, y + rad, rad);
+        pixmap.fillCircle(x + w - rad - 1, y + rad, rad);
+        pixmap.fillCircle(x + rad, y + h - rad - 1, rad);
+        pixmap.fillCircle(x + w - rad - 1, y + h - rad - 1, rad);
     }
 
 
