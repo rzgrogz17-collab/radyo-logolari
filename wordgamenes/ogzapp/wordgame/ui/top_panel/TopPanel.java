@@ -68,9 +68,7 @@ public class TopPanel extends Group {
         }
 
         if(topComboDisplay != null ) {
-            // Tam üst orta: yazı panelin tam genişliğinde ortalanır,
-            // soldan ve sağdan aynı mesafe. Geri/coin tıklaması için
-            // bu grup arkada kalır (backBtn/coinView toFront).
+            // Üst barın TAM ORTASI (geri ile coin arasında, soldan sağa eşit).
             topComboDisplay.setX(0);
             topComboDisplay.setWidth(width);
             topComboDisplay.setComboCount(0, null);

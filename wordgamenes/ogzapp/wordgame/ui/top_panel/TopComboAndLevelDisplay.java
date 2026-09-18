@@ -48,9 +48,9 @@ public class TopComboAndLevelDisplay extends Group {
         // KOMBO ÖDÜLÜ YAZISINI GİZLE
         comboLabel.setVisible(false);
 
-        // Üst çubuğun tam ortası, soldan ve sağdan eşit.
+        // Metin, grubun (geri-coin arası) tam ortasında.
         levelLabel.setAlignment(Align.center);
-        levelLabel.setY(15f);
+        levelLabel.setY(0f);
         levelLabel.setFontScale(LEVEL_FONT_SCALE);
         levelLabel.setVisible(true);
 
@@ -109,14 +109,17 @@ public class TopComboAndLevelDisplay extends Group {
         GlyphLayout levelLayout = Pools.obtain(GlyphLayout.class);
         levelLayout.setText(levelLabel.getStyle().font, levelLabel.getText());
 
-        float targetWidth = getWidth() * 0.55f;
+        float targetWidth = getWidth() * 0.92f;
         float scale = LEVEL_FONT_SCALE;
         float textWidth = levelLayout.width * scale;
         if (targetWidth > 0 && textWidth > targetWidth) {
             scale = targetWidth / levelLayout.width;
         }
         levelLabel.setFontScale(scale);
-        levelLabel.setX((getWidth() - levelLayout.width * scale) * 0.5f);
+        // Grubun tamamını kapla; Align.center yazıyı geri-coin ortasına koyar.
+        levelLabel.setSize(getWidth(), getHeight());
+        levelLabel.setPosition(0f, 0f);
+        levelLabel.setAlignment(Align.center);
         Pools.free(levelLayout);
     }
 
