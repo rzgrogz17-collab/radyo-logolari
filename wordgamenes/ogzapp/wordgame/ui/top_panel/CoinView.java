@@ -43,11 +43,12 @@ public class CoinView extends Group {
     private boolean cancelled;
     private Image frameFill;
     private Image frameBorder;
+    private float numberSlotX;
+    private float numberSlotWidth;
 
-    // Menü tablosu gibi buzlu cam: iç dolgu biraz daha belirgin, çerçeve
-    // tam beyaz değil. Siyah/opak beyaz kutu kullanılmaz.
-    private static final Color FRAME_FILL_COLOR   = new Color(0xFFFFFFB8);
-    private static final Color FRAME_EDGE_COLOR   = new Color(0xFFFFFF6A);
+    // Daha şeffaf buzlu cam; tam beyaz/opak kutu yok.
+    private static final Color FRAME_FILL_COLOR   = new Color(0xFFFFFF48);
+    private static final Color FRAME_EDGE_COLOR   = new Color(0xFFFFFF30);
     private static final String MAX_COIN_TEXT     = "99999";
 
     public CoinView(BaseScreen screen) {
@@ -70,7 +71,7 @@ public class CoinView extends Group {
         Color numberColor = new Color(UIConfig.getDialButtonTextColorUpStateByLevelIndex(0));
         Label.LabelStyle style = new Label.LabelStyle(bitmapFont, numberColor);
         label = new Label("", style);
-        label.setAlignment(Align.left);
+        label.setAlignment(Align.right);
 
         GlyphLayout glyphLayout = Pools.obtain(GlyphLayout.class);
         glyphLayout.setText(bitmapFont, MAX_COIN_TEXT);
@@ -81,10 +82,11 @@ public class CoinView extends Group {
         float coinW = coin.getWidth() * coin.getScaleX();
         float coinH = coin.getHeight() * coin.getScaleY();
         float plusW = plus != null ? plus.getWidth() * 0.85f : 0f;
-        float padX = Math.max(6f, coinW * 0.14f);
-        float padY = Math.max(4f, coinH * 0.14f);
-        float gap = Math.max(1f, coinW * 0.03f);
-        float innerW = coinW + gap + numberWidth + (plus != null ? gap * 0.5f + plusW : 0f);
+        float padX = Math.max(8f, coinW * 0.18f);
+        float padY = Math.max(5f, coinH * 0.16f);
+        // 50 gibi değerlerde sarı ikon ile rakam ayrı dursun; slot 99999 genişliğinde.
+        float gap = Math.max(12f, coinW * 0.32f);
+        float innerW = coinW + gap + numberWidth + (plus != null ? gap * 0.45f + plusW : 0f);
         float innerH = Math.max(coinH, Math.max(numberHeight, plus != null ? plus.getHeight() * 0.7f : 0f));
         float frameW = innerW + padX * 2f;
         float frameH = innerH + padY * 2f;
@@ -107,13 +109,14 @@ public class CoinView extends Group {
         coin.setY((getHeight() - coin.getHeight()) * 0.5f + coin.getHeight() * (1f - coin.getScaleY()) * 0.15f);
         addActor(coin);
 
+        numberSlotX = coin.getX() + coinW + gap;
+        numberSlotWidth = numberWidth;
+        maxWidth = numberWidth;
+
         if (plus != null) {
             plus.setX(getWidth() - padX - plus.getWidth() * 0.92f);
             plus.setY((getHeight() - plus.getHeight()) * 0.5f);
             addActor(plus);
-            maxWidth = numberWidth;
-        } else {
-            maxWidth = numberWidth;
         }
 
         addActor(label);
@@ -172,9 +175,8 @@ public class CoinView extends Group {
             label.setFontScale(1f);
         }
 
-        float coinW = coin.getWidth() * coin.getScaleX();
-        float gap = Math.max(1f, coinW * 0.03f);
-        label.setX(coin.getX() + coinW + gap);
+        float textW = glyphLayout.width * label.getFontScaleX();
+        label.setX(numberSlotX + Math.max(0f, numberSlotWidth - textW));
         label.setY((getHeight() - label.getHeight()) * 0.5f);
         Pools.free(glyphLayout);
     }
