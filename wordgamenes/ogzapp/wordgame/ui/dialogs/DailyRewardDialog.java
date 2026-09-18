@@ -2,10 +2,12 @@ package ogzapp.wordgame.ui.dialogs;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -22,37 +24,213 @@ import ogzapp.wordgame.managers.DailyRewardManager;
 import ogzapp.wordgame.managers.LanguageManager;
 import ogzapp.wordgame.managers.ResourceManager;
 import ogzapp.wordgame.screens.BaseScreen;
+import ogzapp.wordgame.ui.dialogs.iap.ItemContent;
+import ogzapp.wordgame.ui.dialogs.wheel.LuckyWheel;
+import ogzapp.wordgame.ui.dialogs.wheel.Slice;
+import ogzapp.wordgame.ui.hint.RewardedAdAnimation;
 
-// 7 günlük giriş ödülü takvimi. GameConfig.DAILY_REWARD_COINS dizisindeki
-// tutarları gösterir; bugünün günü vurgulanır, önceki günler "alındı" olarak
-// işaretlenir, sonraki günler kilitli görünür.
+import static ogzapp.wordgame.ui.dialogs.wheel.RewardRevealType.COINS;
+import static ogzapp.wordgame.ui.dialogs.wheel.RewardRevealType.PASS;
+
+// GameConfig.DAILY_REWARD_WHEEL_ENABLED = true  -> kilitli tablo YOK, hediye çarkı
+// GameConfig.DAILY_REWARD_WHEEL_ENABLED = false -> eski 7 günlük kilitli kutu tablosu
 public class DailyRewardDialog extends BaseDialog {
 
-    // --- Gün kutucuğu görünümü (kullanıcı isteğiyle YENİLENDİ) ---
-    // Eskiden düz/mat, gölgesiz tek renkli kutucuklardı ("eski tarz"
-    // görünüm veriyordu). Şimdi Menü'deki buzlu-cam-kart dokusu
-    // (NinePatches.round_rect_shadow - yumuşak kenarlı, hafif gölgeli
-    // kart) kullanılıyor ve her duruma özel küçük bir rozet eklendi:
-    // alınan günlerde onay işareti, henüz gelmemiş günlerde asma kilit,
-    // bugünün kutucuğunda ise yumuşak nabız gibi atan bir parıltı halkası.
     private static final Color DAY_BG_LOCKED_COLOR       = new Color(0x27394CE6);
     private static final Color DAY_BG_CLAIMED_COLOR      = new Color(0x2ECC71CC);
     private static final Color DAY_BG_TODAY_COLOR        = new Color(0x1DBAACFF);
     private static final Color DAY_TEXT_COLOR             = Color.WHITE;
-    // Kullanıcı isteğiyle: bugünün kutucuğundaki gün adı ve coin miktarı
-    // yazıları (ör. "1. Gün" / "10") artık altın/turuncu DEĞİL, diğer
-    // günlerle AYNI beyaz renk. (Yalnızca bugünün turkuaz zemini ve nabız
-    // efekti "bugün" vurgusunu veriyor artık.)
     private static final Color DAY_TEXT_TODAY_COLOR       = Color.WHITE;
     private static final Color DAY_TODAY_GLOW_COLOR       = new Color(0xFFC940FF);
     private static final float DAY_LOCKED_CONTENT_ALPHA   = 0.6f;
     private static final float DAY_CLAIMED_CONTENT_ALPHA  = 0.85f;
 
+    private static final float WHEEL_CLOSE_DURATION = 0.85f;
+    private static final int MAX_PASS_SPINS = 2;
+
     private TextButton claimButton;
+    private boolean wheelMode;
+
+    private LuckyWheel luckyWheel;
+    private TextButton spinButton;
+    private int passCount;
+    private boolean spinning;
+    private boolean finished;
+
+    private final Runnable spinFinished = new Runnable() {
+        @Override
+        public void run() {
+            spinning = false;
+            Slice result = luckyWheel == null ? null : luckyWheel.selectedReward;
+            if (result == null) {
+                enableSpinAgain();
+                return;
+            }
+            if (result.reward == PASS) {
+                onPass();
+            } else {
+                onCoinsWon(result);
+            }
+        }
+    };
 
     public DailyRewardDialog(float width, float height, BaseScreen screen) {
         super(width, height, screen);
 
+        // true / false: GameConfig.DAILY_REWARD_WHEEL_ENABLED
+        if (GameConfig.DAILY_REWARD_WHEEL_ENABLED) {
+            setupDailyGiftWheel(width, height);
+            return;
+        }
+
+        setupLockedTable(width, height);
+    }
+
+    private void setupDailyGiftWheel(float width, float height) {
+        wheelMode = true;
+        // Arka plan tablosu / başlık / kapatma / kilitli kutular YOK.
+        content.setSize(width, height);
+        content.setOrigin(Align.center);
+
+        luckyWheel = new LuckyWheel(spinFinished, screen.wordConnectGame.resourceManager, GameConfig.dailyGiftSlices);
+        luckyWheel.setOrigin(Align.center);
+
+        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
+        String font = UIConfig.INTRO_PLAY_BUTTON_USE_SHADOW_FONT ? ResourceManager.fontSemiBoldShadow : ResourceManager.fontSemiBold;
+        style.font = screen.wordConnectGame.resourceManager.get(font, BitmapFont.class);
+        style.fontColor = Color.WHITE;
+        style.up = new NinePatchDrawable(NinePatches.play_r_up);
+        style.down = new NinePatchDrawable(NinePatches.play_r_down);
+        style.disabled = new NinePatchDrawable(NinePatches.play_r_down);
+
+        spinButton = new TextButton(LanguageManager.get("spin_btn_label"), style);
+        spinButton.getLabel().setFontScale(UIConfig.WATCH_AND_EARN_DIALOG_BUTTON_FONT_SCALE);
+        spinButton.setWidth(Math.min(luckyWheel.getWidth() * 0.78f, width * 0.62f));
+        spinButton.setHeight(Math.max(spinButton.getPrefHeight(), NinePatches.play_r_up.getTotalHeight()));
+        spinButton.setOrigin(Align.center);
+
+        float gap = Math.max(18f, luckyWheel.getHeight() * 0.07f);
+        float blockHeight = luckyWheel.getHeight() + gap + spinButton.getHeight();
+        float blockY = (height - blockHeight) * 0.52f;
+
+        luckyWheel.setX((width - luckyWheel.getWidth()) * 0.5f);
+        luckyWheel.setY(blockY + spinButton.getHeight() + gap);
+        spinButton.setX((width - spinButton.getWidth()) * 0.5f);
+        spinButton.setY(blockY);
+
+        content.addActor(luckyWheel);
+        content.addActor(spinButton);
+
+        spinButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                startSpin();
+            }
+        });
+    }
+
+    private void startSpin() {
+        if (spinning || finished || spinButton == null || spinButton.isDisabled()) return;
+        spinning = true;
+        spinButton.setDisabled(true);
+        if (getStage() != null) getStage().getRoot().setTouchable(Touchable.disabled);
+        luckyWheel.spin();
+    }
+
+    private void onPass() {
+        passCount++;
+        if (passCount >= MAX_PASS_SPINS) {
+            DailyRewardManager.markClaimed();
+            closeWheelSlowly();
+            return;
+        }
+        spinButton.setText(LanguageManager.format("spin_again", 1));
+        enableSpinAgain();
+    }
+
+    private void onCoinsWon(Slice result) {
+        finished = true;
+        if (spinButton != null) spinButton.setDisabled(true);
+
+        int coins = result.reward == COINS ? Math.max(0, result.quantity) : 0;
+        DailyRewardManager.markClaimed();
+
+        if (coins > 0) {
+            ItemContent reward = new ItemContent();
+            reward.coins = coins;
+            screen.updateCoinsAndHints(reward);
+
+            RewardedAdAnimation coinText = new RewardedAdAnimation(screen, coins);
+            if (getStage() != null) getStage().addActor(coinText);
+            coinText.show();
+        }
+
+        addAction(Actions.sequence(
+                Actions.delay(0.35f),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeWheelSlowly();
+                    }
+                })
+        ));
+    }
+
+    private void enableSpinAgain() {
+        if (spinButton != null) spinButton.setDisabled(false);
+        if (getStage() != null) getStage().getRoot().setTouchable(Touchable.enabled);
+    }
+
+    private void closeWheelSlowly() {
+        finished = true;
+        if (getStage() != null) getStage().getRoot().setTouchable(Touchable.disabled);
+        if (screen.backNavQueue != null && !screen.backNavQueue.isEmpty()) {
+            screen.backNavQueue.pop();
+        }
+        content.clearActions();
+        content.addAction(new SequenceAction(
+                Actions.fadeOut(WHEEL_CLOSE_DURATION),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        modal.addAction(Actions.sequence(
+                                Actions.fadeOut(0.2f),
+                                Actions.run(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hideAnimFinished();
+                                    }
+                                })
+                        ));
+                    }
+                })
+        ));
+    }
+
+    @Override
+    protected void openDialog() {
+        if (!wheelMode) {
+            super.openDialog();
+            return;
+        }
+        content.setScale(1f);
+        content.getColor().a = 0f;
+        Action run = Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                openAnimFinished();
+            }
+        });
+        content.addAction(new SequenceAction(Actions.fadeIn(0.25f), run));
+    }
+
+    @Override
+    public boolean navigateBack() {
+        if (wheelMode) return true;
+        return super.navigateBack();
+    }
+
+    private void setupLockedTable(float width, float height) {
         content.setSize(width * 0.85f, height * 0.55f);
 
         int today = DailyRewardManager.getUpcomingStreakDay();
@@ -77,11 +255,6 @@ public class DailyRewardDialog extends BaseDialog {
             cell.setSize(cellSize, cellSize);
             cell.setOrigin(Align.center);
 
-            // Bugünün kutucuğunun arkasında yumuşak, nabız gibi yavaşça
-            // parlayıp sönen bir halka - dikkat çekmesi için (5 seviyelik
-            // ödül halkasındaki sis efektiyle AYNI ruhta, çok daha sade).
-            // "bg" kartından ÖNCE ekleniyor ki sadece kartın kenarlarından
-            // taşan kısmı görünsün.
             if (isToday) {
                 float glowSize = cellSize * 1.35f;
                 Image glow = new Image(AtlasRegions.glow);
@@ -96,9 +269,6 @@ public class DailyRewardDialog extends BaseDialog {
                 )));
             }
 
-            // Düz/mat renkli eski "rrect" yerine, Menü'deki hafif gölgeli
-            // buzlu-cam-kart dokusu (round_rect_shadow) kullanılıyor - kart
-            // artık zeminden hafifçe yükseliyormuş gibi görünüyor.
             Image bg = new Image(NinePatches.round_rect_shadow);
             bg.setSize(cellSize, cellSize);
             bg.setColor(isToday ? DAY_BG_TODAY_COLOR : (isClaimed ? DAY_BG_CLAIMED_COLOR : DAY_BG_LOCKED_COLOR));
@@ -136,9 +306,6 @@ public class DailyRewardDialog extends BaseDialog {
             cell.addActor(coinIcon);
 
             if (!isToday) {
-                // Henüz gelmemiş günlerde içerik hafif soluk, alınmış
-                // günlerde "tamamlandı" hissi için biraz daha az soluk -
-                // ikisi de bugünün canlı renginin yanında geri planda kalıyor.
                 float contentAlpha = isClaimed ? DAY_CLAIMED_CONTENT_ALPHA : DAY_LOCKED_CONTENT_ALPHA;
                 dayLabel.getColor().a = contentAlpha;
                 coinIcon.getColor().a = contentAlpha;
@@ -163,8 +330,6 @@ public class DailyRewardDialog extends BaseDialog {
             }
 
             if (isToday) {
-                // Bugünün kutucuğu diğerlerinin arasından hafifçe öne
-                // çıksın diye yavaşça büyüyüp küçülüyor (nabız efekti).
                 cell.addAction(Actions.forever(Actions.sequence(
                         Actions.scaleTo(1.045f, 1.045f, 1.1f),
                         Actions.scaleTo(1f, 1f, 1.1f)
@@ -188,8 +353,6 @@ public class DailyRewardDialog extends BaseDialog {
                 + table.getHeight() + innerGap + claimButton.getHeight() + bottomGap);
 
         setContentBackground();
-        // Diğer buzlu cam dialoglarla AYNI paylaşılan renk sabitleri
-        // kullanılıyor (UIConfig.java'ya yeni bir şey EKLENMEDİ).
         setContentBackgroundColor(UIConfig.MENU_DIALOG_BACKGROUND_COLOR);
 
         table.setX((content.getWidth() - table.getWidth()) * 0.5f);
@@ -202,15 +365,7 @@ public class DailyRewardDialog extends BaseDialog {
 
         setTitleLabel(LanguageManager.get("daily_reward_title"));
         setTitleBackgroundColor(UIConfig.MENU_DIALOG_TITLE_BACKGROUND_COLOR);
-        // NOT: Kullanıcı isteğiyle başlık MENÜ'deki gibi biraz daha aşağı
-        // kaydırıldı. content'in yüksekliği başlık için tam olarak
-        // titleContainer.getHeight()*0.83f + titleGap kadar pay bıraktığından,
-        // bu küçük ek kaydırma "titleGap" boşluğunun bir kısmını kullanır ve
-        // tablo/buton ile çakışmaz.
         titleContainer.setY(titleContainer.getY() - titleContainer.getHeight() * 0.08f);
-        // Kullanıcı isteğiyle: başlık YAZISI konteynerin içinde de biraz
-        // daha aşağı kaydırıldı (yukarıdaki satır tüm başlık ÇUBUĞUNU,
-        // bu satır ise sadece YAZIYI kendi kutusunun içinde aşağı alıyor).
         titleLabel.setY(titleLabel.getY() - titleContainer.getHeight() * 0.05f);
         setCloseButton();
 
@@ -237,7 +392,7 @@ public class DailyRewardDialog extends BaseDialog {
     @Override
     protected void hideAnimFinished() {
         super.hideAnimFinished();
-        getStage().getRoot().setTouchable(Touchable.enabled);
+        if (getStage() != null) getStage().getRoot().setTouchable(Touchable.enabled);
         remove();
     }
 }
