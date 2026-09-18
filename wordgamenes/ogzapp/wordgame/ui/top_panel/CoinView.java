@@ -49,7 +49,8 @@ public class CoinView extends Group {
     // Daha şeffaf buzlu cam; tam beyaz/opak kutu yok.
     private static final Color FRAME_FILL_COLOR   = new Color(0xFFFFFF48);
     private static final Color FRAME_EDGE_COLOR   = new Color(0xFFFFFF30);
-    private static final String MAX_COIN_TEXT     = "99999";
+    private static final String FULL_SCALE_COIN_TEXT = "9999";
+    private static final String MAX_COIN_TEXT        = "99999";
 
     public CoinView(BaseScreen screen) {
         this.screen = screen;
@@ -74,7 +75,7 @@ public class CoinView extends Group {
         label.setAlignment(Align.right);
 
         GlyphLayout glyphLayout = Pools.obtain(GlyphLayout.class);
-        glyphLayout.setText(bitmapFont, MAX_COIN_TEXT);
+        glyphLayout.setText(bitmapFont, FULL_SCALE_COIN_TEXT);
         float numberWidth = glyphLayout.width;
         float numberHeight = glyphLayout.height;
         Pools.free(glyphLayout);
@@ -84,8 +85,8 @@ public class CoinView extends Group {
         float plusW = plus != null ? plus.getWidth() * 0.85f : 0f;
         float padX = Math.max(8f, coinW * 0.18f);
         float padY = Math.max(5f, coinH * 0.16f);
-        // 50 gibi değerlerde sarı ikon ile rakam ayrı dursun; slot 99999 genişliğinde.
-        float gap = Math.max(12f, coinW * 0.32f);
+        // İkon ile rakam yapışmasın; slot 9999 tam boy, 99999 orantılı küçülerek sığar.
+        float gap = Math.max(18f, coinW * 0.48f);
         float innerW = coinW + gap + numberWidth + (plus != null ? gap * 0.45f + plusW : 0f);
         float innerH = Math.max(coinH, Math.max(numberHeight, plus != null ? plus.getHeight() * 0.7f : 0f));
         float frameW = innerW + padX * 2f;
@@ -169,15 +170,14 @@ public class CoinView extends Group {
         GlyphLayout glyphLayout = Pools.obtain(GlyphLayout.class);
         glyphLayout.setText(label.getStyle().font, label.getText());
 
-        if (glyphLayout.width > maxWidth && glyphLayout.width > 0) {
-            label.setFontScale(maxWidth / glyphLayout.width);
-        } else {
-            label.setFontScale(1f);
+        float scale = 1f;
+        if (count > 9999 && glyphLayout.width > numberSlotWidth && glyphLayout.width > 0) {
+            scale = numberSlotWidth / glyphLayout.width;
         }
-
-        float textW = glyphLayout.width * label.getFontScaleX();
-        label.setX(numberSlotX + Math.max(0f, numberSlotWidth - textW));
-        label.setY((getHeight() - label.getHeight()) * 0.5f);
+        label.setFontScale(scale);
+        label.setSize(numberSlotWidth, getHeight());
+        label.setAlignment(Align.right | Align.center);
+        label.setPosition(numberSlotX, 0f);
         Pools.free(glyphLayout);
     }
 

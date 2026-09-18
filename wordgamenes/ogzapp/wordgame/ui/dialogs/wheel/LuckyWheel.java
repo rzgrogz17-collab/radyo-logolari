@@ -2,6 +2,7 @@ package ogzapp.wordgame.ui.dialogs.wheel;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.MathUtils;
@@ -140,13 +141,21 @@ public class LuckyWheel extends Group {
         float angle = getAngleByIndex(index);
         sectorAngles.add(90 - (int)angle);
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(resourceManager.get(ResourceManager.fontSemiBold, BitmapFont.class), index % 2 == 0 ? UIConfig.WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_DARK: UIConfig.WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_LIGHT);
+        BitmapFont sliceFont = resourceManager.get(ResourceManager.fontSemiBoldShadow, BitmapFont.class);
+        Label.LabelStyle shadowStyle = new Label.LabelStyle(sliceFont, new Color(0x000000E6));
+        Label.LabelStyle labelStyle = new Label.LabelStyle(sliceFont, Color.WHITE);
 
+        Label shadow = new Label(slice.text, shadowStyle);
         Label label = new Label(slice.text, labelStyle);
+        float shadowOx = 2.4f;
+        float shadowOy = -2.4f;
+        shadow.setPosition(shadowOx, shadowOy);
+        label.setPosition(0f, 0f);
 
         Group group = new Group();
+        group.addActor(shadow);
         group.addActor(label);
-        group.setSize(label.getWidth(), label.getHeight());
+        group.setSize(label.getWidth() + Math.abs(shadowOx), label.getHeight() + Math.abs(shadowOy));
         group.setOrigin(Align.center);
         group.setTransform(true);
         group.setRotation(angle - 90);
