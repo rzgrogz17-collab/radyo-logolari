@@ -56,11 +56,17 @@ public class LuckyWheel extends Group {
     private ResourceManager resourceManager;
     private Image arrow;
     private Runnable spinFinished;
+    private Slice[] sliceConfig;
 
     public LuckyWheel(Runnable spinFinished, ResourceManager resourceManager){
+        this(spinFinished, resourceManager, GameConfig.slices);
+    }
+
+    public LuckyWheel(Runnable spinFinished, ResourceManager resourceManager, Slice[] slices){
 
         this.spinFinished = spinFinished;
         this.resourceManager = resourceManager;
+        this.sliceConfig = (slices != null && slices.length > 0) ? slices : GameConfig.slices;
 
         rewardTypeToIconMappingSmall = new HashMap<>();
         rewardTypeToIconMappingSmall.put(COINS, new TextureRegionDrawable(AtlasRegions.coin_small));
@@ -115,10 +121,10 @@ public class LuckyWheel extends Group {
         randomWeights = new Array<>();
         sectorAngles = new Array<>();
 
-        for(int i = 0; i < GameConfig.slices.length; i++){
-            populateSlice(i, GameConfig.slices[i], ledDrawable);
+        for(int i = 0; i < sliceConfig.length; i++){
+            populateSlice(i, sliceConfig[i], ledDrawable);
 
-            for(int j = 0; j < GameConfig.slices[i].probability; j++){
+            for(int j = 0; j < sliceConfig[i].probability; j++){
                 randomWeights.add(i);
             }
         }
@@ -157,18 +163,21 @@ public class LuckyWheel extends Group {
         group.setPosition(x, y);
         background.addActor(group);
 
-        ///////icon
-        Image icon = new Image(rewardTypeToIconMappingSmall.get(slice.reward));
-        icon.setOrigin(Align.center);
+        ///////icon  (PASS diliminde ikon yok)
+        Drawable iconDrawable = rewardTypeToIconMappingSmall.get(slice.reward);
+        if(iconDrawable != null) {
+            Image icon = new Image(iconDrawable);
+            icon.setOrigin(Align.center);
 
-        float iconMargin = 0.45f;
+            float iconMargin = 0.45f;
 
-        x = centerX + dx * iconMargin - icon.getWidth() * 0.5f;
-        y = centerY + dy * iconMargin - icon.getHeight() * 0.5f;
+            x = centerX + dx * iconMargin - icon.getWidth() * 0.5f;
+            y = centerY + dy * iconMargin - icon.getHeight() * 0.5f;
 
-        icon.setPosition(x, y);
-        icon.setRotation(angle);
-        background.addActor(icon);
+            icon.setPosition(x, y);
+            icon.setRotation(angle);
+            background.addActor(icon);
+        }
 
         ///////Led
 
@@ -224,12 +233,14 @@ public class LuckyWheel extends Group {
 
     private void spin2(){
         int fullCircles = 5;
-        int rnd = MathUtils.random(0, randomWeights.size - 1);
-        rnd = randomWeights.get(rnd);
+        int rnd = 0;
+        if(randomWeights.size > 0){
+            rnd = randomWeights.get(MathUtils.random(0, randomWeights.size - 1));
+        }
         int randomFinalAngle = sectorAngles.get(rnd);
         float _finalAngle = (fullCircles * 360 + randomFinalAngle);
 
-        selectedReward = GameConfig.slices[rnd];
+        selectedReward = sliceConfig[rnd];
 
 	    float duration = MathUtils.random(3.0f, 6.0f);
         Action rotate = Actions.rotateTo(_finalAngle, duration + 1, Interpolation.cubicOut);

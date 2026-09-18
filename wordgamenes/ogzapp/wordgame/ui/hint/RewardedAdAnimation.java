@@ -27,6 +27,10 @@ public class RewardedAdAnimation extends Group {
     private Image bg;
 
     public RewardedAdAnimation(BaseScreen screen){
+        this(screen, GameConfig.NUMBER_OF_COINS_EARNED_FOR_WATCHING_VIDEO);
+    }
+
+    public RewardedAdAnimation(BaseScreen screen, int coins){
 
         setSize(screen.stage.getWidth(), screen.stage.getHeight());
 
@@ -42,7 +46,7 @@ public class RewardedAdAnimation extends Group {
         group.addActor(coin);
 
         Label.LabelStyle style = new Label.LabelStyle(screen.wordConnectGame.resourceManager.get(ResourceManager.fontBlack, BitmapFont.class), UIConfig.COIN_ANIM_TEXT_COLOR);
-        Label label = new Label(LanguageManager.format("rewarded_ad_amount", GameConfig.NUMBER_OF_COINS_EARNED_FOR_WATCHING_VIDEO), style);
+        Label label = new Label(LanguageManager.format("rewarded_ad_amount", coins), style);
         label.setAlignment(Align.left);
         label.setOrigin(Align.bottomLeft);
 

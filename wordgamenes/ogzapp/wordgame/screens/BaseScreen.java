@@ -51,6 +51,7 @@ import ogzapp.wordgame.ui.dialogs.AlertDialog;
 import ogzapp.wordgame.ui.dialogs.BaseDialog;
 import ogzapp.wordgame.ui.dialogs.DailyRewardDialog;
 import ogzapp.wordgame.ui.dialogs.WatchAndEarnDialog;
+import ogzapp.wordgame.ui.dialogs.wheel.DailyGiftWheelDialog;
 import ogzapp.wordgame.ui.dialogs.iap.ItemContent;
 import ogzapp.wordgame.ui.dialogs.iap.ShoppingDialog;
 import ogzapp.wordgame.ui.dialogs.iap.ShoppingItem;
@@ -271,19 +272,27 @@ public class BaseScreen extends ScreenAdapter {
 
 
     protected boolean checkDailyRewardTiming(){
-        if(DailyRewardManager.isAvailable()){
-            if(dailyRewardDialog == null) {
-                dailyRewardDialog = new DailyRewardDialog(stage.getWidth(), stage.getHeight(), this);
-                dailyRewardDialog.setDialogId(Constants.DAILY_REWARD_DIALOG);
-            }
-            stage.addActor(dailyRewardDialog);
-            dailyRewardDialog.setVisible(true);
-            dailyRewardDialog.show();
+        if(!DailyRewardManager.isAvailable()) return false;
 
+        // true / false: GameConfig.DAILY_REWARD_WHEEL_ENABLED
+        if(GameConfig.DAILY_REWARD_WHEEL_ENABLED){
+            DailyGiftWheelDialog dailyWheel = new DailyGiftWheelDialog(stage.getWidth(), stage.getHeight(), this);
+            dailyWheel.setDialogId(Constants.DAILY_REWARD_DIALOG);
+            stage.addActor(dailyWheel);
+            dailyWheel.show();
             return true;
         }
 
-        return false;
+        if(!GameConfig.DAILY_REWARD_ENABLED) return false;
+
+        if(dailyRewardDialog == null) {
+            dailyRewardDialog = new DailyRewardDialog(stage.getWidth(), stage.getHeight(), this);
+            dailyRewardDialog.setDialogId(Constants.DAILY_REWARD_DIALOG);
+        }
+        stage.addActor(dailyRewardDialog);
+        dailyRewardDialog.setVisible(true);
+        dailyRewardDialog.show();
+        return true;
     }
 
 

@@ -17,6 +17,7 @@ import ogzapp.wordgame.ui.dialogs.wheel.Slice;
 import static ogzapp.wordgame.ui.dialogs.wheel.RewardRevealType.COINS;
 import static ogzapp.wordgame.ui.dialogs.wheel.RewardRevealType.FINGER_REVEAL;
 import static ogzapp.wordgame.ui.dialogs.wheel.RewardRevealType.MULTI_RANDOM_REVEAL;
+import static ogzapp.wordgame.ui.dialogs.wheel.RewardRevealType.PASS;
 import static ogzapp.wordgame.ui.dialogs.wheel.RewardRevealType.ROCKET_REVEAL;
 import static ogzapp.wordgame.ui.dialogs.wheel.RewardRevealType.SINGLE_RANDOM_REVEAL;
 
@@ -271,9 +272,37 @@ public class GameConfig {
      * kez) bu ödül gösterilir. DAILY_REWARD_COINS dizisindeki her gün bir
      * önceki günden fazla coin verir; 7. günden sonra seri 1. güne döner.
      * 0 yaparak tamamen kapatabilirsiniz.
+     *
+     * DAILY_REWARD_WHEEL_ENABLED = true iken bu tablo GÖSTERİLMEZ;
+     * yerine günlük hediye çarkı çıkar. Tabloya dönmek için çarkı false yapın.
      */
     public static final boolean DAILY_REWARD_ENABLED                     = true;
     public static final int[] DAILY_REWARD_COINS                         = {10, 15, 20, 25, 30, 40, 60};
+
+
+    /**
+     * GÜNLÜK HEDİYE ÇARKI  <<-- true / false BURADA
+     *
+     * true  -> her gün oyuna girildiğinde 7 günlük hediye TABLOSU yerine
+     *          arka plansız hediye çarkı çıkar (1, 100, PASS, PASS, 40, 20, 50, 80).
+     * false -> çark kapalı; DAILY_REWARD_ENABLED true ise eski tablo çalışır.
+     */
+    public static final boolean DAILY_REWARD_WHEEL_ENABLED               = true;
+
+    /**
+     * Günlük hediye çarkı dilimleri. Tam 8 adet olmalı (çark grafiği 8 dilim).
+     * probability toplamı 100. Mevcut şans çarkı (slices) ETKİLENMEZ.
+     */
+    public static Slice[] dailyGiftSlices = new Slice[]{
+            new Slice("1",    COINS, 1,   12),
+            new Slice("100",  COINS, 100, 13),
+            new Slice("PASS", PASS,  0,   13),
+            new Slice("PASS", PASS,  0,   12),
+            new Slice("40",   COINS, 40,  13),
+            new Slice("20",   COINS, 20,  12),
+            new Slice("50",   COINS, 50,  13),
+            new Slice("80",   COINS, 80,  12),
+    };
 
 
 

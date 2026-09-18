@@ -1141,6 +1141,9 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
             }
             disableButtons(false);
             stage.getRoot().setTouchable(Touchable.enabled);
+            if (tutorial == null && !showLuckyWheel) {
+                checkDailyRewardTiming();
+            }
             triggerUfoFlyIn();
         }
     };

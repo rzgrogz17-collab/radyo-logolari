@@ -6,5 +6,6 @@ public enum RewardRevealType {
     SINGLE_RANDOM_REVEAL,
     FINGER_REVEAL,
     MULTI_RANDOM_REVEAL,
-    ROCKET_REVEAL
+    ROCKET_REVEAL,
+    PASS
 }

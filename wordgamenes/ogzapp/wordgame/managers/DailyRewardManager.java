@@ -15,7 +15,7 @@ public class DailyRewardManager {
 
     // Son ödül talebinden bu yana 24 saatten fazla geçtiyse yeni ödül alınabilir.
     public static boolean isAvailable() {
-        if (!GameConfig.DAILY_REWARD_ENABLED) return false;
+        if (!GameConfig.DAILY_REWARD_WHEEL_ENABLED && !GameConfig.DAILY_REWARD_ENABLED) return false;
 
         long lastClaimTime = getLastClaimTime();
         if (lastClaimTime == 0) return true;
@@ -65,5 +65,14 @@ public class DailyRewardManager {
         preferences.flush();
 
         return coins;
+    }
+
+    // Günlük hediye çarkı: bugünün hakkını kullanıldı olarak işaretler (coin eklemez).
+    public static void markClaimed() {
+        int day = getUpcomingStreakDay();
+        Preferences preferences = Gdx.app.getPreferences(Constants.PREFS_NAME);
+        preferences.putLong(Constants.KEY_DAILY_REWARD_LAST_CLAIM_TIME, TimeUtils.millis());
+        preferences.putInteger(Constants.KEY_DAILY_REWARD_STREAK_DAY, day);
+        preferences.flush();
     }
 }
