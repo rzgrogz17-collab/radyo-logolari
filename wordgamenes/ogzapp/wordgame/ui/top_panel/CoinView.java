@@ -66,7 +66,9 @@ public class CoinView extends Group {
 
         String font = UIConfig.REMAINING_COINS_USE_SHADOW_FONT ? ResourceManager.fontSemiBoldShadow : ResourceManager.fontSemiBold;
         BitmapFont bitmapFont = screen.wordConnectGame.resourceManager.get(font, BitmapFont.class);
-        Label.LabelStyle style = new Label.LabelStyle(bitmapFont, UIConfig.REMAINING_COINS_TEXT_COLOR);
+        // Buzlu cam üzerinde beyaz okunmuyor; dial harflerinin koyu rengi.
+        Color numberColor = new Color(UIConfig.getDialButtonTextColorUpStateByLevelIndex(0));
+        Label.LabelStyle style = new Label.LabelStyle(bitmapFont, numberColor);
         label = new Label("", style);
         label.setAlignment(Align.left);
 

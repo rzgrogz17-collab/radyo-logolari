@@ -47,9 +47,8 @@ public class TopComboAndLevelDisplay extends Group {
         // KOMBO ÖDÜLÜ YAZISINI GİZLE
         comboLabel.setVisible(false);
 
-        // Seviye yazısını biraz aşağı al ve font scale'ini büyüt.
-        // Ayar butonunun yerinde, sola hizalı durur.
-        levelLabel.setAlignment(Align.left);
+        // Seviye yazısı panelin ortasında (eski konum).
+        levelLabel.setAlignment(Align.center);
         levelLabel.setY(15f);
         levelLabel.setFontScale(1.2f);
         levelLabel.setVisible(true);
@@ -109,7 +108,7 @@ public class TopComboAndLevelDisplay extends Group {
         GlyphLayout levelLayout = Pools.obtain(GlyphLayout.class);
         levelLayout.setText(levelLabel.getStyle().font, levelLabel.getText());
 
-        float targetWidth = getWidth() * 0.98f;
+        float targetWidth = getWidth() * 0.9f;
         float textWidth = levelLayout.width * 1.2f;
         if (targetWidth > 0 && textWidth > targetWidth) {
             levelLabel.setFontScale(targetWidth / levelLayout.width);
@@ -117,7 +116,7 @@ public class TopComboAndLevelDisplay extends Group {
             levelLabel.setFontScale(1.2f);
         }
 
-        levelLabel.setX(0f);
+        levelLabel.setX((getWidth() - levelLayout.width * levelLabel.getFontScaleX()) * 0.5f);
         Pools.free(levelLayout);
     }
 

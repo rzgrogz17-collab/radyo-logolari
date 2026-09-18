@@ -68,20 +68,11 @@ public class TopPanel extends Group {
         }
 
         if(topComboDisplay != null ) {
-            // SEVİYE: X her zaman ayar butonunun yerinde (solda, geri
-            // ikonunun sağında) durur; ortadaki boşluğa taşınmaz.
-            float levelX;
-            if (btnMenu != null) {
-                levelX = btnMenu.getX();
-            } else if (backBtn != null) {
-                levelX = backBtn.getX() + backBtn.getWidth() * 1.2f;
-            } else {
-                levelX = 0;
-            }
-            float levelWidth = Math.max(backBtn != null ? backBtn.getWidth() * 4.6f : getHeight() * 4.6f, 80f);
-            levelWidth = Math.min(levelWidth, Math.max(40f, coinView.getX() - levelX - 8f));
-            topComboDisplay.setWidth(levelWidth);
-            topComboDisplay.setX(levelX);
+            // SEVİYE: X eski yerinde, panelin ortasında.
+            float leftMost = coinView.getWidth();
+            float centerWidth = coinView.getX() - leftMost;
+            topComboDisplay.setWidth(centerWidth);
+            topComboDisplay.setX(leftMost);
             topComboDisplay.setComboCount(0, null);
             topComboDisplay.toFront();
         }
