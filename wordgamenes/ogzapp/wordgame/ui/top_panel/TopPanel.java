@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 
 import ogzapp.wordgame.config.ConfigProcessor;
 import ogzapp.wordgame.config.GameConfig;
@@ -43,10 +44,11 @@ public class TopPanel extends Group {
             if(!GameConfig.SKIP_INTRO) {
                 backBtn = new ImageButton(new TextureRegionDrawable(AtlasRegions.back_up), new TextureRegionDrawable(AtlasRegions.back_down));
                 addActor(backBtn);
-                // Oyun alanında geri ikonu, sol kenardan bir ikon kadar
-                // coin tarafına (sağa) kaydırılır. SEVİYE yazısının
-                // üzerine binmez.
-                backBtn.setX(backBtn.getWidth());
+                backBtn.setTransform(true);
+                backBtn.setOrigin(Align.center);
+                backBtn.setScale(0.88f);
+                // Dışa (sola) yarı ebat kadar kaydır, biraz küçült.
+                backBtn.setX(backBtn.getWidth() * 0.5f);
                 backBtn.setY((getHeight() - backBtn.getHeight()) * 0.5f);
                 backBtn.addListener(((GameScreen) screen).gotoIntroScreen);
             }

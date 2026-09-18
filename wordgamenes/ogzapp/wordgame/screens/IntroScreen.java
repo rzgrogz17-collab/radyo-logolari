@@ -283,7 +283,9 @@ public class IntroScreen extends BaseScreen{
                 tutorialStep_1();
             }else{
                 if(!checkWheelDialogTiming()){
-                    if(!checkDailyRewardTiming()){
+                    if(checkDailyRewardTiming()){
+                        setPlayButtonVisibleForDailyWheel(false);
+                    } else {
                         checkRateStatus();
                     }
                 }
@@ -326,6 +328,22 @@ public class IntroScreen extends BaseScreen{
 
 
 
+
+
+    public void setPlayButtonVisibleForDailyWheel(boolean visible) {
+        if (playButton == null) return;
+        playButton.clearActions();
+        playButton.setScale(1f);
+        playButton.getColor().a = 1f;
+        playButton.setVisible(visible);
+        playButton.setTouchable(visible ? Touchable.enabled : Touchable.disabled);
+        if (playButtonShadow != null) {
+            playButtonShadow.clearActions();
+            playButtonShadow.setScale(1f);
+            playButtonShadow.getColor().a = 1f;
+            playButtonShadow.setVisible(visible);
+        }
+    }
 
 
     private void checkRateStatus(){

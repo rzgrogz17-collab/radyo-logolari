@@ -72,10 +72,12 @@ public class CoinView extends Group {
         Color numberColor = new Color(UIConfig.getDialButtonTextColorUpStateByLevelIndex(0));
         Label.LabelStyle style = new Label.LabelStyle(bitmapFont, numberColor);
         label = new Label("", style);
-        label.setAlignment(Align.right);
+        label.setAlignment(Align.left);
 
         GlyphLayout glyphLayout = Pools.obtain(GlyphLayout.class);
-        glyphLayout.setText(bitmapFont, FULL_SCALE_COIN_TEXT);
+        glyphLayout.setText(bitmapFont, "5");
+        float gap = Math.max(6f, glyphLayout.width * 0.7f);
+        glyphLayout.setText(bitmapFont, MAX_COIN_TEXT);
         float numberWidth = glyphLayout.width;
         float numberHeight = glyphLayout.height;
         Pools.free(glyphLayout);
@@ -83,10 +85,8 @@ public class CoinView extends Group {
         float coinW = coin.getWidth() * coin.getScaleX();
         float coinH = coin.getHeight() * coin.getScaleY();
         float plusW = plus != null ? plus.getWidth() * 0.85f : 0f;
-        float padX = Math.max(8f, coinW * 0.18f);
+        float padX = Math.max(4f, coinW * 0.10f);
         float padY = Math.max(5f, coinH * 0.16f);
-        // İkon ile rakam yapışmasın; slot 9999 tam boy, 99999 orantılı küçülerek sığar.
-        float gap = Math.max(18f, coinW * 0.48f);
         float innerW = coinW + gap + numberWidth + (plus != null ? gap * 0.45f + plusW : 0f);
         float innerH = Math.max(coinH, Math.max(numberHeight, plus != null ? plus.getHeight() * 0.7f : 0f));
         float frameW = innerW + padX * 2f;
@@ -176,7 +176,7 @@ public class CoinView extends Group {
         }
         label.setFontScale(scale);
         label.setSize(numberSlotWidth, getHeight());
-        label.setAlignment(Align.right | Align.center);
+        label.setAlignment(Align.left | Align.center);
         label.setPosition(numberSlotX, 0f);
         Pools.free(glyphLayout);
     }

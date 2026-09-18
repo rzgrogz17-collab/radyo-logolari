@@ -24,6 +24,7 @@ import ogzapp.wordgame.managers.DailyRewardManager;
 import ogzapp.wordgame.managers.LanguageManager;
 import ogzapp.wordgame.managers.ResourceManager;
 import ogzapp.wordgame.screens.BaseScreen;
+import ogzapp.wordgame.screens.IntroScreen;
 import ogzapp.wordgame.ui.dialogs.iap.ItemContent;
 import ogzapp.wordgame.ui.dialogs.wheel.LuckyWheel;
 import ogzapp.wordgame.ui.dialogs.wheel.Slice;
@@ -127,6 +128,7 @@ public class DailyRewardDialog extends BaseDialog {
                 startSpin();
             }
         });
+        setIntroPlayButtonVisible(false);
     }
 
     private void startSpin() {
@@ -389,10 +391,17 @@ public class DailyRewardDialog extends BaseDialog {
         return style;
     }
 
+    private void setIntroPlayButtonVisible(boolean visible) {
+        if (screen instanceof IntroScreen) {
+            ((IntroScreen) screen).setPlayButtonVisibleForDailyWheel(visible);
+        }
+    }
+
     @Override
     protected void hideAnimFinished() {
         super.hideAnimFinished();
         if (getStage() != null) getStage().getRoot().setTouchable(Touchable.enabled);
+        if (wheelMode) setIntroPlayButtonVisible(true);
         remove();
     }
 }
