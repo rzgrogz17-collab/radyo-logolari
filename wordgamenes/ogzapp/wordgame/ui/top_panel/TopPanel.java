@@ -68,17 +68,12 @@ public class TopPanel extends Group {
         }
 
         if(topComboDisplay != null ) {
-            // SEVİYE: X geri ikonunun sağında kalan alanın ORTASINDA
-            // (üst çubuğun eski merkezi). Ayar butonu oyun ekranında gizli.
-            float leftClear = 0f;
-            if (backBtn != null) {
-                leftClear = backBtn.getX() + backBtn.getWidth() + backBtn.getWidth() * 0.45f;
-            }
-            float rightClear = coinView.getX() - Math.max(8f, coinView.getHeight() * 0.25f);
-            topComboDisplay.setX(leftClear);
-            topComboDisplay.setWidth(Math.max(40f, rightClear - leftClear));
+            // Tam üst orta: yazı panelin tam genişliğinde ortalanır,
+            // soldan ve sağdan aynı mesafe. Geri/coin tıklaması için
+            // bu grup arkada kalır (backBtn/coinView toFront).
+            topComboDisplay.setX(0);
+            topComboDisplay.setWidth(width);
             topComboDisplay.setComboCount(0, null);
-            topComboDisplay.toFront();
         }
 
         if (backBtn != null) backBtn.toFront();

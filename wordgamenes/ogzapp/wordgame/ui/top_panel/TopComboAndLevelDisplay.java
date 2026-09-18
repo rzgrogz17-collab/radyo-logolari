@@ -31,6 +31,7 @@ public class TopComboAndLevelDisplay extends Group {
     private boolean anim;
     private GameScreen gameScreen;
     private HowToPlayDialog howToPlayDialog;
+    private static final float LEVEL_FONT_SCALE = 1.32f;
 
 
     public TopComboAndLevelDisplay(ResourceManager resourceManager) {
@@ -47,10 +48,10 @@ public class TopComboAndLevelDisplay extends Group {
         // KOMBO ÖDÜLÜ YAZISINI GİZLE
         comboLabel.setVisible(false);
 
-        // Seviye yazısı panelin ortasında (eski konum).
+        // Üst çubuğun tam ortası, soldan ve sağdan eşit.
         levelLabel.setAlignment(Align.center);
         levelLabel.setY(15f);
-        levelLabel.setFontScale(1.2f);
+        levelLabel.setFontScale(LEVEL_FONT_SCALE);
         levelLabel.setVisible(true);
 
         // Grubun yüksekliğini sadece levelLabel'a göre ayarla
@@ -108,15 +109,14 @@ public class TopComboAndLevelDisplay extends Group {
         GlyphLayout levelLayout = Pools.obtain(GlyphLayout.class);
         levelLayout.setText(levelLabel.getStyle().font, levelLabel.getText());
 
-        float targetWidth = getWidth() * 0.9f;
-        float textWidth = levelLayout.width * 1.2f;
+        float targetWidth = getWidth() * 0.55f;
+        float scale = LEVEL_FONT_SCALE;
+        float textWidth = levelLayout.width * scale;
         if (targetWidth > 0 && textWidth > targetWidth) {
-            levelLabel.setFontScale(targetWidth / levelLayout.width);
-        } else {
-            levelLabel.setFontScale(1.2f);
+            scale = targetWidth / levelLayout.width;
         }
-
-        levelLabel.setX((getWidth() - levelLayout.width * levelLabel.getFontScaleX()) * 0.5f);
+        levelLabel.setFontScale(scale);
+        levelLabel.setX((getWidth() - levelLayout.width * scale) * 0.5f);
         Pools.free(levelLayout);
     }
 
