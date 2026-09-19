@@ -1,5 +1,6 @@
 package ogzapp.wordgame.ui.dialogs;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -28,7 +29,9 @@ public class HowToPlayDialog extends BaseDialog{
 
         itemHeight = AtlasRegions.howtoplay_1.getRegionHeight() * 1.4f;
 
-        content.setSize(width * 0.8f, itemHeight * 4f);
+        // Kırmızı çerçeve alanına yakın: neredeyse tam genişlik, dial'e
+        // değmeyecek kadar yüksek - uzun dillerde satırların sığması için.
+        content.setSize(width * 0.92f, Math.min(height * 0.56f, Math.max(itemHeight * 4.8f, height * 0.50f)));
         setContentBackground();
         // Kullanıcı isteğiyle: diğer dialoglarla (Dil, Günlük Ödül vb.)
         // AYNI paylaşılan "buzlu cam" renk sabitleri kullanılıyor.
@@ -56,22 +59,25 @@ public class HowToPlayDialog extends BaseDialog{
 
     public void setContent(String desc1, String desc2, String desc3, TextureAtlas.AtlasRegion region1, TextureAtlas.AtlasRegion region2, TextureAtlas.AtlasRegion region3){
 
-        float top = titleContainer.getY() - closeButton.getHeight();
-
-        float sliceHeight = (content.getHeight() - (content.getHeight() - top)) / 3f;
-        float bottom = itemHeight * 0.15f;
+        float areaTop = titleContainer.getY();
+        float bottomPad = content.getHeight() * 0.035f;
+        float gap = content.getHeight() * 0.012f;
+        float sliceHeight = (areaTop - bottomPad - gap * 2f) / 3f;
 
         Group g3 = createSlice(sliceHeight, region3, desc3);
-        g3.setY(bottom);
+        g3.setY(bottomPad);
         content.addActor(g3);
 
         Group g2 = createSlice(sliceHeight, region2, desc2);
-        g2.setY(sliceHeight + bottom);
+        g2.setY(bottomPad + sliceHeight + gap);
         content.addActor(g2);
 
         Group g1 = createSlice(sliceHeight, region1, desc1);
-        g1.setY(sliceHeight * 2f + bottom);
+        g1.setY(bottomPad + (sliceHeight + gap) * 2f);
         content.addActor(g1);
+
+        titleContainer.toFront();
+        closeButton.toFront();
     }
 
 
@@ -79,34 +85,48 @@ public class HowToPlayDialog extends BaseDialog{
 
 
     private Group createSlice(float height, TextureAtlas.AtlasRegion icon, String text){
-        Group group = new Group();
-
+        ClipGroup group = new ClipGroup();
         group.setSize(content.getWidth(), height);
+        group.setTransform(false);
 
-        float margin = content.getWidth() * 0.05f;
+        float margin = content.getWidth() * 0.045f;
 
         Image img = new Image(icon);
+        float iconMax = height * 0.70f;
+        if (img.getHeight() > iconMax && img.getHeight() > 0) {
+            float s = iconMax / img.getHeight();
+            img.setSize(img.getWidth() * s, img.getHeight() * s);
+        }
         img.setX(margin);
         img.setY((height - img.getHeight()) * 0.5f);
         group.addActor(img);
 
-        Label descLabel = new Label(text, bodyTextStyle);
+        float textX = img.getX() + img.getWidth() + margin;
+        float textW = Math.max(8f, group.getWidth() - textX - margin * 1.15f);
+        float maxTextH = height * 0.90f;
+
+        Label descLabel = new Label(text, new Label.LabelStyle(bodyTextStyle));
         descLabel.setWrap(true);
-        descLabel.setWidth(group.getWidth() - img.getWidth() - margin * 4);
-        descLabel.setAlignment(Align.bottomLeft);
+        descLabel.setAlignment(Align.left);
+        descLabel.setWidth(textW);
 
-        descLabel.setX(img.getX() + img.getWidth() + margin);
-        descLabel.setY((group.getHeight() - descLabel.getPrefHeight()) * 0.5f);
+        float scale = 1f;
+        while (descLabel.getPrefHeight() > maxTextH && scale > 0.58f) {
+            scale *= 0.9f;
+            descLabel.setFontScale(scale);
+            descLabel.setWidth(textW);
+        }
+        descLabel.setHeight(Math.min(descLabel.getPrefHeight(), maxTextH));
+        descLabel.setX(textX);
+        descLabel.setY((height - descLabel.getHeight()) * 0.5f);
 
-        // Kullanıcı isteğiyle: açık/buzlu-cam panel üzerindeki (neredeyse
-        // beyaz) yazının okunabilirliği için, AlertDialog/BombDialog'daki
-        // İLE AYNI teknik - yazının hemen arkasına hafif (yarı saydam)
-        // siyah bir gölge kopyası ekleniyor.
         Label.LabelStyle descShadowStyle = new Label.LabelStyle(bodyTextStyle.font, UIConfig.FROSTED_ALERT_DIALOG_TEXT_SHADOW_COLOR);
         Label descShadow = new Label(text, descShadowStyle);
         descShadow.setWrap(true);
-        descShadow.setWidth(descLabel.getWidth());
-        descShadow.setAlignment(Align.bottomLeft);
+        descShadow.setAlignment(Align.left);
+        descShadow.setWidth(textW);
+        descShadow.setFontScale(descLabel.getFontScaleX());
+        descShadow.setHeight(descLabel.getHeight());
         float descShadowOffset = content.getWidth() * 0.006f;
         descShadow.setX(descLabel.getX() + descShadowOffset);
         descShadow.setY(descLabel.getY() - descShadowOffset);
@@ -119,6 +139,16 @@ public class HowToPlayDialog extends BaseDialog{
     }
 
 
+    private static class ClipGroup extends Group {
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            if (clipBegin()) {
+                super.draw(batch, parentAlpha);
+                batch.flush();
+                clipEnd();
+            }
+        }
+    }
 
 
 

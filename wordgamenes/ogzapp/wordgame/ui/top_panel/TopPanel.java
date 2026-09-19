@@ -47,8 +47,8 @@ public class TopPanel extends Group {
                 backBtn.setTransform(true);
                 backBtn.setOrigin(Align.center);
                 backBtn.setScale(0.88f);
-                // Dışa (sola) yarı ebat kadar kaydır, biraz küçült.
-                backBtn.setX(backBtn.getWidth() * 0.5f);
+                // Dışa (sola) yarı ebat + Seviye yazısına doğru yarım ikon.
+                backBtn.setX(backBtn.getWidth());
                 backBtn.setY((getHeight() - backBtn.getHeight()) * 0.5f);
                 backBtn.addListener(((GameScreen) screen).gotoIntroScreen);
             }

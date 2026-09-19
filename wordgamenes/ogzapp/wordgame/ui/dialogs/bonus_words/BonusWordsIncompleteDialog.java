@@ -2,7 +2,6 @@ package ogzapp.wordgame.ui.dialogs.bonus_words;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.StringBuilder;
 
 import ogzapp.wordgame.config.GameConfig;
@@ -26,6 +24,7 @@ import ogzapp.wordgame.managers.ResourceManager;
 import ogzapp.wordgame.model.GameData;
 import ogzapp.wordgame.screens.BaseScreen;
 import ogzapp.wordgame.screens.GameScreen;
+import ogzapp.wordgame.ui.MarqueeLabel;
 import ogzapp.wordgame.ui.ProgressBar;
 import ogzapp.wordgame.ui.dialogs.BaseDialog;
 import ogzapp.wordgame.ui.tutorial.Tutorial;
@@ -34,11 +33,14 @@ import ogzapp.wordgame.ui.tutorial.TutorialBooster;
 public class BonusWordsIncompleteDialog extends BaseDialog {
 
     private ProgressBar progressBar;
-    private Label countLabel;
-    private Label countShadow;
+    private MarqueeLabel titleMarquee;
+    private MarqueeLabel countMarquee;
+    private MarqueeLabel thisMarquee;
     private Label wordsLabel;
     private Label wordsShadow;
     private Group wordsTextGroup;
+    private Group wordsGroup;
+    private ScrollPane wordsPane;
     private GameScreen gameScreen;
     private TutorialBooster tutorialBooster;
     private float textShadowOffset;
@@ -48,7 +50,7 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         gameScreen = (GameScreen) screen;
 
         float minSide = Math.min(width, height);
-        content.setSize(minSide * 0.76f, minSide * 0.80f);
+        content.setSize(Math.min(width * 0.90f, minSide * 0.92f), minSide * 0.94f);
         textShadowOffset = content.getWidth() * 0.008f;
 
         setContentBackground();
@@ -61,10 +63,20 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
 
         setTitleLabel(LanguageManager.get("extra_words_incomplete"));
         setTitleBackgroundColor(UIConfig.MENU_DIALOG_TITLE_BACKGROUND_COLOR);
-        titleLabel.setFontScale(titleLabel.getFontScaleX() * 1.12f);
-        titleLabel.setY(titleContainer.getHeight() * 0.28f - titleLabel.getPrefHeight() * 0.5f);
-        titleContainer.setY(titleContainer.getY() - titleContainer.getHeight() * 0.08f);
-        addDropShadowBehind(titleLabel, titleContainer, textShadowOffset);
+        titleLabel.setWrap(false);
+        titleLabel.setVisible(false);
+        titleLabel.setFontScale(titleLabel.getFontScaleX() * 1.08f);
+        titleContainer.setY(titleContainer.getY() - titleContainer.getHeight() * 0.04f);
+
+        titleMarquee = new MarqueeLabel(titleLabel.getStyle(), bodyShadowStyle, textShadowOffset);
+        titleMarquee.setFontScale(titleLabel.getFontScaleX());
+        float titleMaxW = titleContainer.getWidth() * 0.72f;
+        titleMarquee.setSize(titleMaxW, Math.max(titleLabel.getPrefHeight(), titleContainer.getHeight() * 0.55f));
+        titleMarquee.setPosition((titleContainer.getWidth() - titleMaxW) * 0.5f,
+                titleContainer.getHeight() * 0.28f - titleMarquee.getHeight() * 0.5f);
+        titleMarquee.setMarqueeText(LanguageManager.get("extra_words_incomplete"));
+        titleContainer.addActor(titleMarquee);
+
         setCloseButton();
 
         closeButton.addListener(new ChangeListener() {
@@ -75,66 +87,54 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
             }
         });
 
-        // Hediye logosu (boxClosed ve badgeGroup) kaldırıldı.
+        float pad = content.getWidth() * 0.045f;
+        float barWidth = content.getWidth() * 0.78f;
 
         progressBar = new ProgressBar(AtlasRegions.bonus_bar_bg, AtlasRegions.bonus_words_bar_track);
+        progressBar.setSize(barWidth, progressBar.getHeight());
         progressBar.setOrigin(Align.center);
         progressBar.setX((content.getWidth() - progressBar.getWidth()) * 0.5f);
-        progressBar.setY(content.getHeight() * 0.58f);
-        // Boş şerit: alttaki bulunan-kelime kutusunun koyu lacivert rengi.
-        // Kenar: hafif belirgin, yuvarlak/kapsül çerçeve.
+        // Üstteki boşluğa doğru kaydır: başlığın hemen altı.
+        progressBar.setY(titleContainer.getY() - progressBar.getHeight() - content.getHeight() * 0.03f);
         Color barBorder = new Color(0x8BB0D4CC);
         progressBar.setRoundedTrack(UIConfig.BWD_WORDS_BG_COLOR, barBorder, Math.max(2f, progressBar.getHeight() * 0.10f));
         content.addActor(progressBar);
 
-        countShadow = new Label(LanguageManager.get("extra_words_collected"), bodyShadowStyle);
-        countShadow.setFontScale(0.82f);
-        countLabel = new Label(LanguageManager.get("extra_words_collected"), bodyTextStyle);
-        countLabel.setFontScale(0.82f);
-        countLabel.setY(progressBar.getY() - countLabel.getPrefHeight() * 1.15f);
-        countShadow.setY(countLabel.getY() - textShadowOffset);
-        content.addActor(countShadow);
-        content.addActor(countLabel);
+        countMarquee = new MarqueeLabel(bodyTextStyle, bodyShadowStyle, textShadowOffset);
+        countMarquee.setFontScale(0.82f);
+        countMarquee.setSize(content.getWidth() * 0.90f, countMarquee.getHeight());
+        countMarquee.setX((content.getWidth() - countMarquee.getWidth()) * 0.5f);
+        countMarquee.setY(progressBar.getY() - countMarquee.getHeight() - content.getHeight() * 0.012f);
+        countMarquee.setMarqueeText(LanguageManager.get("extra_words_collected"));
+        content.addActor(countMarquee);
 
         Image wordsGroupBg = new Image(NinePatches.iap_card2);
         wordsGroupBg.setColor(UIConfig.BWD_WORDS_BG_COLOR);
 
-        Group wordsGroup = new Group();
+        wordsGroup = new Group();
         wordsGroup.addActor(wordsGroupBg);
-        wordsGroup.setWidth(progressBar.getWidth() * 1.05f);
-        wordsGroup.setHeight(Math.max(countLabel.getY() * 0.82f, content.getHeight() * 0.28f));
+        wordsGroup.setWidth(content.getWidth() - pad * 2f);
+        float wordsBottom = content.getHeight() * 0.045f;
+        float wordsTop = countMarquee.getY() - content.getHeight() * 0.018f;
+        wordsGroup.setHeight(Math.max(8f, wordsTop - wordsBottom));
         wordsGroup.setOrigin(Align.center);
-
         wordsGroup.setX((content.getWidth() - wordsGroup.getWidth()) * 0.5f);
-        wordsGroup.setY(Math.max(content.getHeight() * 0.06f, (countLabel.getY() - wordsGroup.getHeight()) * 0.42f));
+        wordsGroup.setY(wordsBottom);
         content.addActor(wordsGroup);
-
         wordsGroupBg.setSize(wordsGroup.getWidth(), wordsGroup.getHeight());
 
         Label.LabelStyle wordsTitleStyle = new Label.LabelStyle();
         wordsTitleStyle.font = bodyFont;
         wordsTitleStyle.fontColor = UIConfig.BWD_WORDS_TITLE_COLOR;
 
-        Label thisLabel = new Label(LanguageManager.get("extra_words_in_this_level"), wordsTitleStyle);
-        thisLabel.setFontScale(0.92f);
-        thisLabel.setAlignment(Align.center);
-        float maxLabelWidth = wordsGroup.getWidth() * 0.9f;
-        thisLabel.setWidth(maxLabelWidth);
-        thisLabel.setWrap(true);
-        thisLabel.setHeight(thisLabel.getPrefHeight());
-        thisLabel.setX((wordsGroup.getWidth() - maxLabelWidth) * 0.5f);
-        thisLabel.setY(wordsGroup.getHeight() - thisLabel.getHeight() * 1.05f);
-
-        Label thisShadow = new Label(LanguageManager.get("extra_words_in_this_level"), bodyShadowStyle);
-        thisShadow.setFontScale(0.92f);
-        thisShadow.setAlignment(Align.center);
-        thisShadow.setWidth(maxLabelWidth);
-        thisShadow.setWrap(true);
-        thisShadow.setHeight(thisLabel.getHeight());
-        thisShadow.setX(thisLabel.getX() + textShadowOffset);
-        thisShadow.setY(thisLabel.getY() - textShadowOffset);
-        wordsGroup.addActor(thisShadow);
-        wordsGroup.addActor(thisLabel);
+        float headerPad = wordsGroup.getHeight() * 0.04f;
+        thisMarquee = new MarqueeLabel(wordsTitleStyle, bodyShadowStyle, textShadowOffset);
+        thisMarquee.setFontScale(0.90f);
+        thisMarquee.setSize(wordsGroup.getWidth() * 0.90f, thisMarquee.getHeight());
+        thisMarquee.setX((wordsGroup.getWidth() - thisMarquee.getWidth()) * 0.5f);
+        thisMarquee.setY(wordsGroup.getHeight() - thisMarquee.getHeight() - headerPad);
+        thisMarquee.setMarqueeText(LanguageManager.get("extra_words_in_this_level"));
+        wordsGroup.addActor(thisMarquee);
 
         Label.LabelStyle wordsStyle = new Label.LabelStyle(bodyFont, UIConfig.BWD_WORDS_TEXT_COLOR);
         wordsShadow = new Label(" ", bodyShadowStyle);
@@ -153,27 +153,19 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         ScrollPane.ScrollPaneStyle paneStyle = new ScrollPane.ScrollPaneStyle();
         paneStyle.vScrollKnob = new TextureRegionDrawable(AtlasRegions.rect);
 
-        ScrollPane pane = new ScrollPane(wordsTextGroup, paneStyle);
-        pane.setScrollbarsVisible(false);
-        pane.setSize(wordsGroup.getWidth(), thisLabel.getY() * 0.9f);
-        pane.setY(wordsGroup.getHeight() * 0.03f);
-        pane.setupFadeScrollBars(0, 0);
+        wordsPane = new ScrollPane(wordsTextGroup, paneStyle);
+        wordsPane.setScrollingDisabled(true, false);
+        wordsPane.setScrollbarsVisible(false);
+        wordsPane.setFadeScrollBars(true);
+        wordsPane.setupFadeScrollBars(0.4f, 0.2f);
+        wordsPane.setFlickScroll(true);
+        float paneTop = thisMarquee.getY() - headerPad * 0.6f;
+        wordsPane.setSize(wordsGroup.getWidth() * 0.94f, Math.max(24f, paneTop - wordsGroup.getHeight() * 0.03f));
+        wordsPane.setX((wordsGroup.getWidth() - wordsPane.getWidth()) * 0.5f);
+        wordsPane.setY(wordsGroup.getHeight() * 0.03f);
+        wordsGroup.addActor(wordsPane);
 
-        wordsGroup.addActor(pane);
-    }
-
-    private void addDropShadowBehind(Label source, Group parent, float offset) {
-        Label.LabelStyle shadowStyle = new Label.LabelStyle(source.getStyle().font, UIConfig.FROSTED_ALERT_DIALOG_TEXT_SHADOW_COLOR);
-        Label shadow = new Label(source.getText(), shadowStyle);
-        shadow.setFontScale(source.getFontScaleX(), source.getFontScaleY());
-        shadow.setAlignment(Align.center);
-        shadow.setWidth(source.getWidth());
-        shadow.setWrap(true);
-        shadow.setX(source.getX() + offset);
-        shadow.setY(source.getY() - offset);
-        int idx = parent.getChildren().indexOf(source, true);
-        if (idx >= 0) parent.addActorAt(idx, shadow);
-        else parent.addActor(shadow);
+        closeButton.toFront();
     }
 
     @Override
@@ -238,33 +230,23 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
     public void updateViewWithData(float percent, int current, int target) {
         progressBar.setPercent(percent);
         String text = LanguageManager.format("extra_words_collected", current, target);
-        countLabel.setText(text);
-        GlyphLayout countLayout = Pools.obtain(GlyphLayout.class);
-        countLayout.setText(countLabel.getStyle().font, text);
-        float targetWidth = progressBar.getWidth() * 0.98f;
-        float scale = countLayout.width > 0 ? targetWidth / countLayout.width : 0.82f;
-        countLabel.setFontScale(Math.max(0.72f, Math.min(0.92f, scale)));
-        Pools.free(countLayout);
+        if (countMarquee != null)
+            countMarquee.setMarqueeText(text);
 
-        countLabel.setX((content.getWidth() - countLabel.getWidth() * countLabel.getFontScaleX()) * 0.5f);
-        countShadow.setText(text);
-        countShadow.setFontScale(countLabel.getFontScaleX());
-        countShadow.setX(countLabel.getX() + textShadowOffset);
-        countShadow.setY(countLabel.getY() - textShadowOffset);
-
-        if (wordsLabel != null) {
+        if (wordsLabel != null && wordsGroup != null) {
             String list = getWordList();
-            float paneWidth = progressBar.getWidth() * 1.05f;
+            float paneWidth = wordsPane.getWidth();
             wordsLabel.setText(list);
             wordsShadow.setText(list);
             wordsLabel.setWidth(paneWidth);
             wordsShadow.setWidth(paneWidth);
-            float listHeight = Math.max(wordsLabel.getPrefHeight(), 1f);
+            float listHeight = Math.max(wordsLabel.getPrefHeight(), wordsPane.getHeight());
             wordsLabel.setHeight(listHeight);
             wordsShadow.setHeight(listHeight);
             wordsLabel.setPosition(0, 0);
             wordsShadow.setPosition(textShadowOffset, -textShadowOffset);
-            wordsTextGroup.setSize(paneWidth + textShadowOffset, listHeight + textShadowOffset);
+            wordsTextGroup.setSize(paneWidth, listHeight + textShadowOffset);
+            wordsPane.layout();
         }
     }
 
