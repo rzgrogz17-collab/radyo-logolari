@@ -1,6 +1,5 @@
 package ogzapp.wordgame.ui.dialogs;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -33,8 +32,8 @@ public class HowToPlayDialog extends BaseDialog{
         // değmeyecek kadar yüksek - uzun dillerde satırların sığması için.
         content.setSize(width * 0.92f, Math.min(height * 0.56f, Math.max(itemHeight * 4.8f, height * 0.50f)));
         setContentBackground();
-        // Kullanıcı isteğiyle: diğer dialoglarla (Dil, Günlük Ödül vb.)
-        // AYNI paylaşılan "buzlu cam" renk sabitleri kullanılıyor.
+        contentBackground.setSize(content.getWidth(), content.getHeight());
+        // Bonus / Dil tablolarıyla AYNI buzlu cam panel.
         setContentBackgroundColor(UIConfig.MENU_DIALOG_BACKGROUND_COLOR);
 
         String font = UIConfig.DIALOG_BODY_TEXT_USE_SHADOW_FONT ? ResourceManager.fontSemiBoldShadow : ResourceManager.fontSemiBold;
@@ -76,6 +75,7 @@ public class HowToPlayDialog extends BaseDialog{
         g1.setY(bottomPad + (sliceHeight + gap) * 2f);
         content.addActor(g1);
 
+        contentBackground.toBack();
         titleContainer.toFront();
         closeButton.toFront();
     }
@@ -85,7 +85,7 @@ public class HowToPlayDialog extends BaseDialog{
 
 
     private Group createSlice(float height, TextureAtlas.AtlasRegion icon, String text){
-        ClipGroup group = new ClipGroup();
+        Group group = new Group();
         group.setSize(content.getWidth(), height);
         group.setTransform(false);
 
@@ -136,18 +136,6 @@ public class HowToPlayDialog extends BaseDialog{
         group.setOrigin(Align.center);
 
         return group;
-    }
-
-
-    private static class ClipGroup extends Group {
-        @Override
-        public void draw(Batch batch, float parentAlpha) {
-            if (clipBegin()) {
-                super.draw(batch, parentAlpha);
-                batch.flush();
-                clipEnd();
-            }
-        }
     }
 
 
