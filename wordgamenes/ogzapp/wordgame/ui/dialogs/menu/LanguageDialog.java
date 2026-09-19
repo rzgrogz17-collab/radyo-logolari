@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
@@ -71,6 +72,7 @@ public class LanguageDialog extends BaseDialog {
     private Runnable callback;
     private Table table = new Table();
     private String currentLanguage;
+    private TextButton confirmButton;
 
     private final Map<String, Image> bgByCode = new HashMap<>();
     private final Map<String, Image> borderByCode = new HashMap<>();
@@ -88,11 +90,15 @@ public class LanguageDialog extends BaseDialog {
         // panel artık (referans görseldeki gibi) SABİT bir yükseklikte
         // tutuluyor ve liste bir ScrollPane içinde yukarı/aşağı kaydırılıyor.
         // NOT: Kullanıcı isteğiyle panel biraz daha genişletildi (0.88 -> 0.94).
-        content.setSize(width * 0.94f, height * 0.82f);
+        // Boy, üstten ve alttan yaklaşık bir ülke satırı kadar kısaltıldı;
+        // altta aynı yükseklikte yeşil (sarı kenarlı) kapatma butonu var.
+        float contentW = width * 0.94f;
+        float tableWidth = contentW * 0.9f;
+        float cellHeight = tableWidth * 0.175f;
+        content.setSize(contentW, height * 0.82f - cellHeight);
 
         TextureAtlas atlas4 = screen.wordConnectGame.resourceManager.get(ResourceManager.ATLAS_4, TextureAtlas.class);
 
-        float tableWidth = content.getWidth() * 0.9f;
         table.setWidth(tableWidth);
 
         if (LanguageManager.locale != null)
@@ -110,7 +116,6 @@ public class LanguageDialog extends BaseDialog {
         // (satır tableWidth'ten dar olunca) narrower satırlar otomatik
         // olarak ortalanıyor - ekstra bir X kayması gerekmiyor.
         float cellWidth = tableWidth * 0.90f;
-        float cellHeight = tableWidth * 0.175f;
         float borderThickness = Math.max(3f, cellHeight * 0.07f);
         NinePatch selectedStroke = createRoundedStrokeNinePatch(
                 cellHeight + borderThickness * 2f,
@@ -195,12 +200,40 @@ public class LanguageDialog extends BaseDialog {
 
         float titleHeight = AtlasRegions.dialog_title.getRegionHeight();
         float titleGap = titleHeight * 0.15f;
-        float bottomGap = titleGap;
+        float bottomPad = Math.max(titleGap, cellHeight * 0.12f);
 
-        // Liste alanı: başlığın altından panelin alt kenarına kadar kalan
-        // TÜM boşluk - içerik bundan uzun olursa ScrollPane kaydırıyor.
+        TextButton.TextButtonStyle confirmStyle = new TextButton.TextButtonStyle();
+        String confirmFont = UIConfig.ALERT_DIALOG_BUTTON_USE_SHADOW_FONT
+                ? ResourceManager.fontSemiBoldShadow : ResourceManager.fontSemiBold;
+        confirmStyle.font = screen.wordConnectGame.resourceManager.get(confirmFont, BitmapFont.class);
+        confirmStyle.fontColor = Color.WHITE;
+        confirmStyle.up = new NinePatchDrawable(NinePatches.play_r_up);
+        confirmStyle.down = new NinePatchDrawable(NinePatches.play_r_down);
+        confirmStyle.disabled = new NinePatchDrawable(NinePatches.play_r_down);
+
+        String confirmText = LanguageManager.bundle != null ? LanguageManager.get("okay") : "OK";
+        confirmButton = new TextButton(confirmText, confirmStyle);
+        confirmButton.getLabel().setFontScale(UIConfig.ALERT_DIALOG_BUTTON_FONT_SCALE);
+        confirmButton.setSize(Math.min(cellWidth, content.getWidth() * 0.72f), cellHeight);
+        confirmButton.setOrigin(Align.center);
+        confirmButton.setTransform(true);
+        confirmButton.setX((content.getWidth() - confirmButton.getWidth()) * 0.5f);
+        confirmButton.setY(bottomPad);
+        content.addActor(confirmButton);
+
+        confirmButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (LanguageManager.locale == null && newCode == null) return;
+                getStage().getRoot().setTouchable(Touchable.disabled);
+                hide();
+            }
+        });
+
+        // Liste alanı: başlığın altından kapatma butonunun üstüne kadar.
+        float scrollAreaBottom = confirmButton.getY() + confirmButton.getHeight() + bottomPad;
         float scrollAreaTop = content.getHeight() - titleHeight * 0.83f - titleGap;
-        float scrollAreaHeight = scrollAreaTop - bottomGap;
+        float scrollAreaHeight = Math.max(cellHeight, scrollAreaTop - scrollAreaBottom);
 
         // BonusWordsIncompleteDialog'daki İLE AYNI, zaten kanıtlanmış
         // ScrollPane deseni: varsayılan stil, görünmez kaydırma çubuğu -
@@ -209,7 +242,7 @@ public class LanguageDialog extends BaseDialog {
         scrollPane.setScrollbarsVisible(false);
         scrollPane.setScrollingDisabled(true, false);
         scrollPane.setSize(tableWidth, scrollAreaHeight);
-        scrollPane.setPosition((content.getWidth() - tableWidth) * 0.5f, bottomGap);
+        scrollPane.setPosition((content.getWidth() - tableWidth) * 0.5f, scrollAreaBottom);
         content.addActor(scrollPane);
 
 
@@ -221,19 +254,7 @@ public class LanguageDialog extends BaseDialog {
         // BaseDialog.setTitleLabel() ile AYNI merkezleme mantığı - font
         // ölçeği burada büyütüldüğü için getPrefHeight() yeniden alınıyor.
         titleLabel.setY(titleContainer.getHeight() * 0.30f - titleLabel.getPrefHeight() * 0.5f);
-
-        setCloseButton();
-
-        closeButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                getStage().getRoot().setTouchable(Touchable.disabled);
-                hide();
-            }
-        });
-
-        if (LanguageManager.locale == null)
-            closeButton.setVisible(false);
+        confirmButton.toFront();
     }
 
     @Override
@@ -326,9 +347,6 @@ public class LanguageDialog extends BaseDialog {
             if (code != null) {
                 markSelected(code);
                 newCode = code;
-                getStage().getRoot().setTouchable(Touchable.disabled);
-                hide();
-                //setNewLanguage(target.getName());
             }
         }
     };
