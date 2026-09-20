@@ -282,12 +282,10 @@ public class IntroScreen extends BaseScreen{
             if(UIConfig.INTERACTIVE_TUTORIAL_ENABLED && GameData.getTutorialStep() == 0){
                 tutorialStep_1();
             }else{
-                if(!checkWheelDialogTiming()){
-                    if(checkDailyRewardTiming()){
-                        setPlayButtonVisibleForDailyWheel(false);
-                    } else {
-                        checkRateStatus();
-                    }
+                if(checkDailyRewardTiming()){
+                    setPlayButtonVisibleForDailyWheel(false);
+                } else if(!checkWheelDialogTiming()){
+                    checkRateStatus();
                 }
             }
             // Kalp atışı / nabız (pulse) efekti kasıtlı olarak KALDIRILDI -

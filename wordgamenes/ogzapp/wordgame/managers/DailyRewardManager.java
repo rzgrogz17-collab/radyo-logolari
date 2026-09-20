@@ -20,7 +20,7 @@ public class DailyRewardManager {
         long lastClaimTime = getLastClaimTime();
         if (lastClaimTime == 0) return true;
 
-        return TimeUtils.timeSinceMillis(lastClaimTime) > MILLIS_IN_A_DAY;
+        return TimeUtils.timeSinceMillis(lastClaimTime) >= MILLIS_IN_A_DAY;
     }
 
     public static long getLastClaimTime() {

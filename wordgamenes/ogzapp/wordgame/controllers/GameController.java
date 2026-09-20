@@ -235,7 +235,8 @@ public class GameController {
     private void saveLevelEndData() {
         DictionaryDialog.words = level.getWordsAsString();
         GameData.updateFirstIncompleteLevelIndex(++level.index);
-        clearLevelRelatedData(true, true);
+        // Bonus kelimeler 50/50 dolup coin aktarılana kadar silinmez.
+        clearLevelRelatedData(false, true);
     }
 
     // ========== ANA ANİMASYON METODU (SIRALI + BOOSTER) ==========
@@ -470,7 +471,7 @@ public class GameController {
         int count = GameData.getExtraWordsCount();
         int oldCount = count - numExtraWordsEarnedThisLevel;
         GameData.saveExtraWordsCount(oldCount);
-        GameData.clearExtraWords();
+        GameData.removeLastExtraWords(numExtraWordsEarnedThisLevel);
     }
 
     private void handleGoldPack() {

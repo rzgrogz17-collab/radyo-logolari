@@ -886,15 +886,18 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
     // Ekstra kelime koleksiyonu dolduğunda ödül coinleri, herhangi bir "topla"
     // penceresi açılmadan doğrudan bonus ikonundan coin sayacına uçar.
     public void awardBonusWordsRewardAutomatically() {
-        GameData.resetExtraWordCount();
-        GameData.clearExtraWords();
-
         int current = HintManager.getRemainingCoins();
         HintManager.setCoinCount(current + GameConfig.NUMBER_OF_COINS_AWARDED_FOR_BONUS_WORDS_REWARD);
 
         Vector2 pos = extraWordsButton.localToActorCoordinates(topPanel.coinView,
                 new Vector2(extraWordsButton.getWidth() * 0.5f, extraWordsButton.getHeight() * 0.5f));
-        topPanel.coinView.createCoinAnimation(GameConfig.NUMBER_OF_COINS_AWARDED_FOR_BONUS_WORDS_REWARD, pos.x, pos.y, null);
+        topPanel.coinView.createCoinAnimation(GameConfig.NUMBER_OF_COINS_AWARDED_FOR_BONUS_WORDS_REWARD, pos.x, pos.y, new Runnable() {
+            @Override
+            public void run() {
+                GameData.resetExtraWordCount();
+                GameData.clearExtraWords();
+            }
+        });
     }
 
     private Word giveRocketHint() {

@@ -181,6 +181,8 @@ public class BonusWordsCompleteDialog extends BaseDialog {
             topPanel.coinView.getColor().a = 1f;
             topPanel.addActor(topPanel.coinView);
             topPanel.coinView.cancel(false);
+            GameData.resetExtraWordCount();
+            GameData.clearExtraWords();
             hide();
         }
     };
@@ -188,8 +190,6 @@ public class BonusWordsCompleteDialog extends BaseDialog {
     @Override
     public void show() {
         super.show();
-        GameData.resetExtraWordCount();
-        GameData.clearExtraWords();
         int current = HintManager.getRemainingCoins();
         HintManager.setCoinCount(current + GameConfig.NUMBER_OF_COINS_AWARDED_FOR_BONUS_WORDS_REWARD);
         int target = GameConfig.NUMBER_OF_BONUS_WORDS_TO_FIND_FOR_REWARD;

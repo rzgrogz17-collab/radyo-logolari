@@ -1,7 +1,11 @@
 package ogzapp.wordgame.ui.dialogs.bonus_words;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -10,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -18,7 +23,6 @@ import com.badlogic.gdx.utils.StringBuilder;
 import ogzapp.wordgame.config.GameConfig;
 import ogzapp.wordgame.config.UIConfig;
 import ogzapp.wordgame.graphics.AtlasRegions;
-import ogzapp.wordgame.graphics.NinePatches;
 import ogzapp.wordgame.managers.LanguageManager;
 import ogzapp.wordgame.managers.ResourceManager;
 import ogzapp.wordgame.model.GameData;
@@ -32,10 +36,12 @@ import ogzapp.wordgame.ui.tutorial.TutorialBooster;
 
 public class BonusWordsIncompleteDialog extends BaseDialog {
 
+    // Ekrandaki çapraz çizgiyle aynı çelik-mavi: kelime çerçevesi + şerit.
+    private static final Color FRAME_COLOR = new Color(0x6A8AA3FF);
+    private static final Color FRAME_BORDER_COLOR = new Color(0x4E6F86FF);
+
     private ProgressBar progressBar;
-    private MarqueeLabel titleMarquee;
     private MarqueeLabel countMarquee;
-    private MarqueeLabel thisMarquee;
     private Label wordsLabel;
     private Label wordsShadow;
     private Group wordsTextGroup;
@@ -54,31 +60,13 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         textShadowOffset = content.getWidth() * 0.008f;
 
         setContentBackground();
-        // Diğer buzlu cam dialoglarla AYNI paylaşılan renk sabitleri
-        // kullanılıyor (UIConfig.java'ya yeni bir şey EKLENMEDİ).
+        contentBackground.setSize(content.getWidth(), content.getHeight());
         setContentBackgroundColor(UIConfig.MENU_DIALOG_BACKGROUND_COLOR);
         BitmapFont bodyFont = screen.wordConnectGame.resourceManager.get(ResourceManager.fontSemiBoldShadow, BitmapFont.class);
         Label.LabelStyle bodyTextStyle = new Label.LabelStyle(bodyFont, Color.WHITE);
         Label.LabelStyle bodyShadowStyle = new Label.LabelStyle(bodyFont, UIConfig.FROSTED_ALERT_DIALOG_TEXT_SHADOW_COLOR);
 
-        setTitleLabel(LanguageManager.get("extra_words_incomplete"));
-        setTitleBackgroundColor(UIConfig.MENU_DIALOG_TITLE_BACKGROUND_COLOR);
-        titleLabel.setWrap(false);
-        titleLabel.setVisible(false);
-        titleLabel.setFontScale(titleLabel.getFontScaleX() * 1.08f);
-        titleContainer.setY(titleContainer.getY() - titleContainer.getHeight() * 0.04f);
-
-        titleMarquee = new MarqueeLabel(titleLabel.getStyle(), bodyShadowStyle, textShadowOffset);
-        titleMarquee.setFontScale(titleLabel.getFontScaleX());
-        float titleMaxW = titleContainer.getWidth() * 0.72f;
-        titleMarquee.setSize(titleMaxW, Math.max(titleLabel.getPrefHeight(), titleContainer.getHeight() * 0.55f));
-        titleMarquee.setPosition((titleContainer.getWidth() - titleMaxW) * 0.5f,
-                titleContainer.getHeight() * 0.28f - titleMarquee.getHeight() * 0.5f);
-        titleMarquee.setMarqueeText(LanguageManager.get("extra_words_incomplete"));
-        titleContainer.addActor(titleMarquee);
-
         setCloseButton();
-
         closeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -94,10 +82,8 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         progressBar.setSize(barWidth, progressBar.getHeight());
         progressBar.setOrigin(Align.center);
         progressBar.setX((content.getWidth() - progressBar.getWidth()) * 0.5f);
-        // Üstteki boşluğa doğru kaydır: başlığın hemen altı.
-        progressBar.setY(titleContainer.getY() - progressBar.getHeight() - content.getHeight() * 0.03f);
-        Color barBorder = new Color(0x8BB0D4CC);
-        progressBar.setRoundedTrack(UIConfig.BWD_WORDS_BG_COLOR, barBorder, Math.max(2f, progressBar.getHeight() * 0.10f));
+        progressBar.setY(closeButton.getY() - progressBar.getHeight() - content.getHeight() * 0.025f);
+        progressBar.setRoundedTrack(FRAME_COLOR, FRAME_BORDER_COLOR, Math.max(2f, progressBar.getHeight() * 0.10f));
         content.addActor(progressBar);
 
         countMarquee = new MarqueeLabel(bodyTextStyle, bodyShadowStyle, textShadowOffset);
@@ -108,11 +94,7 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         countMarquee.setMarqueeText(LanguageManager.get("extra_words_collected"));
         content.addActor(countMarquee);
 
-        Image wordsGroupBg = new Image(NinePatches.iap_card2);
-        wordsGroupBg.setColor(UIConfig.BWD_WORDS_BG_COLOR);
-
         wordsGroup = new Group();
-        wordsGroup.addActor(wordsGroupBg);
         wordsGroup.setWidth(content.getWidth() - pad * 2f);
         float wordsBottom = content.getHeight() * 0.045f;
         float wordsTop = countMarquee.getY() - content.getHeight() * 0.018f;
@@ -121,20 +103,13 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         wordsGroup.setX((content.getWidth() - wordsGroup.getWidth()) * 0.5f);
         wordsGroup.setY(wordsBottom);
         content.addActor(wordsGroup);
-        wordsGroupBg.setSize(wordsGroup.getWidth(), wordsGroup.getHeight());
 
-        Label.LabelStyle wordsTitleStyle = new Label.LabelStyle();
-        wordsTitleStyle.font = bodyFont;
-        wordsTitleStyle.fontColor = UIConfig.BWD_WORDS_TITLE_COLOR;
-
-        float headerPad = wordsGroup.getHeight() * 0.04f;
-        thisMarquee = new MarqueeLabel(wordsTitleStyle, bodyShadowStyle, textShadowOffset);
-        thisMarquee.setFontScale(0.90f);
-        thisMarquee.setSize(wordsGroup.getWidth() * 0.90f, thisMarquee.getHeight());
-        thisMarquee.setX((wordsGroup.getWidth() - thisMarquee.getWidth()) * 0.5f);
-        thisMarquee.setY(wordsGroup.getHeight() - thisMarquee.getHeight() - headerPad);
-        thisMarquee.setMarqueeText(LanguageManager.get("extra_words_in_this_level"));
-        wordsGroup.addActor(thisMarquee);
+        float stroke = Math.max(3f, wordsGroup.getHeight() * 0.012f);
+        float radius = Math.min(wordsGroup.getWidth(), wordsGroup.getHeight()) * 0.06f;
+        Image wordsFrame = new Image(new NinePatchDrawable(
+                createRoundedStrokeNinePatch(wordsGroup.getHeight(), radius, stroke, FRAME_COLOR)));
+        wordsFrame.setSize(wordsGroup.getWidth(), wordsGroup.getHeight());
+        wordsGroup.addActor(wordsFrame);
 
         Label.LabelStyle wordsStyle = new Label.LabelStyle(bodyFont, UIConfig.BWD_WORDS_TEXT_COLOR);
         wordsShadow = new Label(" ", bodyShadowStyle);
@@ -159,11 +134,13 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         wordsPane.setFadeScrollBars(true);
         wordsPane.setupFadeScrollBars(0.4f, 0.2f);
         wordsPane.setFlickScroll(true);
-        float paneTop = thisMarquee.getY() - headerPad * 0.6f;
-        wordsPane.setSize(wordsGroup.getWidth() * 0.94f, Math.max(24f, paneTop - wordsGroup.getHeight() * 0.03f));
+        float inner = stroke + wordsGroup.getWidth() * 0.03f;
+        wordsPane.setSize(Math.max(8f, wordsGroup.getWidth() - inner * 2f),
+                Math.max(24f, wordsGroup.getHeight() - inner * 2f));
         wordsPane.setX((wordsGroup.getWidth() - wordsPane.getWidth()) * 0.5f);
-        wordsPane.setY(wordsGroup.getHeight() * 0.03f);
+        wordsPane.setY((wordsGroup.getHeight() - wordsPane.getHeight()) * 0.5f);
         wordsGroup.addActor(wordsPane);
+        wordsFrame.toFront();
 
         closeButton.toFront();
     }
@@ -219,8 +196,10 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         StringBuilder sb = new StringBuilder();
         String lineBreak = "";
         for (int i = 0; i < words.size; i++) {
+            String word = words.get(i);
+            if (word == null) continue;
             sb.append(lineBreak);
-            sb.append(words.get(i));
+            sb.append(word);
             if (lineBreak.isEmpty())
                 lineBreak = "\n";
         }
@@ -262,5 +241,39 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         super.hideAnimFinished();
         getStage().getRoot().setTouchable(Touchable.enabled);
         remove();
+    }
+
+    private static NinePatch createRoundedStrokeNinePatch(float height, float radius, float stroke, Color color) {
+        int h = Math.max(8, Math.round(height));
+        int r = Math.max(2, Math.round(radius));
+        int s = Math.max(1, Math.round(stroke));
+        int stretch = 4;
+        int w = r * 2 + stretch;
+        Pixmap pixmap = new Pixmap(w, h, Pixmap.Format.RGBA8888);
+        pixmap.setBlending(Pixmap.Blending.None);
+        pixmap.setColor(0, 0, 0, 0);
+        pixmap.fill();
+        pixmap.setBlending(Pixmap.Blending.SourceOver);
+        fillRoundedRect(pixmap, 0, 0, w, h, r, color);
+        pixmap.setBlending(Pixmap.Blending.None);
+        pixmap.setColor(0, 0, 0, 0);
+        int innerR = Math.max(1, r - s);
+        fillRoundedRect(pixmap, s, s, Math.max(1, w - s * 2), Math.max(1, h - s * 2), innerR, new Color(0, 0, 0, 0));
+        PixmapTextureData texData = new PixmapTextureData(pixmap, pixmap.getFormat(), false, false, true);
+        Texture tex = new Texture(texData);
+        tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        return new NinePatch(tex, r, r, r, r);
+    }
+
+    private static void fillRoundedRect(Pixmap pixmap, int x, int y, int w, int h, int radius, Color color) {
+        if (w <= 0 || h <= 0) return;
+        int rad = Math.min(radius, Math.min(w, h) / 2);
+        pixmap.setColor(color);
+        pixmap.fillRectangle(x + rad, y, Math.max(1, w - rad * 2), h);
+        pixmap.fillRectangle(x, y + rad, w, Math.max(1, h - rad * 2));
+        pixmap.fillCircle(x + rad, y + rad, rad);
+        pixmap.fillCircle(x + w - rad - 1, y + rad, rad);
+        pixmap.fillCircle(x + rad, y + h - rad - 1, rad);
+        pixmap.fillCircle(x + w - rad - 1, y + h - rad - 1, rad);
     }
 }

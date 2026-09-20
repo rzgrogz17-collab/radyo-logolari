@@ -693,6 +693,19 @@ public class GameData {
     }
 
 
+    public static void removeLastExtraWords(int n) {
+        if (n <= 0) return;
+        String key = getLocaleAwareKey(Constants.KEY_EXTRA_WORDS);
+        JsonValue doc = readJsonArrayFromPreferences(key);
+        int keep = Math.max(0, doc.size - n);
+        JsonValue trimmed = new JsonValue(JsonValue.ValueType.array);
+        for (int i = 0; i < keep; i++) {
+            trimmed.addChild(new JsonValue(doc.get(i).asInt()));
+        }
+        saveJsonDocument(trimmed, key);
+    }
+
+
 
 
     public static void incrementFoundBonusWordCount(){
