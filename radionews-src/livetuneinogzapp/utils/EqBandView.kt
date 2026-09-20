@@ -6,8 +6,6 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.content.ContextCompat
-import com.globalradio.livetuneinogzapp.R
 import kotlin.math.roundToInt
 
 /** Dikey ekolayzer bandı — döndürülmüş SeekBar yerine dokunmatik sütun. */
@@ -57,10 +55,10 @@ class EqBandView @JvmOverloads constructor(
         val stroke = 6f * d
         trackPaint.strokeWidth = stroke
         fillPaint.strokeWidth = stroke
-        trackPaint.color = ContextCompat.getColor(context, R.color.divider)
+        trackPaint.color = 0xFF3A3A44.toInt()
         fillPaint.color = 0xFFE01B3B.toInt()
         thumbPaint.color = 0xFFE01B3B.toInt()
-        centerPaint.color = ContextCompat.getColor(context, R.color.text_hint)
+        centerPaint.color = 0xFFAABBCC.toInt()
         centerPaint.strokeWidth = 1.2f * d
 
         canvas.drawLine(cx, top, cx, bot, trackPaint)

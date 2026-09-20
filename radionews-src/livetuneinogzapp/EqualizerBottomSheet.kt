@@ -176,11 +176,12 @@ class EqualizerBottomSheet : BottomSheetDialogFragment() {
             this.text = text
             isCheckable = true
             isChecked = selected
-            setChipBackgroundColorResource(R.color.bg_surface)
-            setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
+            checkedIconVisible = false
+            setChipBackgroundColorResource(R.color.timer_chip_idle)
+            setTextColor(ContextCompat.getColor(requireContext(), R.color.on_dark_sheet))
             chipStrokeColor = android.content.res.ColorStateList.valueOf(
                 if (selected) Color.parseColor("#E94560")
-                else ContextCompat.getColor(requireContext(), R.color.card_stroke)
+                else ContextCompat.getColor(requireContext(), R.color.on_dark_sheet_muted)
             )
             chipStrokeWidth = if (selected) 2.5f else 1.5f
             setOnClickListener {
@@ -204,7 +205,7 @@ class EqualizerBottomSheet : BottomSheetDialogFragment() {
             chip.isChecked = selected
             chip.chipStrokeColor = android.content.res.ColorStateList.valueOf(
                 if (selected) Color.parseColor("#E94560")
-                else ContextCompat.getColor(requireContext(), R.color.card_stroke)
+                else ContextCompat.getColor(requireContext(), R.color.on_dark_sheet_muted)
             )
             chip.chipStrokeWidth = if (selected) 2.5f else 1.5f
         }
@@ -227,7 +228,7 @@ class EqualizerBottomSheet : BottomSheetDialogFragment() {
                 tag = "db_$i"
                 text = "${EqualizerManager.getBandLevel(i) / 100}dB"
                 textSize = 11f
-                setTextColor(Color.parseColor("#AABBCC"))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.on_dark_sheet_muted))
                 gravity = Gravity.CENTER
             }
             val band = EqBandView(requireContext()).apply {
@@ -251,7 +252,7 @@ class EqualizerBottomSheet : BottomSheetDialogFragment() {
                 text = if (i < freqLabels.size) freqLabels[i]
                 else "${EqualizerManager.getBandFreq(i)}Hz"
                 textSize = 10f
-                setTextColor(Color.parseColor("#AABBCC"))
+                setTextColor(ContextCompat.getColor(requireContext(), R.color.on_dark_sheet_muted))
                 gravity = Gravity.CENTER
             }
             col.addView(db, LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT))

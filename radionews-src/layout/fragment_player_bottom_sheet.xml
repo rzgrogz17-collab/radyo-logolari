@@ -62,156 +62,170 @@
 
         </RelativeLayout>
 
-        <!-- ── LOGO PAGER ── peek efekti ile yan logolar görünür -->
-        <FrameLayout
+        <!-- Logo aşağı doğru büyür; rewind/save ve banner sabit kalır. -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_marginTop="4dp"
-            android:clipChildren="false"
-            android:clipToPadding="false">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/logoPager"
+            <!-- Kare logo: yükseklik kalan alana yayılır, kart 1:1 oranında -->
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="4dp"
                 android:clipChildren="false"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingHorizontal="32dp" />
+                android:clipToPadding="false">
 
-        </FrameLayout>
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/logoPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never" />
 
-        <!-- ── İSTASYON BİLGİSİ ── -->
-        <TextView
-            android:id="@+id/tvStationName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="14dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"
-            android:textColor="#FFFFFF"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            </FrameLayout>
 
-        <!-- Ülke pill -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="6dp"
-            android:background="@drawable/bg_quality_badge"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="4dp">
-
+            <!-- ── İSTASYON BİLGİSİ ── -->
             <TextView
-                android:id="@+id/tvCountry"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvStationName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#AABBCC"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <!-- Tags + sıra -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="4dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvTags"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#556677"
-                android:textSize="11sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="  ·  "
-                android:textColor="#556677"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/tvStationIndex"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#556677"
-                android:textSize="11sp" />
-        </LinearLayout>
-
-        <!-- Canlı Yayın + equalizer -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="6dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:id="@+id/equalizerView"
-                android:layout_width="wrap_content"
-                android:layout_height="14dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="12dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:gravity="center"
-                android:orientation="horizontal"
-                android:visibility="invisible">
-
-                <View
-                    android:layout_width="3dp"
-                    android:layout_height="12dp"
-                    android:layout_marginHorizontal="1dp"
-                    android:background="@color/accent" />
-
-                <View
-                    android:layout_width="3dp"
-                    android:layout_height="8dp"
-                    android:layout_marginHorizontal="1dp"
-                    android:background="@color/accent" />
-
-                <View
-                    android:layout_width="3dp"
-                    android:layout_height="14dp"
-                    android:layout_marginHorizontal="1dp"
-                    android:background="@color/accent" />
-
-                <View
-                    android:layout_width="3dp"
-                    android:layout_height="6dp"
-                    android:layout_marginHorizontal="1dp"
-                    android:background="@color/accent" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="7dp"
-                android:layout_height="7dp"
-                android:layout_marginEnd="5dp"
-                android:background="@drawable/bg_live_dot" />
-
-            <TextView
-                android:id="@+id/tvStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/status_live"
-                android:textColor="@color/accent"
-                android:textSize="12sp"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
+            <!-- Ülke pill -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_quality_badge"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp">
+
+                <TextView
+                    android:id="@+id/tvCountry"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#AABBCC"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Tags + sıra -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvTags"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="#556677"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  ·  "
+                    android:textColor="#556677"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/tvStationIndex"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#556677"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Canlı / duraklatıldı — tek satır, banner'a taşmaz -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/equalizerView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="14dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:visibility="invisible">
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="12dp"
+                        android:layout_marginHorizontal="1dp"
+                        android:background="@color/accent" />
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="8dp"
+                        android:layout_marginHorizontal="1dp"
+                        android:background="@color/accent" />
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="14dp"
+                        android:layout_marginHorizontal="1dp"
+                        android:background="@color/accent" />
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="6dp"
+                        android:layout_marginHorizontal="1dp"
+                        android:background="@color/accent" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="7dp"
+                    android:layout_height="7dp"
+                    android:layout_marginEnd="5dp"
+                    android:background="@drawable/bg_live_dot" />
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:text="@string/status_live"
+                    android:textColor="@color/accent"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
-        <!-- ── ESNEK BOŞLUK (minimumda tutulur) ── -->
+        <!-- Logo / canlı yazısı rewind-kaydet paneline yapışmasın -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="16dp"
-            android:layout_weight="1" />
+            android:layout_height="22dp" />
 
         <!-- ── İLERLEME / GERİ SAR / KAYDET ── -->
         <LinearLayout
@@ -384,7 +398,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/favorite"
                 android:src="@drawable/ic_favorite_border"
-                app:tint="@null" />
+                app:tint="#2C2C34" />
 
             <ImageButton
                 android:id="@+id/btnPrevious"

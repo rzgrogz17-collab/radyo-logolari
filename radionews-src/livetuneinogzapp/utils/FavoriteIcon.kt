@@ -4,28 +4,33 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.core.widget.ImageViewCompat
 import com.globalradio.livetuneinogzapp.R
 
 /**
  * Favori kalbi tek görsel kuralı:
  *  • Favoride     → kırmızı dolu kalp
- *  • Favori değil → boş beyaz kalp
+ *  • Favori değil → boş kalp (açık temada koyu, koyu temada beyaz)
  *
- * ImageButton XML/theme tint'i ile eski setColorFilter, dolu kalbi
- * beyaza boyayabildiği için her güncellemede renk açıkça yazılır.
+ * Büyük player buzlu açık zeminde olduğu için orada her zaman koyu boş kalp.
  */
 object FavoriteIcon {
 
     const val FILLED_RED = 0xFFE01B3B.toInt()
-    const val EMPTY_WHITE = Color.WHITE
+    private val EMPTY_ON_LIGHT = Color.parseColor("#2C2C34")
 
-    fun apply(view: ImageView, favorite: Boolean) {
+    fun apply(view: ImageView, favorite: Boolean, onLightSurface: Boolean = false) {
         view.clearColorFilter()
         view.setImageResource(
             if (favorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_border
         )
-        val color = if (favorite) FILLED_RED else EMPTY_WHITE
+        val empty = if (onLightSurface) {
+            EMPTY_ON_LIGHT
+        } else {
+            ContextCompat.getColor(view.context, R.color.favorite_empty)
+        }
+        val color = if (favorite) FILLED_RED else empty
         ImageViewCompat.setImageTintList(view, ColorStateList.valueOf(color))
         ImageViewCompat.setImageTintMode(view, PorterDuff.Mode.SRC_IN)
         view.isSelected = favorite

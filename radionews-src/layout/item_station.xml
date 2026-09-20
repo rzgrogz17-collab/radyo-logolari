@@ -126,7 +126,7 @@
                 android:padding="6dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_favorite_border"
-                app:tint="@null" />
+                app:tint="@color/favorite_empty" />
 
         </LinearLayout>
 

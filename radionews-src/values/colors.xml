@@ -74,4 +74,7 @@
     <color name="splash_window_bg">#2E3D82</color>
     <color name="timer_on_dark">#FFFFFF</color>
     <color name="timer_chip_idle">#2C2C34</color>
+    <color name="on_dark_sheet">#FFFFFF</color>
+    <color name="on_dark_sheet_muted">#AABBCC</color>
+    <color name="favorite_empty">#2C2C34</color>
 </resources>

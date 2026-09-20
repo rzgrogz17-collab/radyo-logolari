@@ -38,7 +38,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/close"
                 android:src="@drawable/ic_close"
-                app:tint="@color/text_primary" />
+                app:tint="@color/on_dark_sheet" />
         </LinearLayout>
     </LinearLayout>
 
@@ -60,7 +60,7 @@
             android:layout_marginStart="10dp"
             android:layout_weight="1"
             android:text="@string/equalizer"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/on_dark_sheet"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -72,7 +72,9 @@
             android:minWidth="0dp"
             android:text="@string/eq_off"
             android:textAllCaps="false"
+            android:textColor="@color/on_dark_sheet"
             android:textSize="12sp"
+            app:backgroundTint="@android:color/transparent"
             app:cornerRadius="18dp"
             app:strokeColor="#E91E63"
             app:strokeWidth="1.5dp" />
@@ -84,7 +86,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="@string/eq_status_off"
-        android:textColor="@color/text_secondary"
+        android:textColor="@color/on_dark_sheet_muted"
         android:textSize="12sp" />
 
     <TextView
@@ -136,7 +138,7 @@
             android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:text="@string/bass_boost"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/on_dark_sheet"
             android:textSize="13sp" />
 
         <com.google.android.material.slider.Slider
@@ -162,7 +164,7 @@
             android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:text="@string/eq_treble"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/on_dark_sheet"
             android:textSize="13sp" />
 
         <com.google.android.material.slider.Slider
@@ -188,7 +190,7 @@
             android:layout_width="72dp"
             android:layout_height="wrap_content"
             android:text="@string/eq_surround"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/on_dark_sheet"
             android:textSize="13sp" />
 
         <com.google.android.material.slider.Slider
@@ -219,9 +221,10 @@
             android:layout_weight="1"
             android:text="@string/eq_reset"
             android:textAllCaps="false"
-            android:textColor="@color/text_primary"
+            android:textColor="@color/on_dark_sheet"
+            app:backgroundTint="@android:color/transparent"
             app:cornerRadius="12dp"
-            app:strokeColor="@color/card_stroke" />
+            app:strokeColor="@color/on_dark_sheet_muted" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEqSave"
