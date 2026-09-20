@@ -35,7 +35,7 @@ class SectionListFragment : Fragment() {
 
     private val genres = listOf(
         "Pop", "Rock", "News", "Haber", "Jazz", "Hip-Hop",
-        "Electronic", "Dance", "Classical", "House", "Folk", "80s", "90s", "Talk", "İslam"
+        "Electronic", "Dance", "Classical", "House", "Folk", "80s", "90s", "Talk"
     )
 
     override fun onCreateView(
