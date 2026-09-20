@@ -41,6 +41,7 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
     private static final Color FRAME_BORDER_COLOR = new Color(0x4E6F86FF);
 
     private ProgressBar progressBar;
+    private MarqueeLabel titleMarquee;
     private MarqueeLabel countMarquee;
     private Label wordsLabel;
     private Label wordsShadow;
@@ -66,6 +67,22 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         Label.LabelStyle bodyTextStyle = new Label.LabelStyle(bodyFont, Color.WHITE);
         Label.LabelStyle bodyShadowStyle = new Label.LabelStyle(bodyFont, UIConfig.FROSTED_ALERT_DIALOG_TEXT_SHADOW_COLOR);
 
+        setTitleLabel(LanguageManager.get("extra_words_incomplete"));
+        setTitleBackgroundColor(UIConfig.MENU_DIALOG_TITLE_BACKGROUND_COLOR);
+        titleLabel.setWrap(false);
+        titleLabel.setVisible(false);
+        titleLabel.setFontScale(titleLabel.getFontScaleX() * 1.08f);
+        titleContainer.setY(titleContainer.getY() - titleContainer.getHeight() * 0.04f);
+
+        titleMarquee = new MarqueeLabel(titleLabel.getStyle(), bodyShadowStyle, textShadowOffset);
+        titleMarquee.setFontScale(titleLabel.getFontScaleX());
+        float titleMaxW = titleContainer.getWidth() * 0.72f;
+        titleMarquee.setSize(titleMaxW, Math.max(titleLabel.getPrefHeight(), titleContainer.getHeight() * 0.55f));
+        titleMarquee.setPosition((titleContainer.getWidth() - titleMaxW) * 0.5f,
+                titleContainer.getHeight() * 0.28f - titleMarquee.getHeight() * 0.5f);
+        titleMarquee.setMarqueeText(LanguageManager.get("extra_words_incomplete"));
+        titleContainer.addActor(titleMarquee);
+
         setCloseButton();
         closeButton.addListener(new ChangeListener() {
             @Override
@@ -82,7 +99,7 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         progressBar.setSize(barWidth, progressBar.getHeight());
         progressBar.setOrigin(Align.center);
         progressBar.setX((content.getWidth() - progressBar.getWidth()) * 0.5f);
-        progressBar.setY(closeButton.getY() - progressBar.getHeight() - content.getHeight() * 0.025f);
+        progressBar.setY(titleContainer.getY() - progressBar.getHeight() - content.getHeight() * 0.03f);
         progressBar.setRoundedTrack(FRAME_COLOR, FRAME_BORDER_COLOR, Math.max(2f, progressBar.getHeight() * 0.10f));
         content.addActor(progressBar);
 
@@ -142,6 +159,7 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         wordsGroup.addActor(wordsPane);
         wordsFrame.toFront();
 
+        titleContainer.toFront();
         closeButton.toFront();
     }
 
