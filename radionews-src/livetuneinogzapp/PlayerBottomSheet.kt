@@ -44,6 +44,9 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var logoPagerAdapter: LogoPagerAdapter
     private var isPagerScrolling = false
+    private var pendingLogoIndex = -1
+    private var logoNeedsRecenter = false
+    private var logoCenterAttempts = 0
     private var userScrubbing = false
     private var recordingObserved = false
     private var liveEdgePosition = 0L
@@ -173,23 +176,60 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     // ── Logo ViewPager2 kurulumu ─────────────────────────────────────────────
 
+    private val logoCenterRetry = Runnable {
+        if (_binding == null || isPagerScrolling) return@Runnable
+        if (centerCurrentLogo() == LogoCenterResult.CENTERED) logoNeedsRecenter = false
+    }
+
+    private val logoCenterPreDraw = android.view.ViewTreeObserver.OnPreDrawListener {
+        if (_binding == null || isPagerScrolling || !logoNeedsRecenter) return@OnPreDrawListener true
+        when (centerCurrentLogo()) {
+            LogoCenterResult.CENTERED -> {
+                logoNeedsRecenter = false
+                logoCenterAttempts = 0
+                true
+            }
+            LogoCenterResult.ADJUSTED -> {
+                logoCenterAttempts++
+                if (logoCenterAttempts > 8) {
+                    logoNeedsRecenter = false
+                    logoCenterAttempts = 0
+                    true
+                } else {
+                    false
+                }
+            }
+            LogoCenterResult.NOT_READY -> true
+        }
+    }
+
     private fun setupSwipeGesture() {
         logoPagerAdapter = LogoPagerAdapter { station ->
             // Görünür olan istasyonu takip et
         }
-        binding.logoPager.adapter = logoPagerAdapter
-        binding.logoPager.offscreenPageLimit = 2
-        binding.logoPager.clipToPadding = false
-        binding.logoPager.clipChildren = false
+        val pager = binding.logoPager
+        pager.offscreenPageLimit = 2
+        pager.clipToPadding = false
+        pager.clipChildren = false
+        applyLogoPeekPadding()
+        pager.adapter = logoPagerAdapter
+        applyLogoPeekPadding()
 
-        binding.logoPager.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+        pager.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             applyLogoPeekPadding()
+            if (logoNeedsRecenter && !isPagerScrolling) {
+                pager.removeCallbacks(logoCenterRetry)
+                pager.post(logoCenterRetry)
+            }
         }
-        binding.logoPager.post { applyLogoPeekPadding() }
+        val vto = pager.viewTreeObserver
+        if (vto.isAlive) vto.addOnPreDrawListener(logoCenterPreDraw)
+        pager.post(logoCenterRetry)
 
         // Sayfa değişince radyoyu değiştir
-        binding.logoPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                pendingLogoIndex = position
                 val station = logoPagerAdapter.getStation(position) ?: return
                 if (station.id != radioService?.currentStation?.id) {
                     isPagerScrolling = true
@@ -198,29 +238,82 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             }
 
             override fun onPageScrollStateChanged(state: Int) {
-                if (state == ViewPager2.SCROLL_STATE_IDLE) {
-                    isPagerScrolling = false
+                when (state) {
+                    ViewPager2.SCROLL_STATE_DRAGGING -> {
+                        isPagerScrolling = true
+                        logoNeedsRecenter = false
+                    }
+                    ViewPager2.SCROLL_STATE_IDLE -> {
+                        isPagerScrolling = false
+                        if (logoNeedsRecenter && centerCurrentLogo() == LogoCenterResult.CENTERED) {
+                            logoNeedsRecenter = false
+                        }
+                    }
                 }
             }
         })
     }
 
+    private fun logoPeekPx(): Int = (32f * resources.displayMetrics.density).toInt()
+
     /** Sağ/sol komşu logo kenarları görünsün — padding yalnızca iç RecyclerView'da. */
-    private fun applyLogoPeekPadding() {
-        if (_binding == null) return
+    private fun applyLogoPeekPadding(): Boolean {
+        if (_binding == null) return false
         val pager = binding.logoPager
-        val peek = (32f * resources.displayMetrics.density).toInt()
+        val peek = logoPeekPx()
         pager.clipToPadding = false
         pager.clipChildren = false
+        var changed = false
         if (pager.paddingStart != 0 || pager.paddingEnd != 0) {
-            pager.setPadding(0, pager.paddingTop, 0, pager.paddingBottom)
+            pager.setPaddingRelative(0, pager.paddingTop, 0, pager.paddingBottom)
+            changed = true
         }
-        val rv = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return
+        val rv = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return changed
         rv.clipToPadding = false
         rv.clipChildren = false
         rv.overScrollMode = View.OVER_SCROLL_NEVER
         if (rv.paddingStart != peek || rv.paddingEnd != peek) {
-            rv.setPadding(peek, 0, peek, 0)
+            rv.setPaddingRelative(peek, 0, peek, 0)
+            changed = true
+        }
+        return changed
+    }
+
+    /**
+     * Çalan radyo kartını sağ/sol kenara eşit uzaklıkta ortalar.
+     * ViewPager2 setCurrentItem aynı index'te no-op olduğu için sayfanın
+     * sol kenarını paddingLeft ile hizalar.
+     */
+    private fun centerCurrentLogo(): LogoCenterResult {
+        if (_binding == null || !::logoPagerAdapter.isInitialized) return LogoCenterResult.NOT_READY
+        val pager = binding.logoPager
+        if (pager.scrollState != ViewPager2.SCROLL_STATE_IDLE) return LogoCenterResult.NOT_READY
+        val index = pendingLogoIndex
+        if (index < 0 || index >= logoPagerAdapter.itemCount) return LogoCenterResult.NOT_READY
+        if (applyLogoPeekPadding()) return LogoCenterResult.ADJUSTED
+        val rv = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return LogoCenterResult.NOT_READY
+        val peek = logoPeekPx()
+        if (pager.width <= 0 || rv.width <= peek * 2) return LogoCenterResult.NOT_READY
+        val lm = rv.layoutManager as? androidx.recyclerview.widget.LinearLayoutManager
+            ?: return LogoCenterResult.NOT_READY
+        val page = lm.findViewByPosition(index)
+        if (page == null) {
+            lm.scrollToPositionWithOffset(index, 0)
+            if (pager.currentItem != index) pager.setCurrentItem(index, false)
+            return LogoCenterResult.ADJUSTED
+        }
+        val marginLeft = (page.layoutParams as? ViewGroup.MarginLayoutParams)?.leftMargin ?: 0
+        val desiredLeft = rv.paddingLeft + marginLeft
+        val dx = page.left - desiredLeft
+        if (kotlin.math.abs(dx) > 1) rv.scrollBy(dx, 0)
+        if (pager.currentItem != index) pager.setCurrentItem(index, false)
+        val aligned = lm.findViewByPosition(index)
+        val alignedLeft = aligned?.left ?: return LogoCenterResult.ADJUSTED
+        val alignedMargin = (aligned.layoutParams as? ViewGroup.MarginLayoutParams)?.leftMargin ?: 0
+        return if (kotlin.math.abs(alignedLeft - (rv.paddingLeft + alignedMargin)) <= 1) {
+            LogoCenterResult.CENTERED
+        } else {
+            LogoCenterResult.ADJUSTED
         }
     }
 
@@ -247,13 +340,18 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         else listOf(cur) // fallback
 
         // Listeyi sadece gerektiğinde güncelle
-        val currentIdx = list.indexOfFirst { it.id == cur.id }
         if (logoPagerAdapter.indexOf(cur) < 0 || logoPagerAdapter.itemCount != list.size) {
             logoPagerAdapter.setStations(list)
         }
         val idx = logoPagerAdapter.indexOf(cur)
-        if (idx >= 0) binding.logoPager.setCurrentItem(idx, false)
-        binding.logoPager.post { applyLogoPeekPadding() }
+        if (idx < 0) return
+        pendingLogoIndex = idx
+        logoNeedsRecenter = true
+        logoCenterAttempts = 0
+        applyLogoPeekPadding()
+        binding.logoPager.removeCallbacks(logoCenterRetry)
+        binding.logoPager.post(logoCenterRetry)
+        binding.logoPager.postDelayed(logoCenterRetry, 32)
     }
 
 
@@ -683,6 +781,10 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         recordingObserved = false
         if (_binding != null) {
+            val pager = binding.logoPager
+            pager.removeCallbacks(logoCenterRetry)
+            val vto = pager.viewTreeObserver
+            if (vto.isAlive) vto.removeOnPreDrawListener(logoCenterPreDraw)
             binding.btnSave.clearAnimation()
         }
         volumeHandler.removeCallbacks(volumeRunnable)
@@ -697,4 +799,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             arguments = Bundle().apply { putParcelable(ARG_STATION, st) }
         }
     }
+
+    private enum class LogoCenterResult { NOT_READY, ADJUSTED, CENTERED }
 }
