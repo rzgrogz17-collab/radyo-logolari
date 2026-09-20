@@ -44,6 +44,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     private lateinit var logoPagerAdapter: LogoPagerAdapter
     private var isPagerScrolling = false
+    private var logoPagerUserDrag = false
     private var pendingLogoIndex = -1
     private var logoNeedsRecenter = false
     private var logoCenterAttempts = 0
@@ -170,8 +171,8 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         ensureServiceObservers()
         loadBannerAd()
 
-        // Başlangıç UI
-        currentStation?.let { updateUI(it) }
+        // Başlangıç UI — serviste çalan istasyon öncelikli
+        (radioService?.currentStation ?: currentStation)?.let { updateUI(it) }
     }
 
     // ── Logo ViewPager2 kurulumu ─────────────────────────────────────────────
@@ -226,25 +227,26 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         if (vto.isAlive) vto.addOnPreDrawListener(logoCenterPreDraw)
         pager.post(logoCenterRetry)
 
-        // Sayfa değişince radyoyu değiştir
+        // Sayfa değişince radyoyu değiştir — yalnızca kullanıcı kaydırınca
         pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 pendingLogoIndex = position
-                val station = logoPagerAdapter.getStation(position) ?: return
-                if (station.id != radioService?.currentStation?.id) {
-                    isPagerScrolling = true
-                    play(station)
-                }
+                if (!logoPagerUserDrag) return
+                playPagerStation(position)
             }
 
             override fun onPageScrollStateChanged(state: Int) {
                 when (state) {
                     ViewPager2.SCROLL_STATE_DRAGGING -> {
+                        logoPagerUserDrag = true
                         isPagerScrolling = true
                         logoNeedsRecenter = false
                     }
                     ViewPager2.SCROLL_STATE_IDLE -> {
+                        val dragged = logoPagerUserDrag
+                        logoPagerUserDrag = false
                         isPagerScrolling = false
+                        if (dragged) playPagerStation(pager.currentItem)
                         if (logoNeedsRecenter && centerCurrentLogo() == LogoCenterResult.CENTERED) {
                             logoNeedsRecenter = false
                         }
@@ -317,6 +319,14 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
+    private fun playPagerStation(position: Int) {
+        val station = logoPagerAdapter.getStation(position) ?: return
+        val playingId = radioService?.currentStation?.id ?: currentStation?.id
+        if (station.id == playingId) return
+        play(station)
+        currentStation = station
+    }
+
     /** Pager'ı aktif bölümün tüm listesiyle güncelle */
     private fun updateLogoPager(currentSt: RadioStation) {
         if (isPagerScrolling) return
@@ -327,11 +337,15 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             radioService?.getPlaylist()?.isNotEmpty() == true -> radioService!!.getPlaylist()
             countryActivity != null -> countryActivity!!.getStationList()
             else -> {
-                val active = activeViewModel?.getActiveSectionList() ?: emptyList()
-                val fav = activeViewModel?.favoriteStations?.value ?: emptyList()
-                if (active.any { it.id == cur.id }) active
-                else if (fav.any { it.id == cur.id }) fav
-                else activeViewModel?.allStationsList() ?: emptyList()
+                val fromVm = activeViewModel?.playlistFor(cur).orEmpty()
+                if (fromVm.isNotEmpty()) fromVm
+                else {
+                    val active = activeViewModel?.getActiveSectionList() ?: emptyList()
+                    val fav = activeViewModel?.favoriteStations?.value ?: emptyList()
+                    if (active.any { it.id == cur.id }) active
+                    else if (fav.any { it.id == cur.id }) fav
+                    else activeViewModel?.allStationsList() ?: emptyList()
+                }
             }
         }
 
@@ -346,6 +360,9 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         val idx = logoPagerAdapter.indexOf(cur)
         if (idx < 0) return
         pendingLogoIndex = idx
+        if (binding.logoPager.currentItem != idx) {
+            binding.logoPager.setCurrentItem(idx, false)
+        }
         logoNeedsRecenter = true
         logoCenterAttempts = 0
         applyLogoPeekPadding()
