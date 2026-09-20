@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    item_country.xml
+    ───────────────────────────────────────────────────────
+    Satır yüksekliği SABİT (84dp). Bayrak görseli büyütülürken
+    tablo/satır genişlemez; sadece bayrak alanı dolu ve net kalır.
+-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/bg_card"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="0dp"
+    app:rippleColor="@color/accent_dim"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Sabit yükseklik: bayrak büyüyünce satır açılmaz -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="84dp"
+            android:clipChildren="true"
+            android:clipToPadding="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <!-- Bayrak yuvası sabit; ImageView bu kutuyu doldurur -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="68dp"
+                android:layout_height="46dp"
+                app:cardBackgroundColor="#1C1C1F"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#4A4A52"
+                app:strokeWidth="1dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/ivFlag"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_flag"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop" />
+
+                    <TextView
+                        android:id="@+id/tvFlag"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:textSize="28sp"
+                        android:visibility="gone"
+                        tools:text="🇹🇷"
+                        tools:visibility="visible" />
+
+                </FrameLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvCountryName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Turkey" />
+
+                <TextView
+                    android:id="@+id/tvStationCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:background="@drawable/bg_station_count_chip"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="2dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="11sp"
+                    tools:text="18 stations" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="›"
+                android:textColor="@color/text_secondary"
+                android:textSize="22sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.6dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="#333333" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
