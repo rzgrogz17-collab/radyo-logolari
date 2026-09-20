@@ -132,6 +132,10 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             com.google.android.material.R.id.design_bottom_sheet
         )?.let { sheet ->
             sheet.setBackgroundColor(Color.TRANSPARENT)
+            if (sheet is ViewGroup) {
+                sheet.clipChildren = false
+                sheet.clipToPadding = false
+            }
             BottomSheetBehavior.from(sheet).apply {
                 peekHeight = resources.displayMetrics.heightPixels
                 state = BottomSheetBehavior.STATE_EXPANDED
@@ -176,13 +180,10 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         binding.logoPager.adapter = logoPagerAdapter
         binding.logoPager.offscreenPageLimit = 2
         binding.logoPager.clipToPadding = false
+        binding.logoPager.clipChildren = false
 
-        // İlk zip'teki peek: sağ/sol sonraki-önceki logo biraz görünür
-        binding.logoPager.setPageTransformer { page, position ->
-            val absPos = kotlin.math.abs(position).coerceAtMost(1f)
-            page.scaleX = 1f - 0.10f * absPos
-            page.scaleY = 1f - 0.10f * absPos
-            page.alpha = 1f - 0.35f * absPos
+        binding.logoPager.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            applyLogoPeekPadding()
         }
         binding.logoPager.post { applyLogoPeekPadding() }
 
@@ -204,14 +205,22 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         })
     }
 
-    /** ViewPager2 sayfa genişliğini küçültmez; iç RecyclerView padding ile yan logolar görünür. */
+    /** Sağ/sol komşu logo kenarları görünsün — padding yalnızca iç RecyclerView'da. */
     private fun applyLogoPeekPadding() {
         if (_binding == null) return
-        val rv = binding.logoPager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return
-        val peek = (40f * resources.displayMetrics.density).toInt()
+        val pager = binding.logoPager
+        val peek = (32f * resources.displayMetrics.density).toInt()
+        pager.clipToPadding = false
+        pager.clipChildren = false
+        if (pager.paddingStart != 0 || pager.paddingEnd != 0) {
+            pager.setPadding(0, pager.paddingTop, 0, pager.paddingBottom)
+        }
+        val rv = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return
+        rv.clipToPadding = false
+        rv.clipChildren = false
+        rv.overScrollMode = View.OVER_SCROLL_NEVER
         if (rv.paddingStart != peek || rv.paddingEnd != peek) {
             rv.setPadding(peek, 0, peek, 0)
-            rv.clipToPadding = false
         }
     }
 
