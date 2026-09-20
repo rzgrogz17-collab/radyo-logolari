@@ -60,8 +60,8 @@ class TimerRingView @JvmOverloads constructor(
         track.strokeWidth = stroke
         fill.strokeWidth = stroke
         track.color = ContextCompat.getColor(context, R.color.divider)
-        textPaint.color = ContextCompat.getColor(context, R.color.text_primary)
-        capPaint.color = ContextCompat.getColor(context, R.color.text_secondary)
+        textPaint.color = 0xFFFFFFFF.toInt()
+        capPaint.color = 0xFFAABBCC.toInt()
         val pad = stroke / 2f + 8f * d
         oval.set(pad, pad, width - pad, height - pad)
         canvas.drawArc(oval, -90f, 360f, false, track)
@@ -70,12 +70,11 @@ class TimerRingView @JvmOverloads constructor(
         }
         textPaint.textSize = 28f * d
         val cy = height / 2f
-        if (caption.isBlank()) {
-            canvas.drawText(label, width / 2f, cy - (textPaint.ascent() + textPaint.descent()) / 2f, textPaint)
-        } else {
-            canvas.drawText(label, width / 2f, cy - 6f * d, textPaint)
-            capPaint.textSize = 12f * d
-            canvas.drawText(caption, width / 2f, cy + 18f * d, capPaint)
-        }
+        canvas.drawText(
+            label,
+            width / 2f,
+            cy - (textPaint.ascent() + textPaint.descent()) / 2f,
+            textPaint
+        )
     }
 }

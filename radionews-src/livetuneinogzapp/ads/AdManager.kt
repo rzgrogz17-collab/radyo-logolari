@@ -96,7 +96,7 @@ object AdManager {
      * Kullanım (Activity/Fragment):
      *   AdManager.loadBanner(this, binding.adBannerContainer)
      */
-    fun loadBanner(activity: Activity, container: ViewGroup) {
+    fun loadBanner(activity: Activity, container: ViewGroup, collapseIfEmpty: Boolean = true) {
         try {
             val bannerView = BannerAdView(activity).apply {
                 setAdUnitId(BANNER_UNIT_ID)
@@ -110,7 +110,7 @@ object AdManager {
 
                     override fun onAdFailedToLoad(error: AdRequestError) {
                         Log.w(TAG, "Banner failed: ${error.description}")
-                        container.visibility = View.GONE
+                        container.visibility = if (collapseIfEmpty) View.GONE else View.INVISIBLE
                     }
 
                     override fun onAdClicked() {
@@ -124,8 +124,14 @@ object AdManager {
             }
 
             container.removeAllViews()
-            container.addView(bannerView)
-            container.visibility = View.GONE  // yüklenince VISIBLE olacak
+            container.addView(
+                bannerView,
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    (56 * activity.resources.displayMetrics.density).toInt()
+                )
+            )
+            container.visibility = if (collapseIfEmpty) View.GONE else View.INVISIBLE
 
             val adRequest = AdRequest.Builder().build()
             bannerView.loadAd(adRequest)

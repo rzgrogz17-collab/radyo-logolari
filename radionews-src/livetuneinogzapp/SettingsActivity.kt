@@ -208,10 +208,13 @@ class SettingsActivity : AppCompatActivity() {
                 .show()
         }
         binding.btnOtherApps.setOnClickListener {
-            try {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://search?q=pub:RadioSphere&hl=tr")))
-            } catch (_: Exception) {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/search?q=RadioSphere")))
+            runCatching {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://appgallery.huawei.com/#/app/C107483149")
+                    )
+                )
             }
         }
     }

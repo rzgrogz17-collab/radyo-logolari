@@ -65,8 +65,8 @@
         <!-- ── LOGO PAGER ── peek efekti ile yan logolar görünür -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="220dp"
+            android:layout_marginTop="4dp"
             android:clipChildren="false"
             android:clipToPadding="false">
 
@@ -438,12 +438,14 @@
 
         </LinearLayout>
 
-        <!-- ── BANNER REKLAM (sadece doluysa görünür) ── -->
+        <!-- ── BANNER REKLAM — sabit 50dp, nav bar üstünde tam görünür ── -->
         <FrameLayout
             android:id="@+id/playerBannerContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:layout_height="56dp"
+            android:layout_marginBottom="8dp"
+            android:minHeight="56dp"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

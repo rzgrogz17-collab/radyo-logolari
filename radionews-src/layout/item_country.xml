@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textColor="@color/white"
+                    android:textColor="@color/text_primary"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     tools:text="Turkey" />
@@ -98,7 +98,7 @@
                     android:maxLines="1"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="2dp"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="@color/white"
                     android:textSize="11sp"
                     tools:text="18 stations" />
 

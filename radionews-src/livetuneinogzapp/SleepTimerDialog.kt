@@ -65,7 +65,12 @@ class SleepTimerDialog : BottomSheetDialogFragment() {
     private fun setupChips() {
         binding.chipGroupDurations.removeAllViews()
         presets.forEach { min ->
-            val chip = Chip(requireContext()).apply {
+            val chip = Chip(
+                android.view.ContextThemeWrapper(
+                    requireContext(),
+                    R.style.ThemeOverlay_RadyoApp_TimerChips
+                )
+            ).apply {
                 text = when (min) {
                     5 -> getString(R.string.timer_5min)
                     10 -> getString(R.string.timer_10min)
@@ -79,6 +84,12 @@ class SleepTimerDialog : BottomSheetDialogFragment() {
                 }
                 isCheckable = true
                 isChecked = min == customMinutes
+                setEnsureMinTouchTargetSize(false)
+                chipBackgroundColor = android.content.res.ColorStateList.valueOf(
+                    Color.parseColor("#2C2C34")
+                )
+                setTextColor(Color.WHITE)
+                chipStrokeWidth = 0f
                 setOnClickListener {
                     customMinutes = min
                     refreshCustomLabel()
@@ -99,9 +110,10 @@ class SleepTimerDialog : BottomSheetDialogFragment() {
             val on = min == customMinutes
             chip.isChecked = on
             chip.chipBackgroundColor = android.content.res.ColorStateList.valueOf(
-                if (on) Color.parseColor("#E91E63") else Color.parseColor("#33FFFFFF")
+                if (on) Color.parseColor("#E91E63") else Color.parseColor("#2C2C34")
             )
             chip.setTextColor(Color.WHITE)
+            chip.chipStrokeWidth = 0f
         }
     }
 
@@ -159,12 +171,13 @@ class SleepTimerDialog : BottomSheetDialogFragment() {
         binding.btnCancelTimer.visibility = if (active) View.VISIBLE else View.GONE
         binding.extendRow.visibility = if (active) View.VISIBLE else View.GONE
         binding.timerRing.progress = if (active) SleepTimerManager.progress() else 0f
+        binding.timerRing.caption = ""
         if (active && ms > 0) {
             binding.timerRing.label = SleepTimerManager.formatRemaining(ms)
-            binding.timerRing.caption = getString(R.string.timer_will_stop)
+            binding.tvTimerBanner.text = getString(R.string.timer_will_stop)
         } else {
             binding.timerRing.label = "%d:00".format(customMinutes)
-            binding.timerRing.caption = getString(R.string.timer_pick)
+            binding.tvTimerBanner.text = getString(R.string.timer_lock_hint)
         }
         refreshCustomLabel()
     }

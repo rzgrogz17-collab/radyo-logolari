@@ -12,6 +12,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -45,6 +46,8 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     private var isPagerScrolling = false
     private var userScrubbing = false
     private var recordingObserved = false
+    private var liveEdgePosition = 0L
+    private var lastProgressStationId: String? = null
 
     private val writePermLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -124,7 +127,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Tam ekran
+        // Tam ekran — sistem çubukları banner'ı kesmesin
         dialog?.findViewById<View>(
             com.google.android.material.R.id.design_bottom_sheet
         )?.let { sheet ->
@@ -134,8 +137,21 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
                 state = BottomSheetBehavior.STATE_EXPANDED
                 skipCollapsed = true
             }
+            val navBottom = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                dialog?.window?.decorView?.rootWindowInsets
+                    ?.getInsets(WindowInsets.Type.navigationBars())?.bottom ?: 0
+            } else {
+                @Suppress("DEPRECATION")
+                dialog?.window?.decorView?.rootWindowInsets?.systemWindowInsetBottom ?: 0
+            }
             sheet.layoutParams.height = resources.displayMetrics.heightPixels
             sheet.requestLayout()
+            binding.root.setPadding(
+                binding.root.paddingLeft,
+                binding.root.paddingTop,
+                binding.root.paddingRight,
+                navBottom.coerceAtLeast(binding.root.paddingBottom)
+            )
         }
 
         setupSwipeGesture()
@@ -264,10 +280,17 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             override fun onStopTrackingTouch(sb: SeekBar?) {
                 userScrubbing = false
                 val bar = sb ?: return
-                val dur = radioService?.playbackDurationMs() ?: 0L
-                if (dur > 0L && radioService?.isPlaybackSeekable() == true) {
-                    radioService?.seekToMs((dur * bar.progress) / bar.max)
+                val service = radioService ?: return
+                val dur = service.playbackDurationMs()
+                if (dur > 0L) {
+                    service.seekToMs((dur * bar.progress) / bar.max)
+                    return
                 }
+                val window = RadioPlayerService.LIVE_REWIND_WINDOW_MS
+                val edge = liveEdgePosition.coerceAtLeast(service.playbackPositionMs())
+                val start = (edge - window).coerceAtLeast(0L)
+                val span = (edge - start).coerceAtLeast(1L)
+                service.seekToMs(start + (span * bar.progress) / bar.max)
             }
         })
         binding.btnRewind.setOnClickListener {
@@ -306,16 +329,15 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         val service = radioService ?: return
         val duration = service.playbackDurationMs()
         val position = service.playbackPositionMs()
-        val hasWindow = duration > 0L
         val seekable = service.isPlaybackSeekable()
         val elapsed = when {
-            hasWindow && position <= duration + 1_000L -> position
+            duration > 0L && position <= duration + 1_000L -> position
             position in 1L until (24L * 3600_000L) -> position
             else -> service.sessionElapsedMs()
         }
 
         binding.tvElapsed.text = formatClock(elapsed)
-        if (hasWindow) {
+        if (duration > 0L) {
             val remaining = (duration - position).coerceAtLeast(0L)
             binding.tvRemaining.text = if (seekable) {
                 "−${formatClock(remaining)}"
@@ -325,19 +347,25 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             binding.tvRemaining.setTextColor(
                 Color.parseColor(if (seekable) "#E6FFFFFF" else "#E01B3B")
             )
-            binding.seekBarProgress.isEnabled = seekable
+            binding.seekBarProgress.isEnabled = true
             if (!userScrubbing) {
                 val max = binding.seekBarProgress.max.coerceAtLeast(1)
                 binding.seekBarProgress.progress =
                     ((position.coerceAtLeast(0L) * max) / duration).toInt().coerceIn(0, max)
             }
         } else {
+            if (position > liveEdgePosition) liveEdgePosition = position
+            val window = RadioPlayerService.LIVE_REWIND_WINDOW_MS
+            val edge = liveEdgePosition.coerceAtLeast(position)
+            val start = (edge - window).coerceAtLeast(0L)
+            val span = (edge - start).coerceAtLeast(1L)
             binding.tvRemaining.text = getString(R.string.live_badge)
             binding.tvRemaining.setTextColor(Color.parseColor("#E01B3B"))
-            binding.seekBarProgress.isEnabled = false
+            binding.seekBarProgress.isEnabled = true
             if (!userScrubbing) {
-                binding.seekBarProgress.max = 1000
-                binding.seekBarProgress.progress = 1000
+                val max = binding.seekBarProgress.max.coerceAtLeast(1)
+                binding.seekBarProgress.progress =
+                    (((position - start) * max) / span).toInt().coerceIn(0, max)
             }
         }
         if (service.isRecording()) {
@@ -560,6 +588,10 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     private fun updateUI(station: RadioStation) {
         if (_binding == null) return
+        if (lastProgressStationId != station.id) {
+            liveEdgePosition = 0L
+            lastProgressStationId = station.id
+        }
         binding.tvStationName.text = station.name
         binding.tvStationName.isSelected = true
         binding.tvCountry.text = station.country
@@ -594,10 +626,11 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     private fun loadBannerAd() {
         try {
             val container = binding.playerBannerContainer
-            container.visibility = android.view.View.GONE // yüklenene kadar gizli
+            container.visibility = android.view.View.INVISIBLE
             com.globalradio.livetuneinogzapp.ads.AdManager.loadBanner(
                 requireActivity() as android.app.Activity,
-                container
+                container,
+                collapseIfEmpty = false
             )
         } catch (_: Exception) {
         }

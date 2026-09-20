@@ -90,7 +90,7 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/text_primary"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -101,7 +101,7 @@
                     android:layout_marginTop="2dp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:textColor="#fff"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
 
                 <!-- Tag'ler - yatay, taşmayı önlemek için sabit yükseklik -->

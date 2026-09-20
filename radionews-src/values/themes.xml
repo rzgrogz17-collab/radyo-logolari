@@ -24,10 +24,26 @@
         <item name="chipStyle">@style/Widget.RadyoApp.Chip</item>
     </style>
 
-    <style name="Theme.RadyoApp.Splash" parent="Theme.RadyoApp">
+    <!-- Sistem splash: ikon yok, arka plan nefes alan splash ile aynı. -->
+    <style name="Theme.RadyoApp.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_window_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_transparent</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/splash_window_bg</item>
+        <item name="postSplashScreenTheme">@style/Theme.RadyoApp.SplashContent</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/splash_window_bg</item>
+        <item name="android:navigationBarColor">@color/splash_window_bg</item>
+    </style>
+
+    <style name="Theme.RadyoApp.SplashContent" parent="Theme.RadyoApp">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@color/bg_dark</item>
+        <item name="android:windowBackground">@drawable/bg_splash_gradient</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/splash_window_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
 
@@ -36,6 +52,7 @@
         <item name="bottomSheetStyle">@style/AppBottomSheetStyle</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="chipStyle">@style/Widget.RadyoApp.TimerChip</item>
     </style>
 
     <style name="AppBottomSheetStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">
@@ -43,6 +60,20 @@
         <item name="backgroundTint">@android:color/transparent</item>
         <item name="behavior_peekHeight">400dp</item>
         <item name="behavior_skipCollapsed">true</item>
+    </style>
+
+    <style name="ThemeOverlay.RadyoApp.TimerChips" parent="">
+        <item name="chipStyle">@style/Widget.RadyoApp.TimerChip</item>
+    </style>
+
+    <style name="Widget.RadyoApp.TimerChip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/timer_chip_idle</item>
+        <item name="android:textColor">@color/timer_on_dark</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="chipMinHeight">36dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="rippleColor">#33FFFFFF</item>
     </style>
 
     <!-- Chip stili -->
@@ -70,8 +101,8 @@
         <item name="bottomSheetStyle">@style/FullScreenSheetStyle</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="android:windowTranslucentNavigation">false</item>
     </style>
 
     <style name="FullScreenSheetStyle" parent="Widget.MaterialComponents.BottomSheet.Modal">

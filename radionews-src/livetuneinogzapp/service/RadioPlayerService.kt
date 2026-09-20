@@ -254,7 +254,7 @@ class RadioPlayerService : Service() {
     private fun initPlayer() {
         val loadControl = DefaultLoadControl.Builder()
             .setBufferDurationsMs(15_000, 50_000, 1_500, 2_500)
-            .setBackBuffer(45_000, true)
+            .setBackBuffer(60_000, true)
             .build()
 
         player = ExoPlayer.Builder(this)
@@ -563,8 +563,11 @@ class RadioPlayerService : Service() {
         return if (d == C.TIME_UNSET || d <= 0L) 0L else d
     }
 
-    fun isPlaybackSeekable(): Boolean =
-        ::player.isInitialized && player.isCurrentMediaItemSeekable && playbackDurationMs() > 0L
+    fun isPlaybackSeekable(): Boolean {
+        if (!::player.isInitialized) return false
+        if (player.isCurrentMediaItemSeekable && playbackDurationMs() > 0L) return true
+        return player.isCurrentMediaItemLive || playbackPositionMs() > 0L
+    }
 
     fun isLiveStream(): Boolean =
         ::player.isInitialized && player.isCurrentMediaItemLive
@@ -572,24 +575,31 @@ class RadioPlayerService : Service() {
     fun rewind(deltaMs: Long = 15_000L): Boolean {
         if (!::player.isInitialized) return false
         return try {
-            val pos = playbackPositionMs()
-            if (pos > 0L) {
-                player.seekTo((pos - deltaMs).coerceAtLeast(0L))
-                return true
-            }
-            if (player.isCurrentMediaItemSeekable || playbackDurationMs() > 0L) {
+            val pos = player.currentPosition
+            if (pos != C.TIME_UNSET && pos > 0L) {
+                val minPos = if (player.isCurrentMediaItemLive) {
+                    (pos - LIVE_REWIND_WINDOW_MS).coerceAtLeast(0L)
+                } else {
+                    0L
+                }
+                player.seekTo((pos - deltaMs).coerceAtLeast(minPos))
+                true
+            } else {
                 player.seekBack()
-                return true
+                true
             }
-            false
         } catch (_: Exception) {
-            false
+            try {
+                player.seekBack()
+                true
+            } catch (_: Exception) {
+                false
+            }
         }
     }
 
     fun seekToMs(positionMs: Long): Boolean {
         if (!::player.isInitialized) return false
-        if (!isPlaybackSeekable() && playbackDurationMs() <= 0L) return false
         return try {
             player.seekTo(positionMs.coerceAtLeast(0L))
             true
@@ -762,5 +772,6 @@ class RadioPlayerService : Service() {
         const val ACTION_REFRESH_NOTIF = "com.globalradio.livetuneinogzapp.ACTION_REFRESH_NOTIF"
         const val BROADCAST_NEXT = "com.globalradio.livetuneinogzapp.NEXT_STATION"
         const val BROADCAST_PREV = "com.globalradio.livetuneinogzapp.PREV_STATION"
+        const val LIVE_REWIND_WINDOW_MS = 60_000L
     }
 }

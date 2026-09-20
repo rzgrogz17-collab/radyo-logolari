@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Cihaz dili Türkçe ise bu çeviriler kullanılır -->
+<resources>
+    <string name="app_name">RadioSphere</string>
+    <string name="splash_subtitle"></string>
+
+    <string name="section_all">🎙 Tümü</string>
+    <string name="section_top">🔥 Popüler</string>
+    <string name="section_favorites">❤️ Favoriler</string>
+    <string name="section_genres">🎵 Türler</string>
+    <string name="section_countries">🌍 Ülkeler</string>
+
+    <string name="search_hint">Ara…</string>
+    <string name="search_clear">Temizle</string>
+
+    <string name="now_playing">Şimdi Çalıyor</string>
+    <string name="play">Oynat</string>
+    <string name="pause">Duraklat</string>
+    <string name="stop">Durdur</string>
+    <string name="next">İleri</string>
+    <string name="previous">Geri</string>
+    <string name="share">Paylaş</string>
+    <string name="close">Kapat</string>
+    <string name="status_live">🔴 Canlı</string>
+    <string name="status_buffering">⏳ Yükleniyor…</string>
+    <string name="status_paused">Duraklatıldı</string>
+    <string name="status_reconnecting">🔄 Yeniden bağlanılıyor… (%d/5)</string>
+
+    <string name="mini_player_live">🔴 Canlı</string>
+    <string name="mini_player_paused">Duraklatıldı</string>
+    <string name="mini_player_loading">⏳ Yükleniyor…</string>
+    <string name="mini_player_reconnecting">🔄 Yeniden bağlanılıyor…</string>
+
+    <string name="favorite">Favori</string>
+    <string name="added_to_favorites">Favorilere eklendi ♥</string>
+    <string name="removed_from_favorites">Favorilerden çıkarıldı</string>
+    <string name="no_favorites">Henüz favori yok.\nEklemek için bir istasyonda ❤ simgesine dokunun.</string>
+
+    <string name="sleep_timer">Uyku Zamanlayıcısı</string>
+    <string name="sleep_timer_desc">Seçilen süre sonunda radyo otomatik durur</string>
+    <string name="timer_5min">5 dk</string>
+    <string name="timer_10min">10 dk</string>
+    <string name="timer_15min">15 dk</string>
+    <string name="timer_30min">30 dk</string>
+    <string name="timer_45min">45 dk</string>
+    <string name="timer_60min">1 saat</string>
+    <string name="timer_90min">1,5 saat</string>
+    <string name="timer_120min">2 saat</string>
+    <string name="timer_cancel">Zamanlayıcıyı İptal Et</string>
+    <string name="timer_set_msg">Radyo %s sonra duracak ⏱</string>
+    <string name="timer_cancelled">Zamanlayıcı iptal edildi</string>
+    <string name="timer_finished">Uyku zamanlayıcısı: Radyo durdu 😴</string>
+    <string name="timer_remaining">⏱ %s</string>
+
+    <string name="notification_channel_name">Radyo Oynatıcı</string>
+    <string name="notification_channel_desc">Radyo arka plan oynatma bildirimi</string>
+    <string name="notif_live">🔴 Canlı</string>
+    <string name="notif_paused">Duraklatıldı</string>
+    <string name="notif_loading">Yükleniyor…</string>
+    <string name="notif_reconnecting">Yeniden bağlanılıyor…</string>
+    <string name="notif_app_name">RadioSphere</string>
+
+    <string name="error_no_internet">İnternet bağlantısı yok. Yenilemek için aşağı çekin.</string>
+    <string name="error_timeout">Bağlantı zaman aşımına uğradı. Lütfen tekrar deneyin.</string>
+    <string name="error_load">İstasyonlar yüklenemedi. Yenilemek için aşağı çekin.</string>
+    <string name="error_stream_unavailable">Yayın şu anda kullanılamıyor</string>
+    <string name="error_connection">Bağlantı başarısız</string>
+    <string name="error_service_starting">Servis başlatılıyor…</string>
+    <string name="error_offline_cache">İnternet yok. Son bilinen istasyon listesi gösteriliyor.</string>
+
+    <string name="empty_result">Sonuç bulunamadı</string>
+    <string name="empty_result_sub">Farklı bir arama deneyin</string>
+    <string name="empty_stations">İstasyon bulunamadı\n\nYeniden denemek için dokunun</string>
+    <string name="no_history">Henüz dinleme geçmişi yok</string>
+    <string name="most_listened">En Çok Dinlenenler</string>
+    <string name="play_count">▶ %d kez çalındı</string>
+    <string name="play_count_first">▶ İlk kez çal</string>
+
+    <string name="settings">Ayarlar</string>
+    <string name="settings_appearance">GÖRÜNÜM</string>
+    <string name="settings_dark_theme">🌙 Koyu Tema</string>
+    <string name="settings_data">VERİ</string>
+    <string name="settings_clear_history">🗑 Dinleme Geçmişini Temizle</string>
+    <string name="settings_clear_cache">🖼 Logo Önbelleğini Temizle</string>
+    <string name="settings_about">HAKKINDA</string>
+    <string name="settings_app_name">📻 RadioSphere</string>
+    <string name="settings_history_cleared">Dinleme geçmişi temizlendi</string>
+    <string name="settings_cache_cleared">Önbellek temizlendi</string>
+    <string name="settings_other_apps">📱 Diğer Uygulamalar</string>
+    <string name="settings_privacy">🔒 Gizlilik Tercihleri</string>
+
+    <string name="widget_not_playing">Çalmıyor</string>
+    <string name="widget_desc">RadioSphere Widget</string>
+    <string name="widget_live">🔴 Canlı</string>
+
+    <string name="countries">🌍 Ülkeler</string>
+    <string name="station_count">%d istasyon</string>
+
+    <string name="retry">Yeniden dene</string>
+    <string name="loading">Yükleniyor…</string>
+    <string name="share_text" formatted="false">📻 %s dinliyorum!\n🌍 %s\n\nRadioSphere uygulaması ile.</string>
+
+    <string name="gdpr_title">Gizlilik Tercihleri</string>
+    <string name="gdpr_message">Uygulama ücretsiz kalmak için reklam gösterir. Kişiselleştirilmiş reklamlar için onayınız gerekir.</string>
+    <string name="gdpr_accept">Kabul et ve devam et</string>
+    <string name="gdpr_reject">Yalnızca temel reklamlara izin ver</string>
+    <string name="gdpr_settings">Gizlilik Ayarları</string>
+    <string name="ad_loading">Reklam yükleniyor…</string>
+    <string name="most_listened_title">🔥 En Çok Dinlenenler</string>
+    <string name="most_listened_desc">Bu cihazda en çok dinlediğiniz istasyonlar</string>
+    <string name="nav_home">Ana sayfa</string>
+    <string name="stream_failed">Yüklenemedi — Yeniden denemek için dokunun</string>
+    <string name="service_starting">Servis başlatılıyor…</string>
+    <string name="error_with_message">Hata: %s</string>
+    <string name="play_count_times">▶ %d kez çalındı</string>
+    <string name="play_count_first_time">▶ İlk kez çal</string>
+    <string name="consent_reset">Reklam tercihleri sıfırlandı. Yeniden başlatılıyor…</string>
+    <string name="btn_reset_consent">Reklam Tercihlerini Sıfırla</string>
+    <string name="genre_pop">Pop</string>
+    <string name="genre_rock">Rock</string>
+    <string name="genre_news">Haber</string>
+    <string name="genre_jazz">Caz</string>
+    <string name="genre_hiphop">Hip-Hop</string>
+    <string name="genre_electronic">Elektronik</string>
+    <string name="genre_dance">Dans</string>
+    <string name="genre_classical">Klasik</string>
+    <string name="genre_house">House</string>
+    <string name="genre_folk">Folk</string>
+    <string name="genre_talk">Sohbet</string>
+    <string name="genre_islam">İslami</string>
+    <string name="share_via">RadioSphere uygulaması ile.</string>
+    <string name="rewind_15">15 saniye geri al</string>
+    <string name="rewind_15_short">15sn</string>
+    <string name="save_recording">Kaydet</string>
+    <string name="save_short">Kaydet</string>
+    <string name="recording_short">KAYIT</string>
+    <string name="live_badge">CANLI</string>
+    <string name="rewind_not_available">Canlı yayın — geri alma kullanılamıyor</string>
+    <string name="recording_started">Kayıt başladı</string>
+    <string name="recording_saved">Müzik/RadioSphere klasörüne kaydedildi: %s</string>
+    <string name="recording_failed">Yayın kaydedilemedi</string>
+    <string name="recording_permission_needed">Sesi kaydetmek için depolama izni gerekir</string>
+
+    <string name="equalizer">Ekolayzer</string>
+    <string name="bass_boost">Bass</string>
+    <string name="eq_flat">Düz</string>
+    <string name="eq_rock">Rock</string>
+    <string name="eq_pop">Pop</string>
+    <string name="eq_hiphop">Hip-Hop</string>
+    <string name="eq_jazz">Caz</string>
+    <string name="eq_classical">Klasik</string>
+    <string name="eq_bass">Bass</string>
+    <string name="eq_vocal">Vokal</string>
+
+    <string name="settings_contact_header">İLETİŞİM</string>
+    <string name="settings_contact_email">✉️ E-posta ile bize yazın</string>
+    <string name="settings_contact_subject">RadioSphere - Geri bildirim</string>
+    <string name="settings_more">DAHA FAZLA</string>
+    <string name="settings_playback">OYNATMA</string>
+    <string name="settings_dark_theme_desc">Koyu RadioSphere görünümünü kullan</string>
+    <string name="settings_resume_last">Açılışta son istasyonu çal</string>
+    <string name="settings_resume_last_desc">Dinlediğiniz son istasyona otomatik devam et</string>
+    <string name="settings_lock_controls">Kilit ekranı kontrolleri</string>
+    <string name="settings_lock_controls_desc">Kilit ekranında ve bildirimde ileri / oynat düğmelerini göster</string>
+    <string name="settings_default_volume">İstasyon başlarken sesi ayarla</string>
+    <string name="settings_default_volume_desc">Her oynatma başında tercih edilen ses düzeyini uygula</string>
+    <string name="settings_volume_value">%d%%</string>
+    <string name="settings_data_saver">Veri tasarrufu</string>
+    <string name="settings_data_saver_desc">Daha az veri kullanmak için istasyon logolarını ve bayrakları yükleme</string>
+    <string name="settings_backup">YEDEK</string>
+    <string name="settings_export">Favorileri ve geçmişi dışa aktar</string>
+    <string name="settings_export_desc">Daha sonra geri yükleyebileceğiniz bir JSON yedeği kaydedin</string>
+    <string name="settings_import">Yedeği içe aktar</string>
+    <string name="settings_import_desc">Bir dosyadan favorileri ve çalma sayılarını birleştir</string>
+    <string name="settings_recordings">KAYITLAR</string>
+    <string name="settings_open_recordings">Kayıt klasörünü aç</string>
+    <string name="settings_open_recordings_desc">Müzik / RadioSphere</string>
+    <string name="settings_clear_recordings">Kayıtları sil</string>
+    <string name="settings_clear_recordings_desc">Müzik klasöründeki RadioSphere dosyalarını kaldır</string>
+    <string name="settings_rate">RadioSphere’i puanla</string>
+    <string name="settings_privacy_policy">Gizlilik</string>
+    <string name="settings_licenses">Açık kaynak lisansları</string>
+    <string name="settings_confirm_title">Emin misiniz?</string>
+    <string name="settings_confirm_history">Bu cihazdaki dinleme geçmişi silinecek.</string>
+    <string name="settings_confirm_cache">Önbellekteki istasyon logoları kaldırılacak.</string>
+    <string name="settings_confirm_recordings">Kaydedilmiş RadioSphere kayıtları silinecek.</string>
+    <string name="settings_exported">Yedek kaydedildi</string>
+    <string name="settings_imported">Yedek içe aktarıldı</string>
+    <string name="settings_import_failed">Yedek dosyası okunamadı</string>
+    <string name="settings_recordings_cleared">Kayıtlar silindi</string>
+    <string name="settings_recordings_path">Müzik/RadioSphere klasörüne kaydedilir</string>
+    <string name="settings_privacy_body">RadioSphere herkese açık radyo yayınlarını çalar, favorileri ve dinleme sayılarını yalnızca bu cihazda saklar ve reklam gösterebilir. Kaydettiğiniz kayıtlar Müzik klasörünüzde kalır. Hesap gerekmez.</string>
+    <string name="settings_licenses_body">Bu uygulama AndroidX, Material Components, Media3/ExoPlayer, OkHttp, Retrofit, Gson, Glide, Room, Hilt ve Google Cast kullanır. Lisansları yazarlarının yayınladığı şekliyle geçerlidir.</string>
+    <string name="settings_theme_applied">Tema güncellendi</string>
+
+    <string name="eq_on">AÇIK</string>
+    <string name="eq_off">KAPALI</string>
+    <string name="eq_status_on">Ekolayzer açık</string>
+    <string name="eq_status_off">Ekolayzer kapalı</string>
+    <string name="eq_unavailable">Bu cihazda bir istasyon çalana kadar ekolayzer kullanılamaz.</string>
+    <string name="eq_treble">Tiz</string>
+    <string name="eq_surround">Surround</string>
+    <string name="eq_reset">Sıfırla</string>
+    <string name="eq_save">Preseti kaydet</string>
+    <string name="eq_custom">Özel</string>
+    <string name="eq_preset_name_hint">Preset adı</string>
+    <string name="eq_preset_saved">Preset kaydedildi — silmek için uzun basın</string>
+
+    <string name="timer_n_min">%d dk</string>
+    <string name="timer_start">Zamanlayıcıyı başlat</string>
+    <string name="timer_plus">Artır</string>
+    <string name="timer_minus">Azalt</string>
+    <string name="timer_plus_5">+5</string>
+    <string name="timer_minus_5">−5</string>
+    <string name="timer_plus_15">+15</string>
+    <string name="timer_fade">Son 20 saniyede sesi kısarak kapat</string>
+    <string name="timer_mute_instead">Durdurmak yerine sesi kapat</string>
+    <string name="timer_lock_hint">Ekranı kilitlemeniz zamanlayıcıyı durdurmaz. Süre dolunca radyo durur.</string>
+    <string name="timer_will_stop">Halka bitince radyo durur</string>
+    <string name="timer_pick">Bir süre seçin</string>
+</resources>
