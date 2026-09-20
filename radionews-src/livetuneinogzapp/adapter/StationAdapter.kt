@@ -87,7 +87,8 @@ class StationAdapter(
             b.tvStationName.setTextColor(
                 if (playing) ctx.getColor(R.color.accent) else ctx.getColor(R.color.text_primary)
             )
-            b.cardRoot.setCardBackgroundColor(
+            b.cardRoot.setCardBackgroundColor(ctx.getColor(R.color.bg_card))
+            b.rowHighlight.setBackgroundColor(
                 ctx.getColor(if (playing) R.color.bg_card_playing else R.color.bg_card)
             )
         }

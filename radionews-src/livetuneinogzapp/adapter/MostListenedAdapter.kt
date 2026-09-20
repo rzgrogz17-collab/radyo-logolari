@@ -129,10 +129,9 @@ class MostListenedAdapter(
             updateFavIcon(station.isFavorite)
 
             // Oynatılıyor vurgusu
-            b.root.setCardBackgroundColor(
-                ctx.getColor(
-                    if (isPlaying) R.color.bg_card_playing else R.color.bg_card
-                )
+            b.root.setCardBackgroundColor(ctx.getColor(R.color.bg_card))
+            b.rowHighlight.setBackgroundColor(
+                ctx.getColor(if (isPlaying) R.color.bg_card_playing else R.color.bg_card)
             )
             b.tvStationName.setTextColor(
                 ctx.getColor(if (isPlaying) R.color.text_playing else R.color.text_primary)
