@@ -176,7 +176,7 @@ class EqualizerBottomSheet : BottomSheetDialogFragment() {
             this.text = text
             isCheckable = true
             isChecked = selected
-            checkedIconVisible = false
+            isCheckedIconVisible = false
             setChipBackgroundColorResource(R.color.timer_chip_idle)
             setTextColor(ContextCompat.getColor(requireContext(), R.color.on_dark_sheet))
             chipStrokeColor = android.content.res.ColorStateList.valueOf(
