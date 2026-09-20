@@ -71,12 +71,11 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- Kare logo: ekranın ortasında, dört yönde mümkün olduğunca büyük -->
+            <!-- Peek: yan logolar 40dp görünür; kart sayfayı doldurur -->
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginTop="2dp"
+                android:layout_height="300dp"
+                android:layout_marginTop="4dp"
                 android:clipChildren="false"
                 android:clipToPadding="false">
 
@@ -86,9 +85,7 @@
                     android:layout_height="match_parent"
                     android:clipChildren="false"
                     android:clipToPadding="false"
-                    android:overScrollMode="never"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp" />
+                    android:overScrollMode="never" />
 
             </FrameLayout>
 

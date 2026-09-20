@@ -177,12 +177,14 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         binding.logoPager.offscreenPageLimit = 2
         binding.logoPager.clipToPadding = false
 
+        // İlk zip'teki peek: sağ/sol sonraki-önceki logo biraz görünür
         binding.logoPager.setPageTransformer { page, position ->
             val absPos = kotlin.math.abs(position).coerceAtMost(1f)
-            page.scaleX = 1f - 0.06f * absPos
-            page.scaleY = 1f - 0.06f * absPos
-            page.alpha = 1f - 0.22f * absPos
+            page.scaleX = 1f - 0.10f * absPos
+            page.scaleY = 1f - 0.10f * absPos
+            page.alpha = 1f - 0.35f * absPos
         }
+        binding.logoPager.post { applyLogoPeekPadding() }
 
         // Sayfa değişince radyoyu değiştir
         binding.logoPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -200,6 +202,17 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
                 }
             }
         })
+    }
+
+    /** ViewPager2 sayfa genişliğini küçültmez; iç RecyclerView padding ile yan logolar görünür. */
+    private fun applyLogoPeekPadding() {
+        if (_binding == null) return
+        val rv = binding.logoPager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return
+        val peek = (40f * resources.displayMetrics.density).toInt()
+        if (rv.paddingStart != peek || rv.paddingEnd != peek) {
+            rv.setPadding(peek, 0, peek, 0)
+            rv.clipToPadding = false
+        }
     }
 
     /** Pager'ı aktif bölümün tüm listesiyle güncelle */
@@ -231,6 +244,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         }
         val idx = logoPagerAdapter.indexOf(cur)
         if (idx >= 0) binding.logoPager.setCurrentItem(idx, false)
+        binding.logoPager.post { applyLogoPeekPadding() }
     }
 
 
