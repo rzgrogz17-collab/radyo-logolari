@@ -3,7 +3,7 @@
     <color name="bg_dark">#F3F4F8</color>
     <color name="bg_surface">#FFFFFF</color>
     <color name="bg_card">#FFFFFF</color>
-    <color name="bg_card_playing">#FDE8EF</color>
+    <color name="bg_card_playing">#F6F1E3</color>
     <color name="bg_mini_player">#FFFFFF</color>
     <color name="bg_overlay">#EEF0F4</color>
 
@@ -48,6 +48,7 @@
 
     <color name="card_stroke">#E2E6EC</color>
     <color name="divider">#E6E9EE</color>
+    <color name="list_separator">#E4DFD4</color>
     <color name="mini_player_stroke">#E91E63</color>
     <color name="search_bg">#F3F4F8</color>
     <color name="search_stroke">#DDE2EA</color>

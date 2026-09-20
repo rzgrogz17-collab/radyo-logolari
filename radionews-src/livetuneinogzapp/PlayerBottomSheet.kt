@@ -179,17 +179,10 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
         binding.logoPager.setPageTransformer { page, position ->
             val absPos = kotlin.math.abs(position).coerceAtMost(1f)
-            page.scaleX = 1f - 0.08f * absPos
-            page.scaleY = 1f - 0.08f * absPos
-            page.alpha = 1f - 0.28f * absPos
+            page.scaleX = 1f - 0.06f * absPos
+            page.scaleY = 1f - 0.06f * absPos
+            page.alpha = 1f - 0.22f * absPos
         }
-
-        binding.logoPager.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-            if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
-                applySquareLogoPagerPadding()
-            }
-        }
-        binding.logoPager.post { applySquareLogoPagerPadding() }
 
         // Sayfa değişince radyoyu değiştir
         binding.logoPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -207,23 +200,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
                 }
             }
         })
-    }
-
-    /** Pager yüksekliğine göre yan padding: kart kare olur, yan logolar peek eder. */
-    private fun applySquareLogoPagerPadding() {
-        if (_binding == null) return
-        val pager = binding.logoPager
-        val w = pager.width
-        val h = pager.height
-        if (w <= 0 || h <= 0) return
-        val density = resources.displayMetrics.density
-        val minPeek = (24f * density).toInt()
-        val pad = ((w - h) / 2).coerceAtLeast(minPeek)
-        val rv = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return
-        if (rv.paddingStart != pad || rv.paddingEnd != pad) {
-            rv.setPadding(pad, 0, pad, 0)
-            rv.clipToPadding = false
-        }
     }
 
     /** Pager'ı aktif bölümün tüm listesiyle güncelle */
@@ -255,7 +231,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         }
         val idx = logoPagerAdapter.indexOf(cur)
         if (idx >= 0) binding.logoPager.setCurrentItem(idx, false)
-        applySquareLogoPagerPadding()
     }
 
 

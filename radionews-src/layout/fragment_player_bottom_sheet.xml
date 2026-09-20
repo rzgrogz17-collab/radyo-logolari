@@ -18,16 +18,18 @@
         android:layout_height="match_parent"
         android:background="@drawable/bg_player_overlay" />
 
-    <!-- İçerik: ScrollView değil LinearLayout, layout_weight ile boşluk yönetilir -->
+    <!-- İçerik: logo ortada kare büyür; rewind/save ve banner sabit -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:orientation="vertical">
 
         <!-- ── ÜST BAR ── -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="98dp"
+            android:layout_height="64dp"
             android:paddingHorizontal="16dp">
 
             <ImageButton
@@ -69,12 +71,12 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!-- Kare logo: yükseklik kalan alana yayılır, kart 1:1 oranında -->
+            <!-- Kare logo: ekranın ortasında, dört yönde mümkün olduğunca büyük -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
                 android:clipChildren="false"
                 android:clipToPadding="false">
 
@@ -84,7 +86,9 @@
                     android:layout_height="match_parent"
                     android:clipChildren="false"
                     android:clipToPadding="false"
-                    android:overScrollMode="never" />
+                    android:overScrollMode="never"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp" />
 
             </FrameLayout>
 
@@ -94,7 +98,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
@@ -222,10 +226,10 @@
 
         </LinearLayout>
 
-        <!-- Logo / canlı yazısı rewind-kaydet paneline yapışmasın -->
+        <!-- Logo rewind/kaydet paneline yapışmasın -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="22dp" />
+            android:layout_height="16dp" />
 
         <!-- ── İLERLEME / GERİ SAR / KAYDET ── -->
         <LinearLayout
@@ -385,8 +389,8 @@
         <!-- ── ANA KONTROLLER ── -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginBottom="10dp"
+            android:layout_height="88dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingHorizontal="16dp">

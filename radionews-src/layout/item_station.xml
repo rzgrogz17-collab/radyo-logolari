@@ -27,20 +27,35 @@
         <!-- Asıl satır içeriği -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="72dp"
+            android:layout_height="76dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingHorizontal="12dp">
 
-            <!-- Kare logo -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cvAvatar"
-                android:layout_width="58dp"
-                android:layout_height="58dp"
+            <!-- Kare logo + alt gölge -->
+            <FrameLayout
+                android:layout_width="62dp"
+                android:layout_height="64dp"
                 android:layout_marginStart="4dp"
-                app:cardCornerRadius="11dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+                <View
+                    android:layout_width="52dp"
+                    android:layout_height="14dp"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:background="@drawable/bg_logo_soft_shadow" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cvAvatar"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="top|center_horizontal"
+                    app:cardCornerRadius="11dp"
+                    app:cardElevation="3dp"
+                    app:strokeWidth="0dp">
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -67,6 +82,7 @@
                 </FrameLayout>
 
             </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
 
             <!-- Oynuyor göstergesi -->
             <View
@@ -133,10 +149,8 @@
         <!-- ── Alt ayırıcı çizgi (çok belirgin değil) ── -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.6dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:background="#333333" />
+            android:layout_height="1dp"
+            android:background="@color/list_separator" />
 
     </LinearLayout>
 

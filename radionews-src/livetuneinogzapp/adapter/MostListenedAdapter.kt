@@ -134,7 +134,9 @@ class MostListenedAdapter(
                     if (isPlaying) R.color.bg_card_playing else R.color.bg_card
                 )
             )
-            b.tvStationName.setTextColor(if (isPlaying) Color.parseColor("#c90076") else Color.WHITE)
+            b.tvStationName.setTextColor(
+                ctx.getColor(if (isPlaying) R.color.text_playing else R.color.text_primary)
+            )
 
             if (isPlaying) {
                 b.playingDot.visibility = View.VISIBLE
