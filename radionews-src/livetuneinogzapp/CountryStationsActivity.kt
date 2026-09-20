@@ -15,8 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.globalradio.livetuneinogzapp.utils.StationImages
 import com.globalradio.livetuneinogzapp.adapter.StationAdapter
 import com.globalradio.livetuneinogzapp.ads.AdManager
 import com.globalradio.livetuneinogzapp.databinding.ActivityCountryStationsBinding
@@ -52,6 +51,8 @@ class CountryStationsActivity : AppCompatActivity() {
                 }
                 adapter.updatePlayingStation(playingId)
                 updateMiniPlayerState(state)
+                val sid = radioService?.getAudioSessionId() ?: 0
+                if (sid != 0) EqualizerManager.init(this@CountryStationsActivity, sid)
             }
             val sid = radioService?.getAudioSessionId() ?: 0
             if (sid != 0) EqualizerManager.init(this@CountryStationsActivity, sid)
@@ -339,12 +340,7 @@ class CountryStationsActivity : AppCompatActivity() {
         binding.miniBuffering.visibility =
             if (isBuffering || isReconnecting) View.VISIBLE else View.GONE
         if (station.hasValidFavicon()) {
-            Glide.with(this).load(station.favicon)
-                .placeholder(R.drawable.ic_radio_placeholder)
-                .error(R.drawable.ic_radio_placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .circleCrop()
-                .into(binding.ivMiniLogo)
+            StationImages.loadLogo(binding.ivMiniLogo, station.favicon, circle = true)
         } else {
             binding.ivMiniLogo.setImageResource(R.drawable.ic_radio_placeholder)
         }

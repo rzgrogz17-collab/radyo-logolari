@@ -28,6 +28,8 @@ import com.globalradio.livetuneinogzapp.R
 import com.globalradio.livetuneinogzapp.RadioWidget
 import com.globalradio.livetuneinogzapp.model.PlayerState
 import com.globalradio.livetuneinogzapp.model.RadioStation
+import com.globalradio.livetuneinogzapp.utils.AppSettings
+import com.globalradio.livetuneinogzapp.utils.SleepTimerManager
 import com.globalradio.livetuneinogzapp.utils.StreamRecorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -66,6 +68,8 @@ class RadioPlayerService : Service() {
     private var recorder: StreamRecorder? = null
     val recordingState = MutableLiveData(false)
     val recordingEvent = MutableLiveData<Pair<Boolean, String>?>()
+    private var fadeJob: Job? = null
+    private var targetVolume = 1f
 
     // ── Yeniden bağlanma ─────────────────────────────────────────────────────
     private var retryJob: Job? = null
@@ -93,6 +97,15 @@ class RadioPlayerService : Service() {
 
             ACTION_NEXT -> playNextStation()
             ACTION_PREV -> playPreviousStation()
+            ACTION_TIMER_STOP -> fadeThenStop()
+            ACTION_TIMER_MUTE -> muteForTimer()
+            ACTION_FADE_VOLUME -> beginFade(20_000L, stopWhenDone = false)
+            ACTION_RESTORE_VOLUME -> restoreVolume()
+            ACTION_TIMER_CANCEL -> SleepTimerManager.cancel()
+            ACTION_TIMER_PLUS_15 -> SleepTimerManager.extend(15 * 60 * 1000L)
+            ACTION_REFRESH_NOTIF -> {
+                if (currentStation != null) updateNotification()
+            }
         }
         return START_STICKY
     }
@@ -100,6 +113,7 @@ class RadioPlayerService : Service() {
     override fun onDestroy() {
         retryJob?.cancel()
         artLoadJob?.cancel()
+        fadeJob?.cancel()
         stopRecording()
         serviceScope.cancel()
         mediaSession.release()
@@ -142,26 +156,39 @@ class RadioPlayerService : Service() {
                 }
             }
 
-            override fun hasNextMediaItem(): Boolean = true
-            override fun hasPreviousMediaItem(): Boolean = true
+            override fun hasNextMediaItem(): Boolean =
+                AppSettings(this@RadioPlayerService).lockScreenControls
+
+            override fun hasPreviousMediaItem(): Boolean =
+                AppSettings(this@RadioPlayerService).lockScreenControls
 
             override fun isCommandAvailable(command: Int): Boolean {
+                val lock = AppSettings(this@RadioPlayerService).lockScreenControls
                 return when (command) {
                     Player.COMMAND_SEEK_TO_NEXT,
                     Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM,
                     Player.COMMAND_SEEK_TO_PREVIOUS,
-                    Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM -> true
+                    Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM -> lock
                     else -> super.isCommandAvailable(command)
                 }
             }
 
             override fun getAvailableCommands(): Player.Commands {
-                return super.getAvailableCommands().buildUpon()
-                    .add(Player.COMMAND_SEEK_TO_NEXT)
-                    .add(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
-                    .add(Player.COMMAND_SEEK_TO_PREVIOUS)
-                    .add(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
-                    .build()
+                val builder = super.getAvailableCommands().buildUpon()
+                if (AppSettings(this@RadioPlayerService).lockScreenControls) {
+                    builder
+                        .add(Player.COMMAND_SEEK_TO_NEXT)
+                        .add(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+                        .add(Player.COMMAND_SEEK_TO_PREVIOUS)
+                        .add(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+                } else {
+                    builder
+                        .remove(Player.COMMAND_SEEK_TO_NEXT)
+                        .remove(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM)
+                        .remove(Player.COMMAND_SEEK_TO_PREVIOUS)
+                        .remove(Player.COMMAND_SEEK_TO_PREVIOUS_MEDIA_ITEM)
+                }
+                return builder.build()
             }
         }
 
@@ -377,6 +404,9 @@ class RadioPlayerService : Service() {
         currentStation = station
         currentAlbumArt = null
         sessionStartedAt = SystemClock.elapsedRealtime()
+        restoreVolume()
+        AppSettings(this).applyDefaultVolumeIfEnabled()
+        AppSettings(this).saveLastStation(station)
         playerState.postValue(PlayerState.Buffering)
 
         player.stop()
@@ -459,6 +489,7 @@ class RadioPlayerService : Service() {
         isIntentionallyStopped = true
         retryJob?.cancel()
         artLoadJob?.cancel()
+        fadeJob?.cancel()
         stopRecording()
         retryCount = 0
         player.stop()
@@ -469,7 +500,45 @@ class RadioPlayerService : Service() {
         stopSelf()
     }
 
-    fun isPlaying(): Boolean = player.isPlaying
+    fun isPlaying(): Boolean = ::player.isInitialized && player.isPlaying
+
+    fun restoreVolume() {
+        fadeJob?.cancel()
+        targetVolume = 1f
+        if (::player.isInitialized) player.volume = 1f
+    }
+
+    fun muteForTimer() {
+        fadeJob?.cancel()
+        if (::player.isInitialized) {
+            player.volume = 0f
+            pause()
+        }
+        updateNotification()
+    }
+
+    fun fadeThenStop() {
+        beginFade(1_500L, stopWhenDone = true)
+    }
+
+    fun beginFade(durationMs: Long, stopWhenDone: Boolean) {
+        if (!::player.isInitialized) {
+            if (stopWhenDone) stopAndRelease()
+            return
+        }
+        fadeJob?.cancel()
+        val startVol = player.volume.coerceIn(0.05f, 1f)
+        val steps = 20
+        val stepMs = (durationMs / steps).coerceAtLeast(50L)
+        fadeJob = serviceScope.launch {
+            for (i in 1..steps) {
+                player.volume = startVol * (1f - i / steps.toFloat())
+                delay(stepMs)
+            }
+            player.volume = 0f
+            if (stopWhenDone) stopAndRelease()
+        }
+    }
 
     fun updateFavorite(stationId: String, isFav: Boolean) {
         currentStation?.takeIf { it.id == stationId }?.isFavorite = isFav
@@ -576,7 +645,8 @@ class RadioPlayerService : Service() {
     }
 
     /** Equalizer için audioSessionId */
-    fun getAudioSessionId(): Int = player.audioSessionId
+    fun getAudioSessionId(): Int =
+        if (::player.isInitialized) player.audioSessionId else 0
 
     // ── Bildirim ──────────────────────────────────────────────────────────────
 
@@ -608,41 +678,66 @@ class RadioPlayerService : Service() {
         )
 
         val contentText = when {
+            SleepTimerManager.isActive.value == true ->
+                getString(
+                    R.string.timer_remaining,
+                    SleepTimerManager.formatRemaining(SleepTimerManager.remainingMs.value ?: 0L)
+                )
             isRetrying -> getString(R.string.notif_reconnecting)
             player.playbackState == Player.STATE_BUFFERING -> getString(R.string.notif_loading)
             isPlaying -> getString(R.string.notif_live)
             else -> getString(R.string.notif_paused)
         }
 
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        val lock = AppSettings(this).lockScreenControls
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_radio_notif)
             .setContentTitle(station?.name ?: getString(R.string.app_name))
             .setContentText(contentText)
             .setContentIntent(openPi)
-            .addAction(
-                R.drawable.ic_skip_previous,
-                getString(R.string.previous),
-                pi(3, ACTION_PREV)
-            )
-            .addAction(
-                if (isPlaying) R.drawable.ic_pause_notif else R.drawable.ic_play_notif,
-                if (isPlaying) getString(R.string.pause) else getString(R.string.play),
-                pi(1, ACTION_PLAY_PAUSE)
-            )
-            .addAction(R.drawable.ic_skip_next, getString(R.string.next), pi(4, ACTION_NEXT))
-            .addAction(R.drawable.ic_stop_notif, getString(R.string.stop), pi(2, ACTION_STOP))
-            .setStyle(
-                androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(mediaSession.sessionCompatToken)
-                    .setShowActionsInCompactView(0, 1, 2)
-            )
             .setCategory(androidx.core.app.NotificationCompat.CATEGORY_TRANSPORT)
-            .apply { if (art != null) setLargeIcon(art) }
             .setOnlyAlertOnce(true)
             .setOngoing(isPlaying || isRetrying)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .build()
+        if (art != null) builder.setLargeIcon(art)
+
+        if (lock) {
+            builder.addAction(
+                R.drawable.ic_skip_previous,
+                getString(R.string.previous),
+                pi(3, ACTION_PREV)
+            )
+        }
+        builder.addAction(
+            if (isPlaying) R.drawable.ic_pause_notif else R.drawable.ic_play_notif,
+            if (isPlaying) getString(R.string.pause) else getString(R.string.play),
+            pi(1, ACTION_PLAY_PAUSE)
+        )
+        if (lock) {
+            builder.addAction(R.drawable.ic_skip_next, getString(R.string.next), pi(4, ACTION_NEXT))
+        }
+        builder.addAction(R.drawable.ic_stop_notif, getString(R.string.stop), pi(2, ACTION_STOP))
+        if (SleepTimerManager.isActive.value == true) {
+            builder.addAction(
+                R.drawable.ic_sleep_timer,
+                getString(R.string.timer_plus_15),
+                pi(5, ACTION_TIMER_PLUS_15)
+            )
+            builder.addAction(
+                R.drawable.ic_close,
+                getString(R.string.timer_cancel),
+                pi(6, ACTION_TIMER_CANCEL)
+            )
+        }
+        if (lock) {
+            builder.setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(mediaSession.sessionCompatToken)
+                    .setShowActionsInCompactView(0, 1, 2)
+            )
+        }
+        return builder.build()
     }
 
     private fun updateNotification(art: Bitmap? = currentAlbumArt) {
@@ -658,6 +753,13 @@ class RadioPlayerService : Service() {
         const val ACTION_STOP = "com.globalradio.livetuneinogzapp.ACTION_STOP"
         const val ACTION_NEXT = "com.globalradio.livetuneinogzapp.ACTION_NEXT"
         const val ACTION_PREV = "com.globalradio.livetuneinogzapp.ACTION_PREV"
+        const val ACTION_TIMER_STOP = "com.globalradio.livetuneinogzapp.ACTION_TIMER_STOP"
+        const val ACTION_TIMER_MUTE = "com.globalradio.livetuneinogzapp.ACTION_TIMER_MUTE"
+        const val ACTION_FADE_VOLUME = "com.globalradio.livetuneinogzapp.ACTION_FADE_VOLUME"
+        const val ACTION_RESTORE_VOLUME = "com.globalradio.livetuneinogzapp.ACTION_RESTORE_VOLUME"
+        const val ACTION_TIMER_CANCEL = "com.globalradio.livetuneinogzapp.ACTION_TIMER_CANCEL"
+        const val ACTION_TIMER_PLUS_15 = "com.globalradio.livetuneinogzapp.ACTION_TIMER_PLUS_15"
+        const val ACTION_REFRESH_NOTIF = "com.globalradio.livetuneinogzapp.ACTION_REFRESH_NOTIF"
         const val BROADCAST_NEXT = "com.globalradio.livetuneinogzapp.NEXT_STATION"
         const val BROADCAST_PREV = "com.globalradio.livetuneinogzapp.PREV_STATION"
     }

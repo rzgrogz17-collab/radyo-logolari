@@ -1,18 +1,12 @@
 package com.globalradio.livetuneinogzapp.adapter
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
+import com.globalradio.livetuneinogzapp.utils.StationImages
 import com.globalradio.livetuneinogzapp.R
 import com.globalradio.livetuneinogzapp.databinding.ItemCountryBinding
 import com.globalradio.livetuneinogzapp.model.CountrySummary
@@ -47,39 +41,21 @@ class CountryAdapter(
             if (flagUrl != null) {
                 b.ivFlag.visibility = View.VISIBLE
                 b.tvFlag.visibility = View.GONE
-                Glide.with(b.root)
-                    .load(flagUrl)
-                    .placeholder(R.drawable.bg_flag)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .centerCrop()
-                    .listener(object : RequestListener<Drawable> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            b.ivFlag.visibility = View.GONE
-                            b.tvFlag.visibility = View.VISIBLE
-                            b.tvFlag.text = summary.flagEmoji
-                            return true
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            model: Any,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            b.tvFlag.visibility = View.GONE
-                            b.ivFlag.visibility = View.VISIBLE
-                            return false
-                        }
-                    })
-                    .into(b.ivFlag)
+                StationImages.loadFlag(
+                    b.ivFlag,
+                    flagUrl,
+                    R.drawable.bg_flag,
+                    onFail = {
+                        b.ivFlag.visibility = View.GONE
+                        b.tvFlag.visibility = View.VISIBLE
+                        b.tvFlag.text = summary.flagEmoji
+                    },
+                    onReady = {
+                        b.tvFlag.visibility = View.GONE
+                        b.ivFlag.visibility = View.VISIBLE
+                    }
+                )
             } else {
-                Glide.with(b.root).clear(b.ivFlag)
                 b.ivFlag.setImageDrawable(null)
                 b.ivFlag.visibility = View.GONE
                 b.tvFlag.visibility = View.VISIBLE
@@ -90,7 +66,7 @@ class CountryAdapter(
         }
 
         fun clear() {
-            Glide.with(b.root).clear(b.ivFlag)
+            b.ivFlag.setImageDrawable(null)
         }
     }
 

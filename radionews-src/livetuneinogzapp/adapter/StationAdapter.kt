@@ -9,12 +9,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.globalradio.livetuneinogzapp.R
 import com.globalradio.livetuneinogzapp.databinding.ItemStationBinding
 import com.globalradio.livetuneinogzapp.model.RadioStation
 import com.globalradio.livetuneinogzapp.utils.FavoriteIcon
+import com.globalradio.livetuneinogzapp.utils.StationImages
 
 class StationAdapter(
     private val onStationClick: (RadioStation) -> Unit,
@@ -139,13 +138,7 @@ class StationAdapter(
             if (s.hasValidFavicon()) {
                 b.tvAvatar.visibility = View.GONE
                 b.ivLogo.visibility = View.VISIBLE
-                Glide.with(b.root.context)
-                    .load(s.favicon)
-                    .placeholder(R.drawable.ic_radio_placeholder)
-                    .error(R.drawable.ic_radio_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .centerCrop()
-                    .into(b.ivLogo)
+                StationImages.loadLogo(b.ivLogo, s.favicon)
             } else {
                 b.ivLogo.visibility = View.GONE
                 b.tvAvatar.visibility = View.VISIBLE

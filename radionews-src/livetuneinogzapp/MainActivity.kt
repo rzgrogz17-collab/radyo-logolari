@@ -17,8 +17,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.globalradio.livetuneinogzapp.ads.AdManager
 import com.globalradio.livetuneinogzapp.cast.CastManager
 import com.globalradio.livetuneinogzapp.databinding.ActivityMainBinding
@@ -26,7 +24,9 @@ import com.globalradio.livetuneinogzapp.model.PlayerState
 import com.globalradio.livetuneinogzapp.model.RadioStation
 import androidx.media3.common.util.UnstableApi
 import com.globalradio.livetuneinogzapp.service.RadioPlayerService
+import com.globalradio.livetuneinogzapp.utils.AppSettings
 import com.globalradio.livetuneinogzapp.utils.SleepTimerManager
+import com.globalradio.livetuneinogzapp.utils.StationImages
 import com.globalradio.livetuneinogzapp.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     private var radioService: RadioPlayerService? = null
     private var isServiceBound = false
+    private var resumedLastStation = false
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, binder: IBinder) {
@@ -47,9 +48,9 @@ class MainActivity : AppCompatActivity() {
             radioService?.playerState?.observe(this@MainActivity) { state ->
                 _viewModel.updatePlayerState(state)
             }
-            // Equalizer'ı başlat (kaydedilmiş ayarlar uygulanır)
             val sid = radioService?.getAudioSessionId() ?: 0
             if (sid != 0) EqualizerManager.init(this@MainActivity, sid)
+            maybeResumeLastStation()
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -212,7 +213,11 @@ class MainActivity : AppCompatActivity() {
         _viewModel.error.observe(this) { err ->
             if (!err.isNullOrEmpty()) Toast.makeText(this, err, Toast.LENGTH_LONG).show()
         }
-        _viewModel.playerState.observe(this) { updateMiniPlayer(it) }
+        _viewModel.playerState.observe(this) { state ->
+            updateMiniPlayer(state)
+            val sid = radioService?.getAudioSessionId() ?: 0
+            if (sid != 0) EqualizerManager.init(this, sid)
+        }
         _viewModel.favoritePayload.observe(this) { payload ->
             payload ?: return@observe
             radioService?.updateFavorite(payload.first, payload.second)
@@ -294,12 +299,7 @@ class MainActivity : AppCompatActivity() {
         binding.miniBuffering.visibility =
             if (isBuffering || isReconnecting) View.VISIBLE else View.GONE
         if (station.hasValidFavicon()) {
-            Glide.with(this).load(station.favicon)
-                .placeholder(R.drawable.ic_radio_placeholder)
-                .error(R.drawable.ic_radio_placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .circleCrop()
-                .into(binding.ivMiniLogo)
+            StationImages.loadLogo(binding.ivMiniLogo, station.favicon, circle = true)
         } else {
             binding.ivMiniLogo.setImageResource(R.drawable.ic_radio_placeholder)
         }
@@ -339,6 +339,15 @@ class MainActivity : AppCompatActivity() {
 
     fun openSettings() {
         startActivity(Intent(this, SettingsActivity::class.java))
+    }
+
+    private fun maybeResumeLastStation() {
+        if (resumedLastStation) return
+        if (!AppSettings(this).resumeLastStation) return
+        if (radioService?.currentStation != null) return
+        val last = AppSettings(this).lastStation() ?: return
+        resumedLastStation = true
+        playStation(last)
     }
 
     // ── Service ───────────────────────────────────────────────────────────────

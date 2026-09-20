@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:orientation="vertical">
+
+    <!-- ══════════════════════════════════════════════════════════════
+         HEADER
+         • Sol: Uygulama başlığı
+         • Orta: Arama kutusu (daha küçük, hafif sağa kaydırılmış)
+         • Sağ: ⋮ Dikey 3 nokta ikonu (menü/ayarlar)
+         ══════════════════════════════════════════════════════════════ -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/bg_surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp">
+
+        <!-- Uygulama başlığı -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="RadioSphere"
+            android:textColor="@color/text_primary"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <!-- Sol ağırlıklı boşluk (arama kutusunu sağa doğru iter) -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.2" />
+
+        <!-- ── Arama kutusu (daha küçük + hafif sağa kaymış) ── -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="118dp"
+            android:layout_height="32dp"
+            android:layout_marginVertical="4dp"
+            app:cardBackgroundColor="@color/search_bg"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/search_stroke"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:contentDescription="@string/search_hint"
+                    android:src="@drawable/ic_search"
+                    app:tint="@color/text_hint" />
+
+                <EditText
+                    android:id="@+id/etSearch"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="6dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/search_hint"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:id="@+id/ivSearchClear"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:contentDescription="Temizle"
+                    android:src="@drawable/ic_close"
+                    android:visibility="gone"
+                    app:tint="@color/text_secondary" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Arama ile ikonlar arası esnek boşluk (küçük) -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.1" />
+
+        <!-- ── "Diğer cihazlarla Çal" (Google Cast) ── -->
+        <androidx.mediarouter.app.MediaRouteButton
+            android:id="@+id/btnCast"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Diğer cihazlarla Çal"
+            app:mediaRouteButtonTint="@color/btn_icon" />
+
+        <!-- ── Dikey 3 nokta (en sağda) ── -->
+        <ImageButton
+            android:id="@+id/btnSettings"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Menü"
+            android:src="@drawable/ic_more_vert"
+            app:tint="@color/btn_icon" />
+
+    </LinearLayout>
+
+    <!-- ── BÖLÜM SEÇİCİ (kaydırılabilir tab butonlar) ── -->
+    <HorizontalScrollView
+        android:id="@+id/tabScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_surface"
+        android:paddingHorizontal="14dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="8dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btnSectionAll"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_section_active"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="16dp"
+                android:text="@string/section_all"
+                android:textColor="@color/bone_white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="13sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btnSectionTopChart"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_section_inactive"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="16dp"
+                android:text="@string/section_top"
+                android:textColor="@color/bone_white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="13sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btnSectionFavorites"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_section_inactive"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="16dp"
+                android:text="@string/section_favorites"
+                android:textColor="@color/bone_white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="13sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btnSectionGenres"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_section_inactive"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="16dp"
+                android:text="@string/section_genres"
+                android:textColor="@color/bone_white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="13sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btnSectionCountries"
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:background="@drawable/bg_section_inactive"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="16dp"
+                android:text="@string/section_countries"
+                android:textColor="@color/bone_white"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="13sp"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeStepGranularity="1sp"
+                app:autoSizeTextType="uniform" />
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+    <!-- ── TÜRLER CHİP'LERİ ── -->
+    <HorizontalScrollView
+        android:id="@+id/genreChipScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupGenres"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="14dp"
+            app:chipSpacingHorizontal="6dp"
+            app:selectionRequired="true"
+            app:singleSelection="true" />
+
+    </HorizontalScrollView>
+
+    <!-- ── ViewPager2: sağa/sola swipe ile bölüm geçişi ── -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Şık yükleme göstergesi: 3 nokta -->
+        <LinearLayout
+            android:id="@+id/loadingIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <View
+                android:id="@+id/loadDot1"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@color/accent"
+                android:alpha="0.3" />
+
+            <View
+                android:id="@+id/loadDot2"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@color/accent"
+                android:alpha="0.3" />
+
+            <View
+                android:id="@+id/loadDot3"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@color/accent"
+                android:alpha="0.3" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tvEmptyState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📻"
+                android:textSize="52sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/empty_result"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/empty_result_sub"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

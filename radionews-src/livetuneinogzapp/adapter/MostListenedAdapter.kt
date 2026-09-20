@@ -8,12 +8,11 @@ import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.globalradio.livetuneinogzapp.R
 import com.globalradio.livetuneinogzapp.databinding.ItemMostListenedBinding
 import com.globalradio.livetuneinogzapp.model.RadioStation
 import com.globalradio.livetuneinogzapp.utils.FavoriteIcon
+import com.globalradio.livetuneinogzapp.utils.StationImages
 
 class MostListenedAdapter(
     private val onStationClick: (RadioStation) -> Unit,
@@ -106,11 +105,7 @@ class MostListenedAdapter(
             if (station.hasValidFavicon()) {
                 b.ivLogo.visibility = View.VISIBLE
                 b.cvAvatar.visibility = View.GONE
-                Glide.with(ctx).load(station.favicon)
-                    .placeholder(R.drawable.ic_radio_placeholder)
-                    .error(R.drawable.ic_radio_placeholder)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .circleCrop().into(b.ivLogo)
+                StationImages.loadLogo(b.ivLogo, station.favicon, circle = true)
             } else {
                 b.ivLogo.visibility = View.GONE
                 b.cvAvatar.visibility = View.VISIBLE
