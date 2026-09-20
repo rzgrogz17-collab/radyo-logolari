@@ -84,10 +84,16 @@ class CountryStationsActivity : AppCompatActivity() {
             onStationClick = { station -> onStationSelected(station) },
             onFavoriteClick = { station ->
                 val isNowFav = favoritesManager.toggleFavorite(station.id)
+                station.isFavorite = isNowFav
                 val updated = viewModel.stations.value?.map { s ->
-                    if (s.id == station.id) s.copy(isFavorite = isNowFav) else s
+                    if (s.id == station.id) {
+                        s.isFavorite = isNowFav
+                        s.copy(isFavorite = isNowFav)
+                    } else s
                 } ?: emptyList()
                 viewModel.updateStations(updated)
+                adapter.updateFavorite(station.id, isNowFav)
+                radioService?.updateFavorite(station.id, isNowFav)
             }
         )
 
@@ -175,6 +181,7 @@ class CountryStationsActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.service_starting), Toast.LENGTH_SHORT).show()
             return
         }
+        station.isFavorite = favoritesManager.isFavorite(station.id)
         service.playStation(station, viewModel.stations.value)
         AdManager.onStationClicked(this)
     }
@@ -353,14 +360,23 @@ class CountryStationsActivity : AppCompatActivity() {
 
     fun getRadioService(): RadioPlayerService? = radioService
 
-    fun toggleFavoriteForStation(station: RadioStation) {
+    fun toggleFavoriteForStation(station: RadioStation): Boolean {
         val isNowFav = favoritesManager.toggleFavorite(station.id)
+        station.isFavorite = isNowFav
         val updated = viewModel.stations.value?.map { s ->
-            if (s.id == station.id) s.copy(isFavorite = isNowFav) else s
+            if (s.id == station.id) {
+                s.isFavorite = isNowFav
+                s.copy(isFavorite = isNowFav)
+            } else s
         } ?: emptyList()
         viewModel.updateStations(updated)
+        adapter.updateFavorite(station.id, isNowFav)
         adapter.submitList(updated)
+        radioService?.updateFavorite(station.id, isNowFav)
+        return isNowFav
     }
+
+    fun isStationFavorite(stationId: String): Boolean = favoritesManager.isFavorite(stationId)
 
     fun getStationList(): List<RadioStation> = viewModel.stations.value ?: emptyList()
 

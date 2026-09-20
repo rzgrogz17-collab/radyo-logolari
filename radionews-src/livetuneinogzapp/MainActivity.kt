@@ -213,6 +213,10 @@ class MainActivity : AppCompatActivity() {
             if (!err.isNullOrEmpty()) Toast.makeText(this, err, Toast.LENGTH_LONG).show()
         }
         _viewModel.playerState.observe(this) { updateMiniPlayer(it) }
+        _viewModel.favoritePayload.observe(this) { payload ->
+            payload ?: return@observe
+            radioService?.updateFavorite(payload.first, payload.second)
+        }
         SleepTimerManager.remainingMs.observe(this) { ms ->
             // Ay ikonu tint rengi - aktifse kırmızı
             val timerActive = ms > 0
@@ -309,6 +313,7 @@ class MainActivity : AppCompatActivity() {
                 .show(); return
         }
         val queue = _viewModel.playlistFor(station)
+        station.isFavorite = _viewModel.isFavorite(station.id)
         if (CastManager.isCasting()) {
             // Bir Cast cihazına bağlıyken istasyonu oraya gönder, telefonda
             // aynı anda ikinci bir ses kaynağı çalmasın diye yereli durdur.

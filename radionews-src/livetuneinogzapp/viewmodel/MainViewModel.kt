@@ -243,7 +243,12 @@ class MainViewModel @Inject constructor(
     }
 
     private fun updateFavorites(stations: List<RadioStation>) {
-        _favoriteStations.postValue(stations.filter { it.isFavorite })
+        val favs = stations.filter { it.isFavorite }
+        try {
+            _favoriteStations.value = favs
+        } catch (_: Exception) {
+            _favoriteStations.postValue(favs)
+        }
     }
 
     fun filterByCategory(category: String) {
@@ -304,22 +309,39 @@ class MainViewModel @Inject constructor(
         refreshMostListened()
     }
 
-    fun toggleFavorite(station: RadioStation) {
+    fun toggleFavorite(station: RadioStation): Boolean {
         val isNowFav = repository.toggleFavorite(station)
+        station.isFavorite = isNowFav
         val updated = _allStations.value?.map { s ->
-            if (s.id == station.id) s.copy(isFavorite = isNowFav) else s
+            if (s.id == station.id) {
+                s.isFavorite = isNowFav
+                s.copy(isFavorite = isNowFav)
+            } else s
         } ?: emptyList()
         try {
             _allStations.value = updated
         } catch (_: Exception) {
             _allStations.postValue(updated)
         }
-        _favoritePayload.postValue(Pair(station.id, isNowFav))
+        val payload = Pair(station.id, isNowFav)
+        try {
+            _favoritePayload.value = payload
+        } catch (_: Exception) {
+            _favoritePayload.postValue(payload)
+        }
+        updateFavorites(updated)
         viewModelScope.launch {
             updateAllSection(updated)
             updateGenreSection(updated)
-            updateFavorites(updated)
         }
+        return isNowFav
+    }
+
+    fun isFavorite(stationId: String): Boolean {
+        _allStations.value?.find { it.id == stationId }?.let { mem ->
+            if (mem.isFavorite) return true
+        }
+        return repository.isFavorite(stationId)
     }
 
     private fun buildCountries(stations: List<RadioStation>) {

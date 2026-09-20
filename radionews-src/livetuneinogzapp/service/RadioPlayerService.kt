@@ -28,6 +28,7 @@ import com.globalradio.livetuneinogzapp.R
 import com.globalradio.livetuneinogzapp.RadioWidget
 import com.globalradio.livetuneinogzapp.model.PlayerState
 import com.globalradio.livetuneinogzapp.model.RadioStation
+import com.globalradio.livetuneinogzapp.utils.StreamRecorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -60,6 +61,11 @@ class RadioPlayerService : Service() {
     private var playlist: MutableList<RadioStation> = mutableListOf()
     private var currentIndex: Int = -1
     private var lastSkipElapsed = 0L
+    private var sessionStartedAt = 0L
+
+    private var recorder: StreamRecorder? = null
+    val recordingState = MutableLiveData(false)
+    val recordingEvent = MutableLiveData<Pair<Boolean, String>?>()
 
     // ── Yeniden bağlanma ─────────────────────────────────────────────────────
     private var retryJob: Job? = null
@@ -94,6 +100,7 @@ class RadioPlayerService : Service() {
     override fun onDestroy() {
         retryJob?.cancel()
         artLoadJob?.cancel()
+        stopRecording()
         serviceScope.cancel()
         mediaSession.release()
         player.release()
@@ -219,13 +226,16 @@ class RadioPlayerService : Service() {
 
     private fun initPlayer() {
         val loadControl = DefaultLoadControl.Builder()
-            .setBufferDurationsMs(8_000, 15_000, 1_500, 2_000)
+            .setBufferDurationsMs(15_000, 50_000, 1_500, 2_500)
+            .setBackBuffer(45_000, true)
             .build()
 
         player = ExoPlayer.Builder(this)
             .setLoadControl(loadControl)
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_NETWORK)
+            .setSeekBackIncrementMs(15_000)
+            .setSeekForwardIncrementMs(15_000)
             .build()
 
         player.addListener(object : Player.Listener {
@@ -355,6 +365,10 @@ class RadioPlayerService : Service() {
             }
         }
 
+        if (currentStation?.id != station.id) {
+            stopRecording()
+        }
+
         isIntentionallyStopped = false
         retryJob?.cancel()
         retryCount = 0
@@ -362,6 +376,7 @@ class RadioPlayerService : Service() {
 
         currentStation = station
         currentAlbumArt = null
+        sessionStartedAt = SystemClock.elapsedRealtime()
         playerState.postValue(PlayerState.Buffering)
 
         player.stop()
@@ -444,6 +459,7 @@ class RadioPlayerService : Service() {
         isIntentionallyStopped = true
         retryJob?.cancel()
         artLoadJob?.cancel()
+        stopRecording()
         retryCount = 0
         player.stop()
         currentStation = null
@@ -454,6 +470,110 @@ class RadioPlayerService : Service() {
     }
 
     fun isPlaying(): Boolean = player.isPlaying
+
+    fun updateFavorite(stationId: String, isFav: Boolean) {
+        currentStation?.takeIf { it.id == stationId }?.isFavorite = isFav
+        val idx = playlist.indexOfFirst { it.id == stationId }
+        if (idx >= 0) playlist[idx] = playlist[idx].copy(isFavorite = isFav)
+    }
+
+    fun sessionElapsedMs(): Long {
+        if (sessionStartedAt == 0L) return 0L
+        return SystemClock.elapsedRealtime() - sessionStartedAt
+    }
+
+    fun playbackPositionMs(): Long {
+        if (!::player.isInitialized) return 0L
+        val p = player.currentPosition
+        return if (p == C.TIME_UNSET || p < 0L) 0L else p
+    }
+
+    fun playbackDurationMs(): Long {
+        if (!::player.isInitialized) return 0L
+        val d = player.duration
+        return if (d == C.TIME_UNSET || d <= 0L) 0L else d
+    }
+
+    fun isPlaybackSeekable(): Boolean =
+        ::player.isInitialized && player.isCurrentMediaItemSeekable && playbackDurationMs() > 0L
+
+    fun isLiveStream(): Boolean =
+        ::player.isInitialized && player.isCurrentMediaItemLive
+
+    fun rewind(deltaMs: Long = 15_000L): Boolean {
+        if (!::player.isInitialized) return false
+        return try {
+            val pos = playbackPositionMs()
+            if (pos > 0L) {
+                player.seekTo((pos - deltaMs).coerceAtLeast(0L))
+                return true
+            }
+            if (player.isCurrentMediaItemSeekable || playbackDurationMs() > 0L) {
+                player.seekBack()
+                return true
+            }
+            false
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun seekToMs(positionMs: Long): Boolean {
+        if (!::player.isInitialized) return false
+        if (!isPlaybackSeekable() && playbackDurationMs() <= 0L) return false
+        return try {
+            player.seekTo(positionMs.coerceAtLeast(0L))
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun isRecording(): Boolean = recorder?.isRunning() == true
+
+    fun recordingElapsedMs(): Long {
+        val rec = recorder ?: return 0L
+        if (!rec.isRunning() && rec.startedAtElapsed == 0L) return 0L
+        return SystemClock.elapsedRealtime() - rec.startedAtElapsed
+    }
+
+    fun toggleRecording() {
+        if (isRecording()) stopRecording() else startRecording()
+    }
+
+    fun startRecording() {
+        val st = currentStation ?: return
+        if (recorder?.isRunning() == true) return
+        val rec = StreamRecorder(applicationContext)
+        recorder = rec
+        rec.start(st, object : StreamRecorder.Listener {
+            override fun onStarted() {
+                recordingState.postValue(true)
+            }
+
+            override fun onSaved(displayName: String) {
+                if (recorder === rec) recorder = null
+                recordingState.postValue(false)
+                recordingEvent.postValue(true to displayName)
+            }
+
+            override fun onError(message: String) {
+                if (recorder === rec) recorder = null
+                recordingState.postValue(false)
+                recordingEvent.postValue(false to message)
+            }
+        })
+        if (rec.isRunning()) {
+            recordingState.postValue(true)
+        } else if (recorder === rec) {
+            recorder = null
+            recordingState.postValue(false)
+        }
+    }
+
+    fun stopRecording() {
+        recorder?.stop()
+    }
 
     /** Equalizer için audioSessionId */
     fun getAudioSessionId(): Int = player.audioSessionId

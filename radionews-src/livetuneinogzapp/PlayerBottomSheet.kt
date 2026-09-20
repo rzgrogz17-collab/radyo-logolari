@@ -1,21 +1,26 @@
 package com.globalradio.livetuneinogzapp
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.GestureDetector
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
+import android.content.res.ColorStateList
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.viewpager2.widget.ViewPager2
@@ -25,10 +30,8 @@ import com.globalradio.livetuneinogzapp.model.PlayerState
 import com.globalradio.livetuneinogzapp.model.RadioStation
 import androidx.media3.common.util.UnstableApi
 import com.globalradio.livetuneinogzapp.service.RadioPlayerService
+import com.globalradio.livetuneinogzapp.utils.FavoriteIcon
 import com.globalradio.livetuneinogzapp.viewmodel.MainViewModel
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import kotlin.math.abs
 
 @UnstableApi
 class PlayerBottomSheet : BottomSheetDialogFragment() {
@@ -37,10 +40,20 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private var currentStation: RadioStation? = null
-    private lateinit var gestureDetector: GestureDetector
 
     private lateinit var logoPagerAdapter: LogoPagerAdapter
     private var isPagerScrolling = false
+    private var userScrubbing = false
+    private var recordingObserved = false
+
+    private val writePermLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) radioService?.startRecording()
+        else if (isAdded) {
+            Toast.makeText(requireContext(), R.string.recording_permission_needed, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     private val mainActivity get() = activity as? MainActivity
     private val countryActivity get() = activity as? CountryStationsActivity
@@ -64,6 +77,14 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             } catch (_: Exception) {
             }
             volumeHandler.postDelayed(this, 300)
+        }
+    }
+
+    private val progressRunnable = object : Runnable {
+        override fun run() {
+            if (!isAdded || _binding == null) return
+            updateProgressUi()
+            volumeHandler.postDelayed(this, 500)
         }
     }
 
@@ -119,8 +140,11 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
         setupSwipeGesture()
         setupVolumeSlider()
+        setupProgressControls()
         setupButtons()
         observePlayerState()
+        observeFavorites()
+        ensureServiceObservers()
         loadBannerAd()
 
         // Başlangıç UI
@@ -220,6 +244,136 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
         volumeHandler.post(volumeRunnable)
+        volumeHandler.post(progressRunnable)
+    }
+
+    // ── İlerleme / geri sar / kaydet ─────────────────────────────────────────
+
+    private fun setupProgressControls() {
+        binding.seekBarProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) {
+                if (!fromUser) return
+                val dur = radioService?.playbackDurationMs() ?: 0L
+                if (dur > 0L) binding.tvElapsed.text = formatClock((dur * p) / sb!!.max)
+            }
+
+            override fun onStartTrackingTouch(sb: SeekBar?) {
+                userScrubbing = true
+            }
+
+            override fun onStopTrackingTouch(sb: SeekBar?) {
+                userScrubbing = false
+                val bar = sb ?: return
+                val dur = radioService?.playbackDurationMs() ?: 0L
+                if (dur > 0L && radioService?.isPlaybackSeekable() == true) {
+                    radioService?.seekToMs((dur * bar.progress) / bar.max)
+                }
+            }
+        })
+        binding.btnRewind.setOnClickListener {
+            val ok = radioService?.rewind(15_000L) == true
+            if (!ok && isAdded) {
+                Toast.makeText(requireContext(), R.string.rewind_not_available, Toast.LENGTH_SHORT).show()
+            }
+            updateProgressUi()
+        }
+        binding.btnSave.setOnClickListener { onSaveClicked() }
+        updateSaveButton(radioService?.isRecording() == true)
+        updateProgressUi()
+    }
+
+    private fun onSaveClicked() {
+        val service = radioService ?: return
+        if (service.isRecording()) {
+            service.stopRecording()
+            return
+        }
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+            val perm = Manifest.permission.WRITE_EXTERNAL_STORAGE
+            if (ContextCompat.checkSelfPermission(requireContext(), perm)
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                writePermLauncher.launch(perm)
+                return
+            }
+        }
+        service.startRecording()
+    }
+
+    private fun updateProgressUi() {
+        if (_binding == null) return
+        ensureServiceObservers()
+        val service = radioService ?: return
+        val duration = service.playbackDurationMs()
+        val position = service.playbackPositionMs()
+        val hasWindow = duration > 0L
+        val seekable = service.isPlaybackSeekable()
+        val elapsed = when {
+            hasWindow && position <= duration + 1_000L -> position
+            position in 1L until (24L * 3600_000L) -> position
+            else -> service.sessionElapsedMs()
+        }
+
+        binding.tvElapsed.text = formatClock(elapsed)
+        if (hasWindow) {
+            val remaining = (duration - position).coerceAtLeast(0L)
+            binding.tvRemaining.text = if (seekable) {
+                "−${formatClock(remaining)}"
+            } else {
+                getString(R.string.live_badge)
+            }
+            binding.tvRemaining.setTextColor(
+                Color.parseColor(if (seekable) "#E6FFFFFF" else "#E01B3B")
+            )
+            binding.seekBarProgress.isEnabled = seekable
+            if (!userScrubbing) {
+                val max = binding.seekBarProgress.max.coerceAtLeast(1)
+                binding.seekBarProgress.progress =
+                    ((position.coerceAtLeast(0L) * max) / duration).toInt().coerceIn(0, max)
+            }
+        } else {
+            binding.tvRemaining.text = getString(R.string.live_badge)
+            binding.tvRemaining.setTextColor(Color.parseColor("#E01B3B"))
+            binding.seekBarProgress.isEnabled = false
+            if (!userScrubbing) {
+                binding.seekBarProgress.max = 1000
+                binding.seekBarProgress.progress = 1000
+            }
+        }
+        if (service.isRecording()) {
+            binding.tvSaveLabel.text = formatClock(service.recordingElapsedMs())
+        }
+    }
+
+    private fun formatClock(ms: Long): String {
+        val total = (ms / 1000L).coerceAtLeast(0L)
+        val h = total / 3600
+        val m = (total % 3600) / 60
+        val s = total % 60
+        return if (h > 0) "%d:%02d:%02d".format(h, m, s) else "%d:%02d".format(m, s)
+    }
+
+    private fun updateSaveButton(recording: Boolean) {
+        if (_binding == null) return
+        binding.btnSave.setImageResource(
+            if (recording) R.drawable.ic_record_stop else R.drawable.ic_record
+        )
+        ImageViewCompat.setImageTintList(
+            binding.btnSave,
+            ColorStateList.valueOf(Color.parseColor("#E01B3B"))
+        )
+        binding.btnSave.clearAnimation()
+        if (recording) {
+            binding.tvSaveLabel.text = getString(R.string.recording_short)
+            val pulse = AlphaAnimation(1f, 0.35f).apply {
+                duration = 700
+                repeatMode = Animation.REVERSE
+                repeatCount = Animation.INFINITE
+            }
+            binding.btnSave.startAnimation(pulse)
+        } else {
+            binding.tvSaveLabel.text = getString(R.string.save_short)
+        }
     }
 
     // ── Butonlar ─────────────────────────────────────────────────────────────
@@ -231,15 +385,15 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
         binding.btnFavorite.setOnClickListener {
             val st = radioService?.currentStation ?: currentStation ?: return@setOnClickListener
-            if (countryActivity != null) {
-                countryActivity?.toggleFavoriteForStation(st)
-            } else {
-                activeViewModel?.toggleFavorite(st)
+            val nowFav = when {
+                countryActivity != null -> countryActivity!!.toggleFavoriteForStation(st)
+                activeViewModel != null -> activeViewModel!!.toggleFavorite(st)
+                else -> return@setOnClickListener
             }
-            // Anlık UI güncellemesi
-            val newFav = !st.isFavorite
-            st.isFavorite = newFav
-            setFavIcon(newFav)
+            st.isFavorite = nowFav
+            currentStation?.isFavorite = nowFav
+            radioService?.updateFavorite(st.id, nowFav)
+            setFavIcon(nowFav)
         }
 
         binding.btnClose.setOnClickListener { dismiss() }
@@ -292,6 +446,59 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         radioService?.playerState?.observe(viewLifecycleOwner) { state ->
             applyState(state)
         }
+    }
+
+    private fun observeFavorites() {
+        activeViewModel?.favoritePayload?.observe(viewLifecycleOwner) { payload ->
+            payload ?: return@observe
+            refreshFavoriteIcon(payload.first, payload.second)
+        }
+        activeViewModel?.favoriteStations?.observe(viewLifecycleOwner) {
+            refreshFavoriteIcon()
+        }
+    }
+
+    private fun ensureServiceObservers() {
+        if (recordingObserved || !isAdded) return
+        val service = radioService ?: return
+        recordingObserved = true
+        service.recordingState.observe(viewLifecycleOwner) { rec ->
+            updateSaveButton(rec == true)
+        }
+        service.recordingEvent.observe(viewLifecycleOwner) { ev ->
+            ev ?: return@observe
+            if (!isAdded) return@observe
+            if (ev.first) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.recording_saved, ev.second),
+                    Toast.LENGTH_LONG
+                ).show()
+            } else if (ev.second != "short") {
+                Toast.makeText(requireContext(), R.string.recording_failed, Toast.LENGTH_SHORT).show()
+            }
+            if (service.recordingEvent.value != null) {
+                service.recordingEvent.value = null
+            }
+        }
+    }
+
+    private fun refreshFavoriteIcon(stationId: String? = null, forced: Boolean? = null) {
+        val id = stationId
+            ?: radioService?.currentStation?.id
+            ?: currentStation?.id
+            ?: return
+        val playingId = radioService?.currentStation?.id ?: currentStation?.id
+        if (playingId != null && playingId != id && forced != null) return
+        val fav = forced ?: isFavoriteNow(id)
+        if (playingId == null || playingId == id) setFavIcon(fav)
+    }
+
+    private fun isFavoriteNow(stationId: String): Boolean {
+        activeViewModel?.let { return it.isFavorite(stationId) }
+        countryActivity?.let { return it.isStationFavorite(stationId) }
+        return radioService?.currentStation?.takeIf { it.id == stationId }?.isFavorite == true
+            || currentStation?.takeIf { it.id == stationId }?.isFavorite == true
     }
 
     private fun applyState(state: PlayerState) {
@@ -357,7 +564,10 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         binding.tvStationName.isSelected = true
         binding.tvCountry.text = station.country
         binding.tvTags.text = station.getTagList().take(3).joinToString("  ·  ")
-        setFavIcon(station.isFavorite)
+        val fav = isFavoriteNow(station.id)
+        station.isFavorite = fav
+        radioService?.updateFavorite(station.id, fav)
+        setFavIcon(fav)
         updateLogoPager(station)
         applyFrostedBackground()
     }
@@ -408,12 +618,8 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun setFavIcon(fav: Boolean) {
-        binding.btnFavorite.setImageResource(
-            if (fav) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_border
-        )
-        binding.btnFavorite.setColorFilter(
-            if (fav) Color.parseColor("#e01b3b") else Color.WHITE
-        )
+        if (_binding == null) return
+        FavoriteIcon.apply(binding.btnFavorite, fav)
     }
 
     private fun startEq() {
@@ -429,7 +635,12 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     }
 
     override fun onDestroyView() {
+        recordingObserved = false
+        if (_binding != null) {
+            binding.btnSave.clearAnimation()
+        }
         volumeHandler.removeCallbacks(volumeRunnable)
+        volumeHandler.removeCallbacks(progressRunnable)
         super.onDestroyView()
         _binding = null
     }
