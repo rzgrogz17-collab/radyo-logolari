@@ -694,7 +694,7 @@ public class GameData {
 
     private static int readExtraWordId(JsonValue child) {
         if (child == null) return 0;
-        if (child.type == JsonValue.ValueType.object) {
+        if (child.isObject()) {
             JsonValue id = child.get("w");
             return id == null ? 0 : id.asInt();
         }
@@ -702,13 +702,13 @@ public class GameData {
     }
 
     private static int readExtraWordLevel(JsonValue child) {
-        if (child == null || child.type != JsonValue.ValueType.object) return 0;
+        if (child == null || !child.isObject()) return 0;
         JsonValue level = child.get("l");
         return level == null ? 0 : level.asInt();
     }
 
     private static JsonValue copyExtraWordChild(JsonValue child) {
-        if (child != null && child.type == JsonValue.ValueType.object) {
+        if (child != null && child.isObject()) {
             JsonValue obj = new JsonValue(JsonValue.ValueType.object);
             obj.addChild("w", new JsonValue(readExtraWordId(child)));
             obj.addChild("l", new JsonValue(readExtraWordLevel(child)));
