@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -43,7 +42,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.FullscreenExit
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.rounded.Cast
@@ -55,8 +53,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
@@ -77,7 +73,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -220,20 +215,7 @@ fun MainAppLogic(
         if (currentLocaleTag.isNotEmpty()) viewModel.reorderByLocale()
     }
 
-    if (!viewModel.hasConsent) {
-        GDPRConsentDialog(
-            onAcceptPersonalized = {
-                viewModel.setConsent(ConsentType.PERSONALIZED)
-                activity.initializeAds()
-            },
-            onAcceptNonPersonalized = {
-                viewModel.setConsent(ConsentType.NON_PERSONALIZED)
-                activity.initializeAds()
-            },
-            onDecline = { activity.finish() }
-        )
-        return
-    } else {
+    if (viewModel.adsConsentEnabled) {
         LaunchedEffect(Unit) { activity.initializeAds() }
     }
 
@@ -460,7 +442,7 @@ fun MainAppLogic(
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .statusBarsPadding()
-                            .padding(start = 10.dp, top = 10.dp)
+                            .padding(start = 14.dp, top = 12.dp)
                             .background(Color.Black.copy(0.45f), RoundedCornerShape(20.dp))
                             .padding(horizontal = 8.dp, vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -605,20 +587,14 @@ fun MainAppLogic(
                 Column(
                     Modifier
                         .background(DiamondPanel)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .padding(horizontal = 8.dp, vertical = 6.dp)
                 ) {
-                    Spacer(
-                        Modifier
-                            .height(12.dp)
-                            .statusBarsPadding()
-                    )
-
                     Row(
                         Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        OutlinedTextField(
+                        CompactSearchField(
                             value = viewModel.searchQuery,
                             onValueChange = {
                                 viewModel.applyFilter(
@@ -628,40 +604,10 @@ fun MainAppLogic(
                                     showSpinner = false
                                 )
                             },
-                            modifier = Modifier
-                                .fillMaxWidth(0.5f)
-                                .heightIn(min = 44.dp),
-                            textStyle = TextStyle(fontSize = 13.sp, lineHeight = 16.sp),
-                            placeholder = {
-                                Text(
-                                    LanguageManager.searchHint,
-                                    fontSize = 12.sp,
-                                    color = Color.Gray,
-                                    maxLines = 1
-                                )
-                            },
-                            leadingIcon = {
-                                Icon(
-                                    Icons.Default.Search,
-                                    null,
-                                    tint = PastelPurple,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = PastelPurple,
-                                unfocusedBorderColor = Color.Gray,
-                                focusedTextColor = Color.White,
-                                unfocusedTextColor = Color.White,
-                                cursorColor = PastelPink
-                            ),
-                            shape = RoundedCornerShape(10.dp),
-                            singleLine = true
+                            hint = LanguageManager.searchHint,
+                            modifier = Modifier.weight(1f)
                         )
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            modifier = Modifier.horizontalScroll(rememberScrollState())
-                        ) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             TvFocusableIconButton(
                                 onClick = {
                                     try {
@@ -710,13 +656,13 @@ fun MainAppLogic(
                         }
                     }
 
-                    Spacer(Modifier.height(6.dp))
+                    Spacer(Modifier.height(5.dp))
 
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         NeonGlassButton(
                             LanguageManager.menuAll,
@@ -743,8 +689,8 @@ fun MainAppLogic(
                         Text(
                             if (playingIdx >= 0) "${playingIdx + 1} / $total" else "$total",
                             color = Color.Gray,
-                            fontSize = 11.sp,
-                            modifier = Modifier.padding(start = 4.dp, top = 2.dp, bottom = 2.dp)
+                            fontSize = 10.sp,
+                            modifier = Modifier.padding(start = 4.dp, top = 3.dp, bottom = 1.dp)
                         )
                     }
                 }
@@ -791,7 +737,7 @@ fun MainAppLogic(
                     else -> {
                         LazyColumn(
                             state = listState,
-                            contentPadding = PaddingValues(bottom = 60.dp)
+                            contentPadding = PaddingValues(start = 6.dp, end = 6.dp, bottom = 60.dp)
                         ) {
                             itemsIndexed(
                                 viewModel.displayedChannels,
@@ -816,7 +762,7 @@ fun MainAppLogic(
                 }
             }
 
-            if (viewModel.hasConsent) {
+            if (viewModel.adsConsentEnabled) {
                 YandexBannerAdView()
             }
         }
@@ -836,7 +782,7 @@ fun MainAppLogic(
 
     if (showSettingsDialog) {
         SettingsDialog(
-            consentType = viewModel.consentType,
+            adsConsentEnabled = viewModel.adsConsentEnabled,
             hiddenCount = viewModel.blacklistedIds.size,
             onDismiss = { showSettingsDialog = false },
             onClearCache = {
@@ -853,10 +799,9 @@ fun MainAppLogic(
                 if (minutes > 0) Toast.makeText(context, "Timer: $minutes min", Toast.LENGTH_SHORT)
                     .show()
             },
-            onChangeConsent = { newConsent ->
-                viewModel.setConsent(newConsent)
-                if (newConsent != ConsentType.NONE) activity.initializeAds()
-                showSettingsDialog = false
+            onAdsConsent = { enabled ->
+                viewModel.setAdsConsent(enabled)
+                if (enabled) activity.initializeAds()
             },
             onOpenPrivacyPolicy = {
                 try {

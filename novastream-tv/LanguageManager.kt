@@ -326,4 +326,35 @@ object LanguageManager {
         "Oynatılıyor", "Reproduciendo", "Lecture", "Wird wiedergegeben",
         "Сейчас", "Reproduzindo", "قيد التشغيل", "正在播放", "Now playing"
     )
+    val adsConsentTitle = getText(
+        "Kişiselleştirilmiş kabul", "Aceptar personalizado", "Acceptation personnalisée",
+        "Personalisierte Einwilligung", "Персонализированное согласие", "Aceite personalizado",
+        "الموافقة المخصصة", "个性化同意", "Personalized consent"
+    )
+    val adsConsentWhere = getText(
+        "Aç / kapat: üst çubuktaki ⚙ Ayarlar",
+        "Abrir / cerrar: Ajustes ⚙ arriba",
+        "Ouvrir / fermer : Paramètres ⚙",
+        "Ein/Aus: Einstellungen ⚙ oben",
+        "Вкл/выкл: Настройки ⚙ сверху",
+        "Abrir / fechar: Configurações ⚙",
+        "فتح/إغلاق: الإعدادات ⚙",
+        "开/关：顶部设置 ⚙",
+        "On / off: Settings ⚙ in the top bar"
+    )
+    val adsConsentHint = getText(
+        "Varsayılan: false (kapalı). Reklam rızasını yalnızca Ayarlar’dan değiştirirsiniz.",
+        "Predeterminado: false. Cámbielo en Ajustes.",
+        "Par défaut : false. Modifiable dans Paramètres.",
+        "Standard: false. Änderung in den Einstellungen.",
+        "По умолчанию: false. Меняется в Настройках.",
+        "Padrão: false. Altere em Configurações.",
+        "الافتراضي: false. غيّره من الإعدادات.",
+        "默认：false。请在设置中开关。",
+        "Default: false (off). Change it only in Settings."
+    )
+    val channelCountFmt = getText(
+        "%d kanal", "%d canales", "%d chaînes", "%d Sender",
+        "%d каналов", "%d canais", "%d قناة", "%d 个频道", "%d channels"
+    )
 }

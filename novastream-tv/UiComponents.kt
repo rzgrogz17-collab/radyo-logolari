@@ -25,11 +25,18 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -160,10 +167,13 @@ fun GDPRConsentDialog(
                 Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = onAcceptPersonalized,
-                    colors = ButtonDefaults.buttonColors(containerColor = DiamondRed),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = DiamondRed,
+                        contentColor = Color.White
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(LanguageManager.btnAcceptPersonalized, fontSize = 13.sp)
+                    Text(LanguageManager.btnAcceptPersonalized, fontSize = 13.sp, color = Color.White)
                 }
                 Spacer(Modifier.height(8.dp))
                 OutlinedButton(
@@ -181,6 +191,45 @@ fun GDPRConsentDialog(
                     Text(LanguageManager.close, fontSize = 12.sp)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CompactSearchField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    hint: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .height(34.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.Black.copy(0.28f))
+            .border(1.dp, Color.Gray.copy(0.45f), RoundedCornerShape(8.dp))
+            .padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            Icons.Default.Search,
+            null,
+            tint = PastelPurple,
+            modifier = Modifier.size(15.dp)
+        )
+        Spacer(Modifier.width(6.dp))
+        Box(Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
+            if (value.isEmpty()) {
+                Text(hint, fontSize = 12.sp, color = Color.Gray, maxLines = 1)
+            }
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = true,
+                textStyle = TextStyle(color = Color.White, fontSize = 12.sp, lineHeight = 14.sp),
+                cursorBrush = SolidColor(PastelPink),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }
@@ -227,37 +276,42 @@ fun MiniFlag(country: String, group: String = "", size: Int = 18) {
     )
     val loaded = painter.state is AsyncImagePainter.State.Success
     Box(
-        modifier = Modifier
-            .size(size.dp)
-            .clip(CircleShape)
-            .background(Color.Black.copy(alpha = 0.28f)),
+        modifier = Modifier.padding(horizontal = 4.dp, vertical = 3.dp),
         contentAlignment = Alignment.Center
     ) {
-        if (!loaded) {
-            if (code == "INT" || code == "UN" || code == "EU") {
-                Icon(
-                    Icons.Rounded.Public,
-                    contentDescription = null,
-                    tint = Color.White.copy(0.85f),
-                    modifier = Modifier.size((size * 0.7f).dp)
-                )
-            } else {
-                Text(
-                    code.take(2),
-                    color = Color.White.copy(alpha = 0.7f),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = (size * 0.38f).sp
-                )
-            }
-        }
-        Image(
-            painter = painter,
-            contentDescription = CountryCatalog.displayName(country, group),
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop
-        )
+                .size(size.dp)
+                .clip(CircleShape)
+                .background(Color.Black.copy(alpha = 0.28f)),
+            contentAlignment = Alignment.Center
+        ) {
+            if (!loaded) {
+                if (code == "INT" || code == "UN" || code == "EU") {
+                    Icon(
+                        Icons.Rounded.Public,
+                        contentDescription = null,
+                        tint = Color.White.copy(0.85f),
+                        modifier = Modifier.size((size * 0.68f).dp)
+                    )
+                } else {
+                    Text(
+                        code.take(2),
+                        color = Color.White.copy(alpha = 0.7f),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = (size * 0.36f).sp
+                    )
+                }
+            }
+            Image(
+                painter = painter,
+                contentDescription = CountryCatalog.displayName(country, group),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+        }
     }
 }
 
@@ -291,7 +345,7 @@ fun ChannelRow(
             .focusable()
             .clickable { onPlay() }
             .background(bgColor, RoundedCornerShape(10.dp))
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+            .padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -342,7 +396,7 @@ fun ChannelRow(
                 modifier = Modifier.padding(top = 2.dp, bottom = 4.dp)
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
-                MiniFlag(channel.country, channel.group, size = 14)
+                MiniFlag(channel.country, channel.group, size = 12)
                 Spacer(Modifier.width(6.dp))
                 Text(
                     CountryCatalog.displayName(channel.country, channel.group),
@@ -363,7 +417,7 @@ fun ChannelRow(
                 }
             }
         }
-        IconButton(onClick = onFav) {
+        IconButton(onClick = onFav, modifier = Modifier.size(36.dp)) {
             Icon(
                 if (isFav) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                 null, tint = if (isFav) DiamondRed else Color.Gray
@@ -387,9 +441,10 @@ fun SmartChannelLogo(logoUrl: String, channelName: String) {
     )
     Box(
         modifier = Modifier
-            .size(44.dp)
-            .clip(RoundedCornerShape(6.dp))
-            .background(Color.White)
+            .padding(horizontal = 4.dp)
+            .size(40.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.Transparent)
     ) {
         if (painter.state !is AsyncImagePainter.State.Success) {
             Box(
@@ -401,15 +456,13 @@ fun SmartChannelLogo(logoUrl: String, channelName: String) {
                     firstLetter,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp
+                    fontSize = 18.sp
                 )
             }
         }
         Image(
             painter = painter, contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(2.dp),
+            modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Fit
         )
     }
@@ -417,47 +470,154 @@ fun SmartChannelLogo(logoUrl: String, channelName: String) {
 
 @Composable
 fun SettingsDialog(
-    consentType: ConsentType,
+    adsConsentEnabled: Boolean,
     hiddenCount: Int,
     onDismiss: () -> Unit,
     onClearCache: () -> Unit,
     onSetTimer: (Int) -> Unit,
-    onChangeConsent: (ConsentType) -> Unit,
+    onAdsConsent: (Boolean) -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
     onRestoreHidden: () -> Unit
 ) {
     var timerInput by remember { mutableStateOf("") }
-    var showConsentOptions by remember { mutableStateOf(false) }
-
-    val consentLabel = when (consentType) {
-        ConsentType.PERSONALIZED -> LanguageManager.consentPersonalized
-        ConsentType.NON_PERSONALIZED -> LanguageManager.consentNonPersonalized
-        ConsentType.NONE -> LanguageManager.consentNone
-    }
+    val sectionShape = RoundedCornerShape(14.dp)
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
-            colors = CardDefaults.cardColors(containerColor = DiamondPanel.copy(0.95f)),
-            shape = RoundedCornerShape(16.dp)
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF1E2229)),
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 Modifier
-                    .padding(20.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(18.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Text(
                     LanguageManager.settingsTitle,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 20.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
-                Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(14.dp))
+
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Color.White.copy(0.05f), sectionShape)
+                        .padding(14.dp)
+                ) {
+                    Text(
+                        LanguageManager.adsConsentTitle,
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    Text(
+                        LanguageManager.adsConsentWhere,
+                        color = PastelBlue,
+                        fontSize = 12.sp
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        LanguageManager.adsConsentHint,
+                        color = Color.Gray,
+                        fontSize = 11.sp
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "false",
+                            color = if (!adsConsentEnabled) Color.White else Color.Gray,
+                            fontWeight = if (!adsConsentEnabled) FontWeight.Bold else FontWeight.Normal,
+                            fontSize = 13.sp
+                        )
+                        Spacer(Modifier.weight(1f))
+                        Switch(
+                            checked = adsConsentEnabled,
+                            onCheckedChange = onAdsConsent,
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = DiamondRed,
+                                uncheckedThumbColor = Color.White,
+                                uncheckedTrackColor = Color.DarkGray
+                            )
+                        )
+                        Spacer(Modifier.weight(1f))
+                        Text(
+                            "true",
+                            color = if (adsConsentEnabled) Color.White else Color.Gray,
+                            fontWeight = if (adsConsentEnabled) FontWeight.Bold else FontWeight.Normal,
+                            fontSize = 13.sp
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(10.dp))
+
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Color.White.copy(0.05f), sectionShape)
+                        .padding(14.dp)
+                ) {
+                    Text(
+                        LanguageManager.timerTitle,
+                        color = Color.White,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        OutlinedTextField(
+                            value = timerInput,
+                            onValueChange = {
+                                if (it.all { c -> c.isDigit() } && (it.toIntOrNull() ?: 0) <= 180) {
+                                    timerInput = it
+                                }
+                            },
+                            placeholder = { Text("0", color = Color.Gray) },
+                            modifier = Modifier
+                                .width(88.dp)
+                                .heightIn(min = 48.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = PastelPurple,
+                                unfocusedBorderColor = Color.Gray,
+                                focusedTextColor = Color.White
+                            ),
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        Button(
+                            onClick = { onSetTimer(timerInput.toIntOrNull() ?: 0) },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = DiamondRed,
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text(LanguageManager.setTimer, color = Color.White)
+                        }
+                    }
+                }
+
+                Spacer(Modifier.height(10.dp))
 
                 Button(
                     onClick = onClearCache,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(0.5f)),
-                    modifier = Modifier.fillMaxWidth()
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.White.copy(0.08f),
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(Icons.Default.Delete, null, tint = Color.White)
                     Spacer(Modifier.width(8.dp))
@@ -465,7 +625,7 @@ fun SettingsDialog(
                 }
 
                 if (hiddenCount > 0) {
-                    Spacer(Modifier.height(10.dp))
+                    Spacer(Modifier.height(8.dp))
                     Text(
                         String.format(LanguageManager.hiddenBroken, hiddenCount),
                         color = Color.Gray,
@@ -475,7 +635,8 @@ fun SettingsDialog(
                     OutlinedButton(
                         onClick = onRestoreHidden,
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Icon(Icons.Default.Replay, null, modifier = Modifier.size(16.dp))
                         Spacer(Modifier.width(6.dp))
@@ -483,122 +644,20 @@ fun SettingsDialog(
                     }
                 }
 
-                Spacer(Modifier.height(15.dp))
-                HorizontalDivider(color = Color.Gray.copy(0.3f))
-                Spacer(Modifier.height(15.dp))
-
-                Text(LanguageManager.timerTitle, color = Color.LightGray, fontSize = 14.sp)
-                Spacer(Modifier.height(8.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = timerInput,
-                        onValueChange = {
-                            if (it.all { c -> c.isDigit() } && (it.toIntOrNull() ?: 0) <= 180) {
-                                timerInput = it
-                            }
-                        },
-                        placeholder = { Text("0", color = Color.Gray) },
-                        modifier = Modifier.width(80.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = PastelPurple,
-                            unfocusedBorderColor = Color.Gray,
-                            focusedTextColor = Color.White
-                        ),
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Button(
-                        onClick = { onSetTimer(timerInput.toIntOrNull() ?: 0) },
-                        colors = ButtonDefaults.buttonColors(containerColor = DiamondRed)
-                    ) {
-                        Text(LanguageManager.setTimer, color = Color.White)
-                    }
-                }
-
-                Spacer(Modifier.height(15.dp))
-                HorizontalDivider(color = Color.Gray.copy(0.3f))
-                Spacer(Modifier.height(15.dp))
-
-                Text(
-                    LanguageManager.consentManage,
-                    color = Color.White,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    String.format(LanguageManager.consentStatus, consentLabel),
-                    color = PastelBlue,
-                    fontSize = 12.sp
-                )
-                Spacer(Modifier.height(8.dp))
-
-                if (!showConsentOptions) {
-                    OutlinedButton(
-                        onClick = { showConsentOptions = true },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
-                    ) {
-                        Icon(Icons.Default.Edit, null, modifier = Modifier.size(16.dp))
-                        Spacer(Modifier.width(6.dp))
-                        Text(LanguageManager.consentManage, fontSize = 12.sp)
-                    }
-                } else {
-                    Column(
-                        Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Button(
-                            onClick = {
-                                onChangeConsent(ConsentType.PERSONALIZED); showConsentOptions = false
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (consentType == ConsentType.PERSONALIZED) DiamondRed else Color.DarkGray
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        ) { Text(LanguageManager.consentPersonalized, fontSize = 12.sp) }
-
-                        Button(
-                            onClick = {
-                                onChangeConsent(ConsentType.NON_PERSONALIZED); showConsentOptions = false
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = if (consentType == ConsentType.NON_PERSONALIZED) DiamondRed else Color.DarkGray
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        ) { Text(LanguageManager.consentNonPersonalized, fontSize = 12.sp) }
-
-                        OutlinedButton(
-                            onClick = {
-                                onChangeConsent(ConsentType.NONE); showConsentOptions = false
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                contentColor = Color(0xFFFF6B6B)
-                            )
-                        ) {
-                            Icon(
-                                Icons.Default.RemoveCircle,
-                                null,
-                                tint = Color(0xFFFF6B6B),
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(Modifier.width(6.dp))
-                            Text(LanguageManager.revokeConsent, fontSize = 12.sp)
-                        }
-                    }
-                }
-
-                Spacer(Modifier.height(8.dp))
-                TextButton(onClick = onOpenPrivacyPolicy) {
+                TextButton(
+                    onClick = onOpenPrivacyPolicy,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text("🔗 ${LanguageManager.privacyPolicy}", color = PastelBlue, fontSize = 12.sp)
                 }
-                Spacer(Modifier.height(15.dp))
                 Button(
                     onClick = onDismiss,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray),
-                    modifier = Modifier.fillMaxWidth()
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = DiamondRed,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(LanguageManager.close, color = Color.White, fontWeight = FontWeight.Bold)
                 }
@@ -670,7 +729,8 @@ fun TvFocusableIconButton(
     IconButton(
         onClick = onClick,
         modifier = modifier
-            .size(48.dp)
+            .defaultMinSize(minWidth = 34.dp, minHeight = 34.dp)
+            .size(34.dp)
             .onFocusChanged { isFocused = it.isFocused }
             .then(
                 if (isFocused) Modifier.border(2.dp, FocusGlow, RoundedCornerShape(8.dp))
@@ -681,7 +741,7 @@ fun TvFocusableIconButton(
                 RoundedCornerShape(8.dp)
             )
     ) {
-        Icon(icon, null, tint = Color.White)
+        Icon(icon, null, tint = Color.White, modifier = Modifier.size(18.dp))
     }
 }
 
@@ -724,21 +784,21 @@ fun NeonGlassButton(
     Box(
         modifier = modifier
             .scale(scale)
-            .heightIn(min = 42.dp)
-            .widthIn(min = 64.dp, max = 132.dp)
+            .heightIn(min = 32.dp)
+            .widthIn(min = 52.dp, max = 108.dp)
             .clip(RoundedCornerShape(12.dp))
             .onFocusChanged { isFocused = it.isFocused }
             .focusable()
             .background(containerColor)
             .border(if (isFocused) 2.dp else 1.dp, borderBrush, RoundedCornerShape(12.dp))
             .clickable(interactionSource = interactionSource, indication = null) { onClick() }
-            .padding(horizontal = 14.dp, vertical = 8.dp),
+            .padding(horizontal = 10.dp, vertical = 5.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
             color = if (isActive || isFocused) Color.White else Color.LightGray,
-            fontSize = 13.sp,
+            fontSize = 12.sp,
             fontWeight = if (isActive || isFocused) FontWeight.Bold else FontWeight.SemiBold,
             textAlign = TextAlign.Center,
             maxLines = 1,
@@ -782,11 +842,11 @@ fun CountryListRow(
             .focusable()
             .border(if (isFocused || isSelected) 2.dp else 1.dp, borderColor, rowShape)
             .clickable(interactionSource = interactionSource, indication = null) { onClick() }
-            .padding(horizontal = 14.dp, vertical = 12.dp),
+            .padding(horizontal = 18.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        MiniFlag(countryCode, size = 34)
-        Spacer(Modifier.width(14.dp))
+        MiniFlag(countryCode, size = 26)
+        Spacer(Modifier.width(12.dp))
         Column(Modifier.weight(1f)) {
             Text(
                 displayName,
@@ -797,7 +857,7 @@ fun CountryListRow(
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                "$count",
+                String.format(LanguageManager.channelCountFmt, count),
                 color = Color.Gray,
                 fontSize = 11.sp
             )
@@ -837,41 +897,25 @@ fun SelectionDialog(
             shape = RoundedCornerShape(16.dp),
             modifier = Modifier.fillMaxHeight(0.82f)
         ) {
-            Column(Modifier.padding(16.dp)) {
+            Column(Modifier.padding(14.dp)) {
                 Text(
                     title,
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+                    fontSize = 17.sp,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                OutlinedTextField(
+                CompactSearchField(
                     value = query,
                     onValueChange = { query = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 44.dp),
-                    textStyle = androidx.compose.ui.text.TextStyle(fontSize = 13.sp),
-                    placeholder = {
-                        Text(LanguageManager.countrySearchHint, fontSize = 12.sp, color = Color.Gray)
-                    },
-                    leadingIcon = {
-                        Icon(Icons.Default.Search, null, tint = PastelPurple, modifier = Modifier.size(18.dp))
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = PastelPurple,
-                        unfocusedBorderColor = Color.Gray,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        cursorColor = PastelPink
-                    ),
-                    shape = RoundedCornerShape(10.dp),
-                    singleLine = true
+                    hint = LanguageManager.countrySearchHint,
+                    modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(8.dp))
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                    contentPadding = PaddingValues(horizontal = 4.dp, vertical = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(filtered, key = { it }) { item ->
                         CountryListRow(

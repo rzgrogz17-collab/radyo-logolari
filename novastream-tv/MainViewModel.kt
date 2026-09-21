@@ -100,23 +100,28 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var lastListIndex by mutableStateOf(prefs.getInt("last_list_index", 0))
         private set
 
+    var adsConsentEnabled by mutableStateOf(prefs.getBoolean("ads_consent_enabled", false))
+        private set
     var consentType by mutableStateOf(
-        when (prefs.getString("consent_type", "NONE")) {
-            "PERSONALIZED" -> ConsentType.PERSONALIZED
-            "NON_PERSONALIZED" -> ConsentType.NON_PERSONALIZED
-            else -> ConsentType.NONE
-        }
+        if (prefs.getBoolean("ads_consent_enabled", false)) ConsentType.PERSONALIZED
+        else ConsentType.NONE
     )
-    val hasConsent: Boolean get() = consentType != ConsentType.NONE
+    val hasConsent: Boolean get() = adsConsentEnabled
 
     private var filterJob: Job? = null
     private val gson = Gson()
 
     fun setConsent(type: ConsentType) {
-        consentType = type
+        setAdsConsent(type == ConsentType.PERSONALIZED || type == ConsentType.NON_PERSONALIZED)
+    }
+
+    fun setAdsConsent(enabled: Boolean) {
+        adsConsentEnabled = enabled
+        consentType = if (enabled) ConsentType.PERSONALIZED else ConsentType.NONE
         prefs.edit()
-            .putString("consent_type", type.name)
-            .putBoolean("gdpr_consent", type != ConsentType.NONE)
+            .putBoolean("ads_consent_enabled", enabled)
+            .putString("consent_type", consentType.name)
+            .putBoolean("gdpr_consent", enabled)
             .apply()
     }
 
@@ -180,10 +185,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             if (code.isNotBlank()) counts[code] = (counts[code] ?: 0) + 1
         }
         countryCounts = counts
-        availableCountries = counts.keys.sortedWith(
-            compareBy<String> { if (it == "INT") 0 else 1 }
-                .thenBy { CountryCatalog.displayName(it).lowercase(Locale.getDefault()) }
-        )
+        availableCountries = counts.entries
+            .sortedByDescending { it.value }
+            .map { it.key }
     }
 
     fun fetchChannels() {

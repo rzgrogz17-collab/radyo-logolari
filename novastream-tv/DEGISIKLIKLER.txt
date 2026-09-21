@@ -1,5 +1,12 @@
-NovaStream 9.0.0 — neler değişti
-================================
+NovaStream 9.0.1
+- Logo arkasındaki beyaz/şeffaf kutu kaldırıldı
+- Bayrak çemberleri kenarlardan ayrıldı, biraz küçültüldü
+- Rıza: true/false anahtar, varsayılan false; aç/kapat = üst ⚙ Ayarlar
+- Kişiselleştirilmiş kabul yazısı beyaz
+- Arama / Tümü / Ülkeler paneli küçültüldü
+- Ayarlar paneli yenilendi
+- Ülkeler çok kanaldan aza sıralanır
+
 
 UYGULAMA
 - INT / International artık BM (UN) bayrağı + küre yedek ikonu ile görünür.
