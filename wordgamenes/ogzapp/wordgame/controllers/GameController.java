@@ -189,8 +189,9 @@ public class GameController {
         saveDataBeforeLetterAnimation(foundWord);
         gameScreen.runSmoke(level.comboCount);
         checkCorrectWordCellsForBoostersBeforeAnimation(foundWord);
+        int themeLevelIndex = level.index;
         checkIfLevelEnded();
-        animateCorrectAnswer(foundWord, level.index);
+        animateCorrectAnswer(foundWord, themeLevelIndex);
         dial.clearSelection();
         preview.setDirty();
         preview.fadeOut();
