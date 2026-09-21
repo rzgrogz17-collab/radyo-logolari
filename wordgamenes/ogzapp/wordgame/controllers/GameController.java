@@ -730,7 +730,7 @@ public class GameController {
             }
             return true;
         }
-        int result = GameData.insertWordToExtraJson(answer);
+        int result = GameData.insertWordToExtraJson(answer, level.index);
         int a = (result >> 8) & 0xFF;
         int b = result & 0xFF;
         if (a == 1) {

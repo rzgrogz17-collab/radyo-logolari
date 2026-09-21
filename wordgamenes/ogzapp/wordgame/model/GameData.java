@@ -62,7 +62,18 @@ public class GameData {
     private static Set<Integer> integerSet = new HashSet<>();
 
     private static Array<String> extraWords = new Array<>();
+    private static Array<ExtraWordEntry> extraWordEntries = new Array<>();
     private static JsonReader jsonReader = new JsonReader();
+
+    public static class ExtraWordEntry {
+        public final String word;
+        public final int levelNumber;
+
+        public ExtraWordEntry(String word, int levelNumber) {
+            this.word = word;
+            this.levelNumber = levelNumber;
+        }
+    }
 
     private static BoardModel boardModel;
     private static Array<Word> acrossWords = new Array<>();
@@ -602,7 +613,7 @@ public class GameData {
 
 
 
-    public static int insertWordToExtraJson(String word){
+    public static int insertWordToExtraJson(String word, int levelIndex){
 
         int a = 0;
         int b = 0;
@@ -615,7 +626,7 @@ public class GameData {
 
             if(!exists){
                 b = 1;
-                addWordToExtraJson(wordId);
+                addWordToExtraJson(wordId, Math.max(0, levelIndex) + 1);
             }else{
                 b = 0;
             }
@@ -635,19 +646,33 @@ public class GameData {
         extraWords.clear();
 
         for(int i = 0; i < doc.size; i++){
-            extraWords.add(wordMap.get(doc.get(i).asInt()));
+            extraWords.add(wordMap.get(readExtraWordId(doc.get(i))));
         }
 
         return extraWords;
     }
 
-
-
-
-    private static void addWordToExtraJson(int wordId) {
+    public static Array<ExtraWordEntry> getExtraWordEntries(){
         String key = getLocaleAwareKey(Constants.KEY_EXTRA_WORDS);
         JsonValue doc = readJsonArrayFromPreferences(key);
-        doc.addChild(new JsonValue(wordId));
+        extraWordEntries.clear();
+        for(int i = 0; i < doc.size; i++){
+            JsonValue child = doc.get(i);
+            extraWordEntries.add(new ExtraWordEntry(wordMap.get(readExtraWordId(child)), readExtraWordLevel(child)));
+        }
+        return extraWordEntries;
+    }
+
+
+
+
+    private static void addWordToExtraJson(int wordId, int levelNumber) {
+        String key = getLocaleAwareKey(Constants.KEY_EXTRA_WORDS);
+        JsonValue doc = readJsonArrayFromPreferences(key);
+        JsonValue obj = new JsonValue(JsonValue.ValueType.object);
+        obj.addChild("w", new JsonValue(wordId));
+        obj.addChild("l", new JsonValue(levelNumber));
+        doc.addChild(obj);
         saveJsonDocument(doc, key);
     }
 
@@ -660,11 +685,36 @@ public class GameData {
         JsonValue doc = readJsonArrayFromPreferences(key);
 
         for(int i = 0; i < doc.size; i++){
-            if(wordId == doc.get(i).asInt())
+            if(wordId == readExtraWordId(doc.get(i)))
                 return true;
         }
 
         return false;
+    }
+
+    private static int readExtraWordId(JsonValue child) {
+        if (child == null) return 0;
+        if (child.type == JsonValue.ValueType.object) {
+            JsonValue id = child.get("w");
+            return id == null ? 0 : id.asInt();
+        }
+        return child.asInt();
+    }
+
+    private static int readExtraWordLevel(JsonValue child) {
+        if (child == null || child.type != JsonValue.ValueType.object) return 0;
+        JsonValue level = child.get("l");
+        return level == null ? 0 : level.asInt();
+    }
+
+    private static JsonValue copyExtraWordChild(JsonValue child) {
+        if (child != null && child.type == JsonValue.ValueType.object) {
+            JsonValue obj = new JsonValue(JsonValue.ValueType.object);
+            obj.addChild("w", new JsonValue(readExtraWordId(child)));
+            obj.addChild("l", new JsonValue(readExtraWordLevel(child)));
+            return obj;
+        }
+        return new JsonValue(readExtraWordId(child));
     }
 
 
@@ -700,7 +750,7 @@ public class GameData {
         int keep = Math.max(0, doc.size - n);
         JsonValue trimmed = new JsonValue(JsonValue.ValueType.array);
         for (int i = 0; i < keep; i++) {
-            trimmed.addChild(new JsonValue(doc.get(i).asInt()));
+            trimmed.addChild(copyExtraWordChild(doc.get(i)));
         }
         saveJsonDocument(trimmed, key);
     }

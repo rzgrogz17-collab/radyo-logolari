@@ -13,12 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.StringBuilder;
+import com.badlogic.gdx.utils.IntArray;
+import com.badlogic.gdx.utils.IntMap;
 
 import ogzapp.wordgame.config.GameConfig;
 import ogzapp.wordgame.config.UIConfig;
@@ -42,14 +44,15 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
 
     private ProgressBar progressBar;
     private MarqueeLabel countMarquee;
-    private Label wordsLabel;
-    private Label wordsShadow;
-    private Group wordsTextGroup;
+    private Label.LabelStyle wordsStyle;
+    private Label.LabelStyle headerStyle;
+    private Table wordsTable;
     private Group wordsGroup;
     private ScrollPane wordsPane;
     private GameScreen gameScreen;
     private TutorialBooster tutorialBooster;
     private float textShadowOffset;
+    private float frameStroke;
 
     public BonusWordsIncompleteDialog(float width, float height, BaseScreen screen) {
         super(width, height, screen);
@@ -58,6 +61,7 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         float minSide = Math.min(width, height);
         content.setSize(Math.min(width * 0.90f, minSide * 0.92f), minSide * 0.94f);
         textShadowOffset = content.getWidth() * 0.008f;
+        frameStroke = Math.max(3f, content.getWidth() * 0.008f);
 
         setContentBackground();
         contentBackground.setSize(content.getWidth(), content.getHeight());
@@ -65,11 +69,11 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         BitmapFont bodyFont = screen.wordConnectGame.resourceManager.get(ResourceManager.fontSemiBoldShadow, BitmapFont.class);
         Label.LabelStyle bodyTextStyle = new Label.LabelStyle(bodyFont, Color.WHITE);
         Label.LabelStyle bodyShadowStyle = new Label.LabelStyle(bodyFont, UIConfig.FROSTED_ALERT_DIALOG_TEXT_SHADOW_COLOR);
+        wordsStyle = new Label.LabelStyle(bodyFont, UIConfig.BWD_WORDS_TEXT_COLOR);
+        headerStyle = new Label.LabelStyle(bodyFont, UIConfig.BWD_WORDS_TITLE_COLOR);
 
         setTitleLabel(LanguageManager.get("extra_words_incomplete"));
         setTitleBackgroundColor(UIConfig.MENU_DIALOG_TITLE_BACKGROUND_COLOR);
-        titleContainer.setY(titleContainer.getY() - titleContainer.getHeight() * 0.04f);
-        shrinkTitleToFit(titleContainer.getWidth() * 0.72f);
 
         setCloseButton();
         closeButton.addListener(new ChangeListener() {
@@ -79,6 +83,7 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
                 hide();
             }
         });
+        expandTitleToFrame();
 
         float pad = content.getWidth() * 0.045f;
         float barWidth = content.getWidth() * 0.78f;
@@ -110,41 +115,30 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         wordsGroup.setY(wordsBottom);
         content.addActor(wordsGroup);
 
-        float stroke = Math.max(3f, wordsGroup.getHeight() * 0.012f);
         float radius = Math.min(wordsGroup.getWidth(), wordsGroup.getHeight()) * 0.06f;
         Image wordsGroupBg = new Image(new NinePatchDrawable(
                 createRoundedFillNinePatch(wordsGroup.getHeight(), radius, UIConfig.BWD_WORDS_BG_COLOR)));
         wordsGroupBg.setSize(wordsGroup.getWidth(), wordsGroup.getHeight());
         wordsGroup.addActor(wordsGroupBg);
         Image wordsFrame = new Image(new NinePatchDrawable(
-                createRoundedStrokeNinePatch(wordsGroup.getHeight(), radius, stroke, FRAME_COLOR)));
+                createRoundedStrokeNinePatch(wordsGroup.getHeight(), radius, frameStroke, FRAME_COLOR)));
         wordsFrame.setSize(wordsGroup.getWidth(), wordsGroup.getHeight());
         wordsGroup.addActor(wordsFrame);
 
-        Label.LabelStyle wordsStyle = new Label.LabelStyle(bodyFont, UIConfig.BWD_WORDS_TEXT_COLOR);
-        wordsShadow = new Label(" ", bodyShadowStyle);
-        wordsShadow.setAlignment(Align.center);
-        wordsShadow.setWrap(true);
-        wordsShadow.setFontScale(0.92f);
-        wordsLabel = new Label(" ", wordsStyle);
-        wordsLabel.setAlignment(Align.center);
-        wordsLabel.setWrap(true);
-        wordsLabel.setFontScale(0.92f);
-
-        wordsTextGroup = new Group();
-        wordsTextGroup.addActor(wordsShadow);
-        wordsTextGroup.addActor(wordsLabel);
+        wordsTable = new Table();
+        wordsTable.top();
+        wordsTable.defaults().growX();
 
         ScrollPane.ScrollPaneStyle paneStyle = new ScrollPane.ScrollPaneStyle();
         paneStyle.vScrollKnob = new TextureRegionDrawable(AtlasRegions.rect);
 
-        wordsPane = new ScrollPane(wordsTextGroup, paneStyle);
+        wordsPane = new ScrollPane(wordsTable, paneStyle);
         wordsPane.setScrollingDisabled(true, false);
         wordsPane.setScrollbarsVisible(false);
         wordsPane.setFadeScrollBars(true);
         wordsPane.setupFadeScrollBars(0.4f, 0.2f);
         wordsPane.setFlickScroll(true);
-        float inner = stroke + wordsGroup.getWidth() * 0.03f;
+        float inner = frameStroke * 1.5f;
         wordsPane.setSize(Math.max(8f, wordsGroup.getWidth() - inner * 2f),
                 Math.max(24f, wordsGroup.getHeight() - inner * 2f));
         wordsPane.setX((wordsGroup.getWidth() - wordsPane.getWidth()) * 0.5f);
@@ -202,26 +196,29 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         }
     }
 
-    private String getWordList() {
-        Array<String> words = GameData.getExtraWords();
-        StringBuilder sb = new StringBuilder();
-        String lineBreak = "";
-        for (int i = 0; i < words.size; i++) {
-            String word = words.get(i);
-            if (word == null) continue;
-            sb.append(lineBreak);
-            sb.append(word);
-            if (lineBreak.isEmpty())
-                lineBreak = "\n";
+    private void expandTitleToFrame() {
+        float gap = frameStroke * 1.5f;
+        float left = gap;
+        float right = content.getWidth() - gap;
+        if (closeButton != null) {
+            right = Math.min(right, closeButton.getX() - gap);
         }
-        return sb.toString();
+        float titleW = Math.max(titleContainer.getWidth() * 1.08f, right - left);
+        if (titleW > right - left) titleW = Math.max(8f, right - left);
+        float titleH = titleContainer.getHeight() * 1.22f;
+        titleBackground.setSize(titleW, titleH);
+        titleContainer.setSize(titleW, titleH);
+        titleContainer.setOrigin(Align.center);
+        titleContainer.setX(left + (right - left - titleW) * 0.5f);
+        titleContainer.setY(content.getHeight() - titleH * 0.83f);
+        shrinkTitleToFit(Math.max(8f, titleW - gap * 2f));
     }
 
     private void shrinkTitleToFit(float titleMaxW) {
         titleLabel.setWrap(false);
         titleLabel.setVisible(true);
         titleLabel.setAlignment(Align.center);
-        float baseScale = titleLabel.getFontScaleX() * 1.08f;
+        float baseScale = titleLabel.getFontScaleX() * 1.22f;
         titleLabel.setFontScale(baseScale);
         float prefW = titleLabel.getPrefWidth();
         if (prefW > titleMaxW && prefW > 0f) {
@@ -248,21 +245,58 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         if (countMarquee != null)
             countMarquee.setMarqueeText(text);
 
-        if (wordsLabel != null && wordsGroup != null) {
-            String list = getWordList();
-            float paneWidth = wordsPane.getWidth();
-            wordsLabel.setText(list);
-            wordsShadow.setText(list);
-            wordsLabel.setWidth(paneWidth);
-            wordsShadow.setWidth(paneWidth);
-            float listHeight = Math.max(wordsLabel.getPrefHeight(), wordsPane.getHeight());
-            wordsLabel.setHeight(listHeight);
-            wordsShadow.setHeight(listHeight);
-            wordsLabel.setPosition(0, 0);
-            wordsShadow.setPosition(textShadowOffset, -textShadowOffset);
-            wordsTextGroup.setSize(paneWidth, listHeight + textShadowOffset);
-            wordsPane.layout();
+        if (wordsTable == null || wordsPane == null) return;
+        wordsTable.clearChildren();
+        float paneWidth = wordsPane.getWidth();
+        float rowPad = Math.max(4f, paneWidth * 0.012f);
+
+        IntMap<Array<String>> groups = new IntMap<Array<String>>();
+        IntArray levels = new IntArray();
+        Array<GameData.ExtraWordEntry> entries = GameData.getExtraWordEntries();
+        for (int i = 0; i < entries.size; i++) {
+            GameData.ExtraWordEntry entry = entries.get(i);
+            if (entry == null || entry.word == null) continue;
+            Array<String> list = groups.get(entry.levelNumber);
+            if (list == null) {
+                list = new Array<String>();
+                groups.put(entry.levelNumber, list);
+                levels.add(entry.levelNumber);
+            }
+            list.add(entry.word);
         }
+        levels.sort();
+
+        for (int i = 0; i < levels.size; i++) {
+            int levelNumber = levels.get(i);
+            Array<String> list = groups.get(levelNumber);
+            if (list == null || list.size == 0) continue;
+
+            if (levelNumber > 0) {
+                addFittedRow(LanguageManager.format("level", levelNumber), headerStyle, paneWidth, 0.88f, rowPad * 2.2f, rowPad);
+            }
+            for (int w = 0; w < list.size; w++) {
+                addFittedRow(list.get(w), wordsStyle, paneWidth, 1.08f, rowPad, rowPad * 0.4f);
+            }
+        }
+
+        wordsTable.pack();
+        wordsTable.setWidth(paneWidth);
+        wordsPane.layout();
+        wordsPane.setScrollY(0);
+    }
+
+    private void addFittedRow(String text, Label.LabelStyle style, float width, float fontScale, float padTop, float padBottom) {
+        Label label = new Label(text, style);
+        label.setAlignment(Align.center);
+        label.setWrap(false);
+        label.setFontScale(fontScale);
+        float prefW = label.getPrefWidth();
+        if (prefW > width && prefW > 0f) {
+            label.setFontScale(fontScale * width / prefW);
+        }
+        label.setWrap(true);
+        label.setWidth(width);
+        wordsTable.add(label).width(width).padTop(padTop).padBottom(padBottom).row();
     }
 
     @Override
