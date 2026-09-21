@@ -249,10 +249,7 @@ public class CellView extends Group implements Pool.Poolable {
         solvedImg.setColor(tint);
         solvedImg.setOrigin(Align.center);
         solvedImg.getColor().a = 1f;
-        if (unsolvedImg != null) {
-            unsolvedImg.setVisible(true);
-            unsolvedImg.setColor(tint);
-        }
+        applyWhiteFrame();
     }
 
 
@@ -277,6 +274,16 @@ public class CellView extends Group implements Pool.Poolable {
         label.setX((getWidth() - layout.width * label.getFontScaleX()) * 0.5f);
         label.setY((getHeight() - label.getHeight()) * 0.5f);
         com.badlogic.gdx.utils.Pools.free(layout);
+    }
+
+    private void applyWhiteFrame() {
+        if (unsolvedImg == null) return;
+        unsolvedImg.setVisible(true);
+        unsolvedImg.setSize(getWidth(), getHeight());
+        Color frame = unsolvedBgColor == null ? new Color(1f, 1f, 1f, 1f) : new Color(unsolvedBgColor);
+        frame.a = 1f;
+        unsolvedImg.setColor(frame);
+        unsolvedImg.toBack();
     }
 
 
@@ -478,10 +485,7 @@ public class CellView extends Group implements Pool.Poolable {
             solvedImg.setColor(tint);
             solvedImg.setVisible(true);
             solvedImg.getColor().a = 1f;
-            if (unsolvedImg != null) {
-                unsolvedImg.setVisible(true);
-                unsolvedImg.setColor(tint);
-            }
+            applyWhiteFrame();
         }
         if (label != null) {
             label.setVisible(true);
