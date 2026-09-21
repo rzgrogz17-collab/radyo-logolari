@@ -87,7 +87,7 @@ public class LevelEndView extends Group {
     // Hediye kutusu açıldığında halkadan dışa doğru yayılan "dalga efekti"
     // (wave/ring-pulse patlaması) - true/false ile açılıp kapatılabilen
     // bir anahtar.
-    private static final boolean MILESTONE_WAVE_EFFECT_ENABLED = true;
+    private static final boolean MILESTONE_WAVE_EFFECT_ENABLED = false;
 
     // Referans görseldeki gibi: koyu/lacivert yazılı, beyaz/aydınlık pill
     // buton (Sonraki Seviye ve X. Seviye butonları için).

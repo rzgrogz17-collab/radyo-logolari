@@ -426,9 +426,17 @@ public class UIConfig {
     public static final Color COIN_ANIMATION_SPARKLE_COLOR                  = new Color(0xfbb117ff);
 
 
-    // Çizgi Rengi (Royal Mavi)
+    /**
+     * The color of tiles' background, preview, dial buttons when they are touched down and the connecting lines among these buttons.
+     * It cycles when the final color is consumed. You can change and add new colors below.
+     */
     public static final Color[] levelColors = {
             Color.ROYAL,
+            Color.OLIVE,
+            Color.SCARLET,
+            Color.ORANGE,
+            Color.MAROON,
+            Color.FIREBRICK,
     };
 
     public static final Color SIDE_COMBO_STAR_COLOR                 = new Color(0xfffac2ff);

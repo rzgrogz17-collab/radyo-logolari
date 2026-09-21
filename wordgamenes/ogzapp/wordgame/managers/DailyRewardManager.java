@@ -11,16 +11,16 @@ import ogzapp.wordgame.model.Constants;
 // HintManager'daki Preferences deseniyle aynı mantığı kullanır.
 public class DailyRewardManager {
 
-    private static final long MILLIS_IN_A_DAY = 86400000L;
+    private static final long MILLIS_BETWEEN_CLAIMS = 43200000L; // 12 saat
 
-    // Son ödül talebinden bu yana 24 saatten fazla geçtiyse yeni ödül alınabilir.
+    // Son çevirmeden bu yana 12 saat geçtiyse yeni çark alınabilir.
     public static boolean isAvailable() {
         if (!GameConfig.DAILY_REWARD_WHEEL_ENABLED && !GameConfig.DAILY_REWARD_ENABLED) return false;
 
         long lastClaimTime = getLastClaimTime();
         if (lastClaimTime == 0) return true;
 
-        return TimeUtils.timeSinceMillis(lastClaimTime) >= MILLIS_IN_A_DAY;
+        return TimeUtils.timeSinceMillis(lastClaimTime) >= MILLIS_BETWEEN_CLAIMS;
     }
 
     public static long getLastClaimTime() {
@@ -39,7 +39,7 @@ public class DailyRewardManager {
         if (lastClaimTime == 0) return 1;
 
         long elapsed = TimeUtils.timeSinceMillis(lastClaimTime);
-        boolean streakBroken = elapsed > MILLIS_IN_A_DAY * 2;
+        boolean streakBroken = elapsed > MILLIS_BETWEEN_CLAIMS * 2;
 
         if (streakBroken) return 1;
 

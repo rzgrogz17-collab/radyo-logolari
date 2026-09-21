@@ -36,12 +36,11 @@ import ogzapp.wordgame.ui.tutorial.TutorialBooster;
 
 public class BonusWordsIncompleteDialog extends BaseDialog {
 
-    // Ekrandaki çapraz çizgiyle aynı çelik-mavi: kelime çerçevesi + şerit.
+    // Ekrandaki çapraz çizgiyle aynı çelik-mavi: kelime listesi çerçevesi.
     private static final Color FRAME_COLOR = new Color(0x6A8AA3FF);
-    private static final Color FRAME_BORDER_COLOR = new Color(0x4E6F86FF);
+    private static final Color PROGRESS_TRACK_BORDER = new Color(0x0C1E32FF);
 
     private ProgressBar progressBar;
-    private MarqueeLabel titleMarquee;
     private MarqueeLabel countMarquee;
     private Label wordsLabel;
     private Label wordsShadow;
@@ -69,19 +68,8 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
 
         setTitleLabel(LanguageManager.get("extra_words_incomplete"));
         setTitleBackgroundColor(UIConfig.MENU_DIALOG_TITLE_BACKGROUND_COLOR);
-        titleLabel.setWrap(false);
-        titleLabel.setVisible(false);
-        titleLabel.setFontScale(titleLabel.getFontScaleX() * 1.08f);
         titleContainer.setY(titleContainer.getY() - titleContainer.getHeight() * 0.04f);
-
-        titleMarquee = new MarqueeLabel(titleLabel.getStyle(), bodyShadowStyle, textShadowOffset);
-        titleMarquee.setFontScale(titleLabel.getFontScaleX());
-        float titleMaxW = titleContainer.getWidth() * 0.72f;
-        titleMarquee.setSize(titleMaxW, Math.max(titleLabel.getPrefHeight(), titleContainer.getHeight() * 0.55f));
-        titleMarquee.setPosition((titleContainer.getWidth() - titleMaxW) * 0.5f,
-                titleContainer.getHeight() * 0.28f - titleMarquee.getHeight() * 0.5f);
-        titleMarquee.setMarqueeText(LanguageManager.get("extra_words_incomplete"));
-        titleContainer.addActor(titleMarquee);
+        shrinkTitleToFit(titleContainer.getWidth() * 0.72f);
 
         setCloseButton();
         closeButton.addListener(new ChangeListener() {
@@ -100,7 +88,8 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         progressBar.setOrigin(Align.center);
         progressBar.setX((content.getWidth() - progressBar.getWidth()) * 0.5f);
         progressBar.setY(titleContainer.getY() - progressBar.getHeight() - content.getHeight() * 0.03f);
-        progressBar.setRoundedTrack(FRAME_COLOR, FRAME_BORDER_COLOR, Math.max(2f, progressBar.getHeight() * 0.10f));
+        progressBar.setRoundedTrack(UIConfig.BWD_WORDS_BG_COLOR, PROGRESS_TRACK_BORDER,
+                Math.max(2f, progressBar.getHeight() * 0.10f));
         content.addActor(progressBar);
 
         countMarquee = new MarqueeLabel(bodyTextStyle, bodyShadowStyle, textShadowOffset);
@@ -123,6 +112,10 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
 
         float stroke = Math.max(3f, wordsGroup.getHeight() * 0.012f);
         float radius = Math.min(wordsGroup.getWidth(), wordsGroup.getHeight()) * 0.06f;
+        Image wordsGroupBg = new Image(new NinePatchDrawable(
+                createRoundedFillNinePatch(wordsGroup.getHeight(), radius, UIConfig.BWD_WORDS_BG_COLOR)));
+        wordsGroupBg.setSize(wordsGroup.getWidth(), wordsGroup.getHeight());
+        wordsGroup.addActor(wordsGroupBg);
         Image wordsFrame = new Image(new NinePatchDrawable(
                 createRoundedStrokeNinePatch(wordsGroup.getHeight(), radius, stroke, FRAME_COLOR)));
         wordsFrame.setSize(wordsGroup.getWidth(), wordsGroup.getHeight());
@@ -224,6 +217,31 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         return sb.toString();
     }
 
+    private void shrinkTitleToFit(float titleMaxW) {
+        titleLabel.setWrap(false);
+        titleLabel.setVisible(true);
+        titleLabel.setAlignment(Align.center);
+        float baseScale = titleLabel.getFontScaleX() * 1.08f;
+        titleLabel.setFontScale(baseScale);
+        float prefW = titleLabel.getPrefWidth();
+        if (prefW > titleMaxW && prefW > 0f) {
+            titleLabel.setFontScale(baseScale * titleMaxW / prefW);
+        }
+        titleLabel.setWidth(titleMaxW);
+        titleLabel.setX((titleContainer.getWidth() - titleMaxW) * 0.5f);
+        titleLabel.setY(titleContainer.getHeight() * 0.28f - titleLabel.getPrefHeight() * 0.5f);
+
+        Label titleShadow = new Label(titleLabel.getText(), new Label.LabelStyle(
+                titleLabel.getStyle().font, UIConfig.FROSTED_ALERT_DIALOG_TEXT_SHADOW_COLOR));
+        titleShadow.setAlignment(Align.center);
+        titleShadow.setWrap(false);
+        titleShadow.setFontScale(titleLabel.getFontScaleX());
+        titleShadow.setSize(titleMaxW, titleLabel.getPrefHeight());
+        titleShadow.setPosition(titleLabel.getX() + textShadowOffset, titleLabel.getY() - textShadowOffset);
+        titleContainer.addActor(titleShadow);
+        titleLabel.toFront();
+    }
+
     public void updateViewWithData(float percent, int current, int target) {
         progressBar.setPercent(percent);
         String text = LanguageManager.format("extra_words_collected", current, target);
@@ -259,6 +277,23 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         super.hideAnimFinished();
         getStage().getRoot().setTouchable(Touchable.enabled);
         remove();
+    }
+
+    private static NinePatch createRoundedFillNinePatch(float height, float radius, Color color) {
+        int h = Math.max(8, Math.round(height));
+        int r = Math.max(2, Math.round(radius));
+        int stretch = 4;
+        int w = r * 2 + stretch;
+        Pixmap pixmap = new Pixmap(w, h, Pixmap.Format.RGBA8888);
+        pixmap.setBlending(Pixmap.Blending.None);
+        pixmap.setColor(0, 0, 0, 0);
+        pixmap.fill();
+        pixmap.setBlending(Pixmap.Blending.SourceOver);
+        fillRoundedRect(pixmap, 0, 0, w, h, r, color);
+        PixmapTextureData texData = new PixmapTextureData(pixmap, pixmap.getFormat(), false, false, true);
+        Texture tex = new Texture(texData);
+        tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        return new NinePatch(tex, r, r, r, r);
     }
 
     private static NinePatch createRoundedStrokeNinePatch(float height, float radius, float stroke, Color color) {
