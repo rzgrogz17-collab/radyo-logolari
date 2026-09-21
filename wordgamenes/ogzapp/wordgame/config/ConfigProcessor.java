@@ -18,19 +18,19 @@ public class ConfigProcessor {
 
 
     public static Color getLevelColor(int levelIndex){
-        int index = levelIndex % UIConfig.levelColors.length;
-
-        if(index >= 0){
-            // Paylaşılan Color.ROYAL referansı alfa animasyonlarında
-            // (fadeInSolvedBg) mutasyona uğrayıp sonraki girişte mavi
-            // kutuları şeffaf bırakmasın diye her seferinde kopya dönülür.
-            Color src = UIConfig.levelColors[index];
-            Color copy = new Color(src);
-            copy.a = 1f;
-            return copy;
+        if (UIConfig.levelColors == null || UIConfig.levelColors.length == 0) {
+            return new Color(Color.WHITE);
         }
 
-        return new Color(Color.WHITE);
+        // Dial, önizleme ve bulunan kelime kutuları 10 seviye boyunca aynı
+        // rengi kullanır. 10. seviye ödülünden sonra (index 10, 20, 30…)
+        // bir sonraki levelColors değerine geçilir.
+        int cycle = Math.max(0, levelIndex) / 10;
+        int index = cycle % UIConfig.levelColors.length;
+        Color src = UIConfig.levelColors[index];
+        Color copy = new Color(src);
+        copy.a = 1f;
+        return copy;
     }
 
 

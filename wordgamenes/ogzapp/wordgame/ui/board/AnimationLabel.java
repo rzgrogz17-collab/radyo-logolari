@@ -48,7 +48,7 @@ public class AnimationLabel extends Group implements Pool.Poolable {
     private Image bg;
 
     public AnimationLabel(){
-        bg = new Image(NinePatches.board_cell_solved);
+        bg = new Image(NinePatches.board_cell);
         addActor(bg);
 
         label = new Label("", labelStyle);

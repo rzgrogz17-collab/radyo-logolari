@@ -65,7 +65,10 @@ public class CellView extends Group implements Pool.Poolable {
 
     public CellView(){
         if(unsolvedBgDrawable == null) unsolvedBgDrawable = new NinePatchDrawable(NinePatches.board_cell);
-        if(solvedBgDrawable == null) solvedBgDrawable = new NinePatchDrawable(NinePatches.board_cell_solved);
+        // board_cell_solved atlası mavi/bordo pişmiş renk taşıdığı için
+        // gold gibi bir tema rengi çarpılınca kutu içinde ikinci bir hue
+        // görünüyordu. Aynı nötr board_cell dokusu boyanınca tek renk kalır.
+        if(solvedBgDrawable == null) solvedBgDrawable = new NinePatchDrawable(NinePatches.board_cell);
         createUnsolvedBg();
     }
 
@@ -246,6 +249,10 @@ public class CellView extends Group implements Pool.Poolable {
         solvedImg.setColor(tint);
         solvedImg.setOrigin(Align.center);
         solvedImg.getColor().a = 1f;
+        if (unsolvedImg != null) {
+            unsolvedImg.setVisible(true);
+            unsolvedImg.setColor(tint);
+        }
     }
 
 
@@ -471,6 +478,10 @@ public class CellView extends Group implements Pool.Poolable {
             solvedImg.setColor(tint);
             solvedImg.setVisible(true);
             solvedImg.getColor().a = 1f;
+            if (unsolvedImg != null) {
+                unsolvedImg.setVisible(true);
+                unsolvedImg.setColor(tint);
+            }
         }
         if (label != null) {
             label.setVisible(true);
