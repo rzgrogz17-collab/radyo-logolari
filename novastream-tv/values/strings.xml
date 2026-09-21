@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">NovaStream - Live TV &amp; HD Global Player</string>
+    <!-- Yandex Ads Test ID'leri -->
+    <string name="yandex_banner_id" translatable="false">R-M-19538844-1</string>
+    <string name="yandex_interstitial_id" translatable="false">R-M-19538844-2</string>
+    <string name="yandex_rewarded_id" translatable="false">R-M-19538844-3</string>
+</resources>

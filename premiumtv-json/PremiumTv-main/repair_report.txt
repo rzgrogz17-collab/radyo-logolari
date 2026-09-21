@@ -1,0 +1,265 @@
+input: 9660
+output: 9388
+stats: {'api_name_match': 7054, 'kept_custom_url': 1255, 'url_in_iptv_org': 6689, 'fragile_url': 616, 'country_changed': 7541, 'replaced_fragile_with_iptvorg': 1100, 'group_from_category': 5043, 'empty_logo': 23, 'group_from_undefined': 457, 'probe_fail': 404, 'probe_ok': 212, 'url_replaced': 1100, 'dup_dropped': 272}
+probe failed: 404
+replaced: 0
+still-dead sample (404):
+  [HTTPError 403] Show TV Max :: https://ciner-live.ercdn.net/showmax/showmax_1080p.m3u8?e=1777028159&st=JJcJjH2lcC1Aedr216TbMg&tv=1
+  [RemoteDisconnected] Eurostar :: https://mn-nl.mncdn.com/dogusdyg_eurostar/live_1080p3000000kbps/index.m3u8?st=MrmdLvG_MJ1NK_P8b5pgxA&e=1777107464
+  [HTTPError 403] CNN Türk :: https://live.duhnet.tv//S2/HLS_LIVE/cnnturknp/track_4_1000/playlist.m3u8?&live=true&app=com.cnnturk&st=a3GA4AdbyzUko98dY
+  [URLError] CAN TV :: http://canbroadcast.com:7000/canlican/tv.m3u8
+  [HTTPError 403] İdman TV :: http://109.205.166.68/server124/idman_az/index.m3u8
+  [URLError] ОТР :: https://www.megacdn.ru/o/otr_2/720p/1788/72/84/1788728409264.ts
+  [URLError] Матч! Планета :: http://212.0.211.102:9999/play/a00b/index.m3u8
+  [HTTPError 403] Space TV :: http://109.205.166.68/server124/space_tv/index.m3u8
+  [HTTPError 502] VIP HD :: https://www.tvkaista.net/stream-forwarder/get.php?x=AZ_VIP
+  [URLError] Sada-E-Haq TV (720p) :: https://live.relentlessinnovations.net:1936/sadaehaq/sadaehaq/playlist.m3u8
+  [HTTPError 403] Bang Bang (480p) :: https://digitalb-live.morescreens.com/DAL_1_004/playlist.m3u8?application_id=backoffice1&application_installation_id=1&a
+  [URLError] TV4 Tamazight TV (576p) :: http://149.62.177.98:8000/play/a01t/index.m3u8
+  [URLError] National Geographic Latin America South (1080p) :: http://38.183.182.166:8000/play/a0vd/index.m3u8
+  [URLError] Balkan Radio Salzburg (480p) :: https://channel.streams.ovh:1936/balkanradiosalzburgtv/balkanradiosalzburgtv/playlist.m3u8
+  [URLError] IN TV :: https://envivo.bolivia-link.com:3580/live/intvlive.m3u8
+  [URLError] BN TV (480p) :: https://rtvbn.tv:8080/live/index.m3u8
+  [URLError] Sehara TV (720p) :: http://ip2.xxlservices.com:8081/seharaonline/live/playlist.m3u8
+  [TimeoutError] tvN Movies (Indonesian Subtitle) (576p) :: http://210.210.155.37/dr9445/h/h21/index.m3u8
+  [HTTPError 404] CNC :: http://43.252.18.195:5080/live/streams/cnctv.m3u8
+  [URLError] Cable 14 Hamilton :: https://flowcaster1-ch.cdn.clearcable.net/C14/smil:C14.smil/playlist.m3u8?iimae0UC2aendtime=1665196120&iimae0UC2ahash=Nz
+  [HTTPError 401] NBA TV Canada (1080p) :: http://user.scalecdn.co:8080/live/54706135/09221986/3092.m3u8
+  [URLError] NETV Toronto (720p) :: https://eu1.vectromdigital.com:1936/netvtoronto/netvtoronto/playlist.m3u8
+  [URLError] TCF TV :: http://66.11.33.44:8081/live/TCF/playlist.m3u8
+  [HTTPError 404] Canal SCN (720p) :: https://live.tvcontrolcp.com:1936/sancarlostv/sancarlostv/playlist.m3u8
+  [URLError] Stgo.TV :: https://panel.miplay.cl:8082/stgotv/index.m3u8
+  [URLError] Animation Show Channel :: http://180.213.174.225:9901/tsfile/live/1034_1.m3u8?authid=0&key=txiptv&playlive=1
+  [URLError] Channel Max :: http://180.213.174.225:9901/tsfile/live/1037_1.m3u8?authid=0&key=txiptv&playlive=1
+  [URLError] Channel Tea :: http://180.213.174.225:9901/tsfile/live/1041_1.m3u8?authid=0&key=txiptv&playlive=1
+  [URLError] DOX Surround :: http://180.213.174.225:9901/tsfile/live/1032_1.m3u8?authid=0&key=txiptv&playlive=1
+  [URLError] DOX Yaqu :: http://180.213.174.225:9901/tsfile/live/1033_1.m3u8?authid=0&key=txiptv&playlive=1
+  [URLError] DOX Yijia :: http://180.213.174.225:9901/tsfile/live/1031_1.m3u8?authid=0&key=txiptv&playlive=1
+  [URLError] Hunan Entertainment Channel :: http://1732e975z9.zicp.fun:8082/hls/20/index.m3u8
+  [URLError] Shanghai Education Television Station :: http://223.166.234.114:7777/tsfile/live/1033_1.m3u8
+  [URLError] STV City :: http://61.173.144.157:9901/tsfile/live/1001_1.m3u8?authid=0&key=txiptv&playlive=1
+  [URLError] STV News and General :: http://61.173.144.157:9901/tsfile/live/1000_1.m3u8?authid=0&key=txiptv&playlive=1
+  [URLError] 东方卫视 (2160p) :: http://118.81.195.79:9003/hls/23/index.m3u8
+  [URLError] 吉林卫视 (2160p) :: http://118.81.195.79:9003/hls/34/index.m3u8
+  [URLError] 安徽卫视 (2160p) :: http://118.81.195.79:9003/hls/21/index.m3u8
+  [URLError] 山西卫视 (2160p) :: http://118.81.195.79:9003/hls/19/index.m3u8
+  [URLError] 广东卫视 (2160p) :: http://118.81.195.79:9003/hls/26/index.m3u8
+  [URLError] 广西卫视 (576p) :: http://118.81.195.79:9003/hls/27/index.m3u8
+  [URLError] 河北卫视 (2160p) :: http://118.81.195.79:9003/hls/29/index.m3u8
+  [URLError] 河南卫视 (2160p) :: http://118.81.195.79:9003/hls/30/index.m3u8
+  [URLError] 海南卫视 (576p) :: http://118.81.195.79:9003/hls/28/index.m3u8
+  [URLError] 湖北卫视 (1080p) :: http://118.81.195.79:9003/hls/32/index.m3u8
+  [URLError] 甘肃卫视 (576p) :: http://118.81.195.79:9003/hls/25/index.m3u8
+  [URLError] 重庆卫视 (1080p) :: http://118.81.195.79:9003/hls/22/index.m3u8
+  [URLError] Canal 10 SOL TV (1080p) :: http://190.211.140.89:8081/SVTranscoder/SOLTVabr.stream/playlist.m3u8
+  [URLError] Comunicaciones Jiménez (720p) [Not 24/7] :: https://s1.tvdatta.com:3156/live/jimeneztvlive.m3u8
+  [URLError] Telefides (720p) :: https://s2.cwebtv.net:4433/telefides/telefides/playlist.m3u8
+  [HTTPError 403] BRT 3 :: http://185.234.111.229:8000/play/a07e
+  [URLError] Canal+ Sport 2 (1080i) :: http://78.130.250.2:8023/play/a02w/index.m3u8
+  [URLError] Agenda 56 TV [Not 24/7] :: https://cloudflare.streamgato.us:3148/live/agenda56tvlive.m3u8
+  [URLError] Area 809 El Original (1080p) :: https://vdo.voxhdnet.com:3159/stream/play.m3u8
+  [URLError] Canal America TV (720p) :: http://newyorkstream.ddns.net:5854/enlacecanalamerica/encoderRD/playlist.m3u8
+  [URLError] Cotui TV (720p) :: https://cloudflare.streamgato.us:3490/live/cotuitvlive.m3u8
+  [URLError] CTV Canal 76 (720p) :: https://vdo2.streamgato.us:3978/live/ctvlive.m3u8
+  [URLError] Digital809 TV (720p) :: https://inliveserver.com:1936/digital809tv/digital809tv/playlist.m3u8
+  [URLError] Mun2TV (720p) :: https://vdo2.streamgato.us:3144/live/mund2tvlive.m3u8
+  [URLError] Nicol Studio RD (720p) :: https://vdopanel.jlahozconsulting.com:3948/live/studitvrdlive.m3u8
+  [URLError] Resplandor TV (720p) :: https://ss2.domint.net:3100/rtv_str/rvision/playlist.m3u8
+  [URLError] Somos Topo Point TV (1080p) [Not 24/7] :: https://cloudflare.streamgato.us:3901/live/somostopopointtvlive.m3u8
+  [URLError] Telerumba TV (720p) [Not 24/7] :: https://inliveserver.com:1936/18506/18506/playlist.m3u8
+  [URLError] Vision Global TV (720p) [Geo-blocked] :: https://vdopanel.jlahozconsulting.com:3407/hybrid/play.m3u8
+  [URLError] VisionNDV TV :: https://cloudflare.streamgato.us:3820/live/visionndvlive.m3u8
+  [URLError] Nortvisión (720p) :: https://server.asilivehd.com:3242/live/nortvisionlive.m3u8
+  [URLError] PJ Digital Radio TV (720p) :: https://vdo1.panelstreaming.live:3363/hybrid/play.m3u8
+  [URLError] Radio Alegria 98.5 FM (720p) :: https://video.compuwebecuador.com:3880/stream/play.m3u8
+  [URLError] Canal 26 TV IAP (1080p) :: https://vdo.tecnoservix.stream:3899/live/canal26tvlive.m3u8
+  [URLError] EuroAl TV (720p) :: http://5.135.92.131:1935/live/euroAl/playlist.m3u8
+  [URLError] Good-Sound (720p) :: http://148.251.76.72:8081/goodsound/goodsound.sdp/playlist.m3u8
+  [URLError] ACTS TV (360p) :: https://mediagh.us:19360/deliverancetv/deliverancetv.m3u8
+  [URLError] BCI 24 News (720p) :: https://eu1.vectromdigital.com:1936/bci24news/bci24news/playlist.m3u8
+  [URLError] Choice (1080p) [Not 24/7] :: https://vod.streams.ovh:3528/stream/play.m3u8
+  [URLError] Epsilon TV (720p) :: https://channel.streams.ovh:1936/epsilontv/epsilontv/playlist.m3u8
+  [HTTPError 403] ERT1 :: http://88.99.254.101/ert1/mono.m3u8
+  [HTTPError 403] ERT2 :: http://88.99.254.101/ert2/mono.m3u8
+  [URLError] ERT2 HD (1080p) :: http://31.121.110.30:4000/play/a02a/index.m3u8
+  [URLError] MGR TV (1080p) [Not 24/7] :: https://vod.streams.ovh:3876/stream/play.m3u8
+  [URLError] NRG TV (720p) :: https://5c389faa13be3.streamlock.net:9553/onweb/live/playlist.m3u8
+countries:
+  US: 1768
+  INT: 700
+  IN: 583
+  DE: 420
+  ES: 324
+  IT: 306
+  TR: 265
+  RU: 263
+  CN: 213
+  GB: 213
+  DO: 212
+  BR: 188
+  CA: 188
+  FR: 176
+  NL: 152
+  MX: 138
+  ID: 133
+  IR: 124
+  AR: 109
+  CL: 89
+  HU: 84
+  PL: 84
+  CO: 78
+  GR: 73
+  KR: 72
+  RO: 69
+  EC: 67
+  PK: 65
+  PE: 62
+  AU: 61
+  CR: 60
+  SA: 56
+  UA: 54
+  VN: 54
+  TH: 52
+  CH: 49
+  IQ: 48
+  AE: 46
+  GT: 46
+  HN: 46
+  SK: 46
+  PT: 44
+  NG: 43
+  BO: 42
+  AT: 40
+  ZA: 38
+  VE: 36
+  BE: 34
+  MN: 33
+  PR: 30
+  BG: 29
+  KZ: 29
+  AZ: 27
+  AL: 26
+  CZ: 26
+  FI: 26
+  RS: 26
+  CD: 25
+  LB: 24
+  SV: 24
+  SE: 23
+  UZ: 22
+  GE: 21
+  BA: 20
+  MK: 20
+  UG: 20
+  EG: 18
+  IL: 18
+  JO: 18
+  PS: 18
+  BZ: 17
+  CM: 17
+  HT: 17
+  TW: 17
+  CI: 16
+  DK: 16
+  LK: 16
+  IE: 15
+  JP: 15
+  KH: 15
+  QA: 15
+  SI: 15
+  BD: 14
+  HK: 14
+  MD: 14
+  PA: 14
+  TJ: 14
+  CY: 13
+  EE: 13
+  GH: 13
+  HR: 13
+  LU: 13
+  MY: 13
+  NI: 13
+  PY: 13
+  NO: 12
+  PH: 12
+  NZ: 11
+  KW: 10
+  SG: 10
+  SN: 10
+  AF: 9
+  AW: 9
+  LA: 9
+  LT: 9
+  LV: 9
+  NP: 9
+  XK: 9
+  BY: 8
+  DZ: 8
+  KE: 8
+  MA: 8
+  SY: 8
+  TG: 8
+  TM: 8
+  AM: 7
+  CG: 7
+  LY: 7
+  MO: 7
+  BF: 6
+  ME: 6
+  SO: 6
+  BH: 5
+  BJ: 5
+  BN: 5
+  BQ: 5
+  ET: 5
+  GN: 5
+  KG: 5
+  MQ: 5
+  MV: 5
+  OM: 5
+  SX: 5
+  CW: 4
+  GP: 4
+  IS: 4
+  JM: 4
+  KN: 4
+  MM: 4
+  MT: 4
+  NE: 4
+  TT: 4
+  YE: 4
+  AD: 3
+  AO: 3
+  FO: 3
+  GY: 3
+  MC: 3
+  MZ: 3
+  RW: 3
+  SD: 3
+  TZ: 3
+  BS: 2
+  CU: 2
+  DJ: 2
+  GM: 2
+  ML: 2
+  SM: 2
+  SR: 2
+  TN: 2
+  VG: 2
+  BB: 1
+  BI: 1
+  BM: 1
+  EH: 1
+  ER: 1
+  GD: 1
+  GF: 1
+  GG: 1
+  GU: 1
+  KP: 1
+  LC: 1
+  PG: 1
+  TD: 1
+  UY: 1
+  VI: 1
+  WS: 1
+  ZW: 1

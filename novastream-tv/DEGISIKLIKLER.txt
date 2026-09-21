@@ -1,0 +1,27 @@
+NovaStream 9.0.0 — neler değişti
+================================
+
+UYGULAMA
+- INT / International artık BM (UN) bayrağı + küre yedek ikonu ile görünür.
+- Yeni ülke eklendiğinde bayrak otomatik gelir:
+  ISO 2 harf, ISO 3 harf, ülke adı (TR/EN/DE/FR/ES/PT/RU/AR/IT/ZH) ve
+  flagcdn.com üzerindeki tüm standart kodlar ekstra kod yazmadan çalışır.
+- Ülkeler/Bölgeler listesi gerçek ülke kodlarına ayrıldı (INT yığını yok).
+  Arama kutusu, kanal sayısı ve yuvarlak bayrak var.
+- Bozuk yayın listeden çıkarılır; kullanıcı 20. sıradaysa 19. sıradan devam eder.
+  Liste başa (1. sıraya) atılmaz, kaydırma konumu korunur.
+- HLS “behind live window” hatası kanal değiştirmez, canlı kenara sarar.
+- İlk denemede bir kez yeniden bağlanır, sonra komşu kanala geçer.
+- Tüm kanallar listelenir (eski 500 sınırı kalktı).
+- Sıra numarası, oynatılan kanal rozeti, kaldığın yerden devam, önceki/sonraki.
+- Gizlenen bozuk kanallar Ayarlar’dan geri alınabilir.
+- DASH desteği, daha iyi HTTP zaman aşımları, arama gecikmesi (debounce).
+
+JSON
+- Ülke kodları iptv-org eşlemesiyle ISO’ya çevrildi (16 kod → 178 ülke).
+- Kırılgan / imzası bitmiş URL’ler güncel iptv-org yayınlarıyla değiştirildi.
+- Yinelenen kayıtlar temizlendi.
+- Kategori alanları News/Sports/Music gibi standart gruplara çekildi.
+
+Kurulum: Kotlin ve res dosyalarını mevcut app/src/main altına kopyalayın
+(package: tv.garden.global.webapp). JSON’u PremiumTv deposuna / API’ye yükleyin.

@@ -1,0 +1,18 @@
+PremiumTv channels_fixed.json
+=============================
+
+Kaynak: 9660 kanal
+Çıktı: 9388 kanal (272 yinelenen ad+url silindi)
+
+Ülke kodları:
+- Eski listede 16 kod vardı ve 6554 kanal INT altındaydı.
+- Şimdi 178 ISO ülke/bölge. INT yalnızca gerçekten uluslararası
+  veya eşlenemeyen kayıtlar için kaldı (700).
+
+URL:
+- 1100 kırılgan / imzası dolmuş adres iptv-org güncel yayınlarıyla değiştirildi.
+- 6689 adres zaten iptv-org kataloğunda vardı, korundu.
+- 404 adres bu ortamdan ulaşılamadı ve yedek bulunamadı; uygulama
+  bunları oynatırken listeden gizleyip kullanıcının kaldığı sıradan devam eder.
+
+Dosyayı workers.dev API veya GitHub PremiumTv/channels_fixed.json olarak yayınlayın.
