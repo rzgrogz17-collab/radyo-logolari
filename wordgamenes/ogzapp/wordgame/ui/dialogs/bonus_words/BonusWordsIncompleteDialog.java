@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
@@ -119,32 +118,36 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
         Image wordsGroupBg = new Image(new NinePatchDrawable(
                 createRoundedFillNinePatch(wordsGroup.getHeight(), radius, UIConfig.BWD_WORDS_BG_COLOR)));
         wordsGroupBg.setSize(wordsGroup.getWidth(), wordsGroup.getHeight());
+        wordsGroupBg.setTouchable(Touchable.disabled);
         wordsGroup.addActor(wordsGroupBg);
         Image wordsFrame = new Image(new NinePatchDrawable(
                 createRoundedStrokeNinePatch(wordsGroup.getHeight(), radius, frameStroke, FRAME_COLOR)));
         wordsFrame.setSize(wordsGroup.getWidth(), wordsGroup.getHeight());
+        wordsFrame.setTouchable(Touchable.disabled);
         wordsGroup.addActor(wordsFrame);
 
         wordsTable = new Table();
         wordsTable.top();
         wordsTable.defaults().growX();
+        wordsTable.setFillParent(false);
 
-        ScrollPane.ScrollPaneStyle paneStyle = new ScrollPane.ScrollPaneStyle();
-        paneStyle.vScrollKnob = new TextureRegionDrawable(AtlasRegions.rect);
-
-        wordsPane = new ScrollPane(wordsTable, paneStyle);
+        wordsPane = new ScrollPane(wordsTable);
         wordsPane.setScrollingDisabled(true, false);
-        wordsPane.setScrollbarsVisible(false);
+        wordsPane.setScrollbarsVisible(true);
         wordsPane.setFadeScrollBars(true);
         wordsPane.setupFadeScrollBars(0.4f, 0.2f);
         wordsPane.setFlickScroll(true);
+        wordsPane.setOverscroll(false, true);
         float inner = frameStroke * 1.5f;
         wordsPane.setSize(Math.max(8f, wordsGroup.getWidth() - inner * 2f),
                 Math.max(24f, wordsGroup.getHeight() - inner * 2f));
         wordsPane.setX((wordsGroup.getWidth() - wordsPane.getWidth()) * 0.5f);
         wordsPane.setY((wordsGroup.getHeight() - wordsPane.getHeight()) * 0.5f);
         wordsGroup.addActor(wordsPane);
+        // Çerçeve görsel olarak üstte kalsın ama dokunuş ScrollPane'e gitsin;
+        // aksi halde Image tüm alanı kaplayıp kaydırmayı yutuyordu.
         wordsFrame.toFront();
+        wordsFrame.setTouchable(Touchable.disabled);
 
         titleContainer.toFront();
         closeButton.toFront();
@@ -279,8 +282,11 @@ public class BonusWordsIncompleteDialog extends BaseDialog {
             }
         }
 
+        wordsTable.invalidateHierarchy();
         wordsTable.pack();
         wordsTable.setWidth(paneWidth);
+        wordsTable.setHeight(Math.max(1f, wordsTable.getPrefHeight()));
+        wordsPane.invalidateHierarchy();
         wordsPane.layout();
         wordsPane.setScrollY(0);
     }
