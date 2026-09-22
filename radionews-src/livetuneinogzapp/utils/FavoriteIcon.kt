@@ -11,21 +11,24 @@ import com.globalradio.livetuneinogzapp.R
 /**
  * Favori kalbi tek görsel kuralı:
  *  • Favoride     → kırmızı dolu kalp
- *  • Favori değil → boş kalp (açık temada koyu, koyu temada beyaz)
- *
- * Büyük player buzlu açık zeminde olduğu için orada her zaman koyu boş kalp.
+ *  • Favori değil → boş kalp (listede temaya göre; büyük player’da beyaz)
  */
 object FavoriteIcon {
 
     const val FILLED_RED = 0xFFE01B3B.toInt()
     private val EMPTY_ON_LIGHT = Color.parseColor("#2C2C34")
 
-    fun apply(view: ImageView, favorite: Boolean, onLightSurface: Boolean = false) {
+    fun apply(
+        view: ImageView,
+        favorite: Boolean,
+        onLightSurface: Boolean = false,
+        emptyColor: Int? = null
+    ) {
         view.clearColorFilter()
         view.setImageResource(
             if (favorite) R.drawable.ic_favorite_filled else R.drawable.ic_favorite_border
         )
-        val empty = if (onLightSurface) {
+        val empty = emptyColor ?: if (onLightSurface) {
             EMPTY_ON_LIGHT
         } else {
             ContextCompat.getColor(view.context, R.color.favorite_empty)

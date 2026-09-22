@@ -54,15 +54,15 @@
                 android:textSize="16sp" />
 
             <ImageButton
-                android:id="@+id/btnShare"
+                android:id="@+id/btnSettings"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Share"
-                android:src="@drawable/ic_share"
-                app:tint="#ffffff" />
+                android:contentDescription="@string/settings"
+                android:src="@drawable/ic_settings"
+                app:tint="#FFFFFF" />
 
         </RelativeLayout>
 
@@ -77,8 +77,8 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:layout_marginTop="4dp"
+                android:layout_height="332dp"
+                android:layout_marginTop="18dp"
                 android:clipChildren="false"
                 android:clipToPadding="false">
 
@@ -107,8 +107,9 @@
                 android:gravity="center"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:singleLine="true"
+                android:scrollHorizontally="true"
                 android:textColor="#FFFFFF"
-                android:textSize="22sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <!-- Ülke pill -->
@@ -131,21 +132,27 @@
 
             <!-- Tags + sıra -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="28dp"
                 android:layout_marginTop="4dp"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/tvTags"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="#556677"
-                    android:textSize="11sp" />
+                    android:layout_weight="1"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center_vertical"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:textColor="#D0D6DE"
+                    android:textSize="13sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -248,80 +255,21 @@
             android:paddingEnd="10dp"
             android:paddingBottom="8dp">
 
-            <LinearLayout
-                android:layout_width="46dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
+            <ImageButton
+                android:id="@+id/btnShare"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_player_round_btn"
+                android:contentDescription="@string/share"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_share"
+                app:tint="#FFFFFF" />
 
-                <ImageButton
-                    android:id="@+id/btnRewind"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_player_round_btn"
-                    android:contentDescription="@string/rewind_15"
-                    android:padding="8dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_rewind_15"
-                    app:tint="#FFFFFF" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/rewind_15_short"
-                    android:textColor="#CCFFFFFF"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
+            <View
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="6dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="4dp">
-
-                    <TextView
-                        android:id="@+id/tvElapsed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="0:00"
-                        android:textColor="#F2FFFFFF"
-                        android:textSize="11sp" />
-
-                    <TextView
-                        android:id="@+id/tvRemaining"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:fontFamily="sans-serif-medium"
-                        android:text="@string/live_badge"
-                        android:textColor="#E01B3B"
-                        android:textSize="11sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <SeekBar
-                    android:id="@+id/seekBarProgress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:max="1000"
-                    android:paddingStart="0dp"
-                    android:paddingEnd="0dp"
-                    android:progress="0"
-                    android:progressBackgroundTint="#55FFFFFF"
-                    android:progressTint="#E01B3B"
-                    android:splitTrack="false"
-                    android:thumb="@drawable/bg_progress_thumb" />
-            </LinearLayout>
+                android:layout_height="1dp"
+                android:layout_weight="1" />
 
             <LinearLayout
                 android:layout_width="48dp"
@@ -361,8 +309,8 @@
             android:paddingHorizontal="24dp">
 
             <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:contentDescription="Vol low"
                 android:src="@drawable/ic_volume_low"
                 app:tint="#ffffff" />
@@ -380,8 +328,8 @@
                 android:thumb="@drawable/bg_volume_thumb" />
 
             <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
                 android:contentDescription="Vol high"
                 android:src="@drawable/ic_volume_high"
                 app:tint="#ffffff" />
@@ -404,7 +352,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/favorite"
                 android:src="@drawable/ic_favorite_border"
-                app:tint="#2C2C34" />
+                app:tint="#FFFFFF" />
 
             <ImageButton
                 android:id="@+id/btnPrevious"

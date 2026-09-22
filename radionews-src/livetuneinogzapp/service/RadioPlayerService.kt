@@ -18,6 +18,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.DefaultLoadControl
@@ -53,6 +54,7 @@ class RadioPlayerService : Service() {
     private lateinit var mediaSession: MediaSession
 
     val playerState = MutableLiveData<PlayerState>(PlayerState.Idle)
+    val nowPlayingTitle = MutableLiveData("")
     var currentStation: RadioStation? = null
         private set
 
@@ -64,6 +66,7 @@ class RadioPlayerService : Service() {
     private var currentIndex: Int = -1
     private var lastSkipElapsed = 0L
     private var sessionStartedAt = 0L
+    private var trackTitle: String = ""
 
     private var recorder: StreamRecorder? = null
     val recordingState = MutableLiveData(false)
@@ -306,6 +309,16 @@ class RadioPlayerService : Service() {
                 RadioWidget.notifyWidgetUpdate(applicationContext, st.name, isPlaying)
             }
 
+            override fun onMetadata(metadata: Metadata) {
+                for (i in 0 until metadata.length()) {
+                    publishTrackTitle(readStreamTitle(metadata[i]))
+                }
+            }
+
+            override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+                publishTrackTitle(mediaMetadata.title?.toString())
+            }
+
             override fun onPlayerError(error: PlaybackException) {
                 Log.e(TAG, "Player error [${error.errorCode}]: ${error.message}")
                 val st = currentStation ?: return
@@ -329,6 +342,36 @@ class RadioPlayerService : Service() {
                 updateNotification()
             }
         })
+    }
+
+    private fun publishTrackTitle(raw: String?) {
+        val title = raw?.trim().orEmpty()
+        if (title.isEmpty()) return
+        val stationName = currentStation?.name?.trim().orEmpty()
+        if (stationName.isNotEmpty() && title.equals(stationName, ignoreCase = true)) return
+        if (title == trackTitle) return
+        trackTitle = title
+        nowPlayingTitle.postValue(title)
+    }
+
+    private fun readStreamTitle(entry: Metadata.Entry): String? {
+        val cls = entry.javaClass
+        return try {
+            when (cls.simpleName) {
+                "IcyInfo" -> cls.getField("title").get(entry) as? String
+                "TextInformationFrame" -> {
+                    val id = cls.getMethod("getId").invoke(entry) as? String
+                    if (id == "TIT2" || id == "TT2") {
+                        cls.getMethod("getValue").invoke(entry) as? String
+                    } else {
+                        null
+                    }
+                }
+                else -> null
+            }
+        } catch (_: Exception) {
+            null
+        }
     }
 
     // ── Otomatik Yeniden Bağlanma ─────────────────────────────────────────────
@@ -394,6 +437,8 @@ class RadioPlayerService : Service() {
 
         if (currentStation?.id != station.id) {
             stopRecording()
+            trackTitle = ""
+            nowPlayingTitle.postValue("")
         }
 
         isIntentionallyStopped = false
