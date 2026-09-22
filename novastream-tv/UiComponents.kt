@@ -34,6 +34,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -77,6 +79,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
@@ -156,6 +159,31 @@ fun CompactSearchField(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+    }
+}
+
+@Composable
+fun ContinueWatchingButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 40.dp)
+            .heightIn(min = 46.dp),
+        shape = RoundedCornerShape(24.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.White.copy(alpha = 0.14f),
+            contentColor = Color.White
+        ),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
+    ) {
+        Text(
+            LanguageManager.continueWatching,
+            color = Color.White,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 15.sp,
+            maxLines = 1
+        )
     }
 }
 
@@ -240,12 +268,12 @@ fun MiniFlag(country: String, group: String = "", size: Int = 18) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ChannelRow(
     channel: Channel,
     isFav: Boolean,
     isPlaying: Boolean,
-    indexLabel: String,
     onPlay: () -> Unit,
     onFav: () -> Unit
 ) {
@@ -263,6 +291,7 @@ fun ChannelRow(
     val quality = detectQuality(channel)
     val countryName = CountryCatalog.displayName(channel.country, channel.group)
     val typeLabel = channelTypeLabel(channel)
+    val title = if (channel.is_premium) "⭐ ${channel.name}" else channel.name
 
     Row(
         borderMod
@@ -271,27 +300,24 @@ fun ChannelRow(
             .focusable()
             .clickable { onPlay() }
             .background(bgColor, RoundedCornerShape(8.dp))
-            .padding(horizontal = 8.dp, vertical = 3.dp),
+            .padding(start = 8.dp, end = 6.dp, top = 6.dp, bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            indexLabel,
-            color = Color.Gray,
-            fontSize = 10.sp,
-            modifier = Modifier.width(24.dp)
-        )
         SmartChannelLogo(channel.logo, channel.name)
-        Spacer(Modifier.width(8.dp))
+        Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    if (channel.is_premium) "⭐ ${channel.name}" else channel.name,
+                    title,
                     color = Color.White,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f, fill = false)
+                    softWrap = false,
+                    overflow = TextOverflow.Visible,
+                    modifier = Modifier
+                        .weight(1f)
+                        .basicMarquee(iterations = Int.MAX_VALUE)
                 )
                 if (quality.isNotEmpty()) {
                     Spacer(Modifier.width(6.dp))
@@ -316,7 +342,7 @@ fun ChannelRow(
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(top = 1.dp)
+                modifier = Modifier.padding(top = 2.dp)
             ) {
                 MiniFlag(channel.country, channel.group, size = 14)
                 Text(
@@ -361,32 +387,49 @@ fun SmartChannelLogo(logoUrl: String, channelName: String) {
     val painter = rememberAsyncImagePainter(
         model = coil.request.ImageRequest.Builder(context).data(logoUrl).crossfade(true).build()
     )
+    val logoShape = RoundedCornerShape(8.dp)
     Box(
-        modifier = Modifier
-            .padding(horizontal = 2.dp)
-            .size(52.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(Color.Transparent)
+        modifier = Modifier.padding(start = 2.dp, end = 8.dp, top = 2.dp, bottom = 6.dp)
     ) {
-        if (painter.state !is AsyncImagePainter.State.Success) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(bgColor), Alignment.Center
-            ) {
-                Text(
-                    firstLetter,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }
-        }
-        Image(
-            painter = painter, contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Fit
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .offset(x = 1.dp, y = 4.dp)
+                .background(Color.Black.copy(alpha = 0.55f), logoShape)
         )
+        Box(
+            modifier = Modifier
+                .size(52.dp)
+                .shadow(
+                    elevation = 10.dp,
+                    shape = logoShape,
+                    clip = false,
+                    ambientColor = Color.Black.copy(alpha = 0.65f),
+                    spotColor = Color.Black.copy(alpha = 0.90f)
+                )
+                .clip(logoShape)
+                .background(Color.Transparent)
+        ) {
+            if (painter.state !is AsyncImagePainter.State.Success) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(bgColor), Alignment.Center
+                ) {
+                    Text(
+                        firstLetter,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
+            }
+            Image(
+                painter = painter, contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Fit
+            )
+        }
     }
 }
 
@@ -588,20 +631,31 @@ fun TvFocusableIconButton(
     modifier: Modifier = Modifier
 ) {
     var isFocused by remember { mutableStateOf(false) }
-    IconButton(
-        onClick = onClick,
+    val chipShape = RoundedCornerShape(6.dp)
+    val interactionSource = remember { MutableInteractionSource() }
+    Box(
         modifier = modifier
-            .size(40.dp)
+            .size(36.dp)
             .onFocusChanged { isFocused = it.isFocused }
-            .then(
-                if (isFocused) Modifier.border(2.dp, FocusGlow, RoundedCornerShape(8.dp))
-                else Modifier
-            )
-            .background(
-                if (isFocused) FocusGlow.copy(0.2f) else Color.DarkGray.copy(0.3f),
-                RoundedCornerShape(8.dp)
-            )
+            .focusable(interactionSource = interactionSource)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { onClick() },
+        contentAlignment = Alignment.Center
     ) {
+        Box(
+            modifier = Modifier
+                .size(28.dp)
+                .clip(chipShape)
+                .background(
+                    if (isFocused) FocusGlow.copy(0.2f) else Color.DarkGray.copy(0.3f),
+                    chipShape
+                )
+                .then(
+                    if (isFocused) Modifier.border(2.dp, FocusGlow, chipShape) else Modifier
+                )
+        )
         Icon(icon, null, tint = Color.White, modifier = Modifier.size(20.dp))
     }
 }

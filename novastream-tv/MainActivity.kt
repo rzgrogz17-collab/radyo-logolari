@@ -489,7 +489,10 @@ fun MainAppLogic(
                 }
             } else {
                 Box(Modifier.fillMaxSize(), Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Icon(
                             Icons.Rounded.Tv,
                             null,
@@ -500,7 +503,7 @@ fun MainAppLogic(
                         val last = viewModel.channelById(viewModel.lastChannelId)
                         if (last != null) {
                             Spacer(Modifier.height(10.dp))
-                            NeonGlassButton(LanguageManager.continueWatching, true) {
+                            ContinueWatchingButton {
                                 currentChannel = last
                                 val idx = viewModel.displayedChannels.indexOfFirst { it.id == last.id }
                                 if (idx >= 0) {
@@ -588,10 +591,13 @@ fun MainAppLogic(
                                 )
                             },
                             hint = LanguageManager.searchHint,
-                            modifier = Modifier.weight(2f)
+                            modifier = Modifier.fillMaxWidth(0.46f)
                         )
-                        Spacer(Modifier.weight(1f))
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Row(
+                            modifier = Modifier.weight(1f),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             TvFocusableIconButton(
                                 onClick = {
                                     try {
@@ -721,12 +727,11 @@ fun MainAppLogic(
                             itemsIndexed(
                                 viewModel.displayedChannels,
                                 key = { _, item -> item.id.ifBlank { item.url } }
-                            ) { index, item ->
+                            ) { _, item ->
                                 ChannelRow(
                                     channel = item,
                                     isFav = viewModel.favSet.contains(item.url),
                                     isPlaying = currentChannel?.id == item.id,
-                                    indexLabel = "${index + 1}",
                                     onPlay = {
                                         currentChannel = item
                                         hasError = false
