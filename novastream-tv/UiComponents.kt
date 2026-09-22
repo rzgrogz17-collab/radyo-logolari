@@ -35,7 +35,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -393,20 +392,14 @@ fun SmartChannelLogo(logoUrl: String, channelName: String) {
     ) {
         Box(
             modifier = Modifier
-                .matchParentSize()
+                .size(52.dp)
                 .offset(x = 1.dp, y = 4.dp)
                 .background(Color.Black.copy(alpha = 0.55f), logoShape)
         )
         Box(
             modifier = Modifier
                 .size(52.dp)
-                .shadow(
-                    elevation = 10.dp,
-                    shape = logoShape,
-                    clip = false,
-                    ambientColor = Color.Black.copy(alpha = 0.65f),
-                    spotColor = Color.Black.copy(alpha = 0.90f)
-                )
+                .shadow(elevation = 10.dp, shape = logoShape, clip = false)
                 .clip(logoShape)
                 .background(Color.Transparent)
         ) {
