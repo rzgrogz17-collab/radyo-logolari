@@ -588,7 +588,7 @@ fun MainAppLogic(
                                 )
                             },
                             hint = LanguageManager.searchHint,
-                            modifier = Modifier.fillMaxWidth(0.33f)
+                            modifier = Modifier.weight(2f)
                         )
                         Spacer(Modifier.weight(1f))
                         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
