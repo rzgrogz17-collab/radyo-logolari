@@ -121,10 +121,10 @@
                         android:layout_height="34dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="Sleep timer"
-                        android:padding="0dp"
-                        android:scaleType="fitCenter"
+                        android:padding="6dp"
+                        android:scaleType="centerInside"
                         android:src="@drawable/ic_mini_sleep_timer"
-                        app:tint="#FFFCFC" />
+                        app:tint="#FFFFFF" />
 
                     <!-- Oynat/Duraklat -->
                     <ImageButton
@@ -143,10 +143,10 @@
                         android:layout_height="34dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:contentDescription="Equalizer"
-                        android:padding="0dp"
-                        android:scaleType="fitCenter"
+                        android:padding="6dp"
+                        android:scaleType="centerInside"
                         android:src="@drawable/ic_mini_equalizer"
-                        app:tint="#8899AA" />
+                        app:tint="#FFFFFF" />
 
                 </LinearLayout>
 

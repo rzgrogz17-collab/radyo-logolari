@@ -277,7 +277,7 @@ class CountryStationsActivity : AppCompatActivity() {
             val timerActive = ms > 0
             binding.btnMiniSleepTimer.setColorFilter(
                 if (timerActive) getColor(R.color.timer_active)
-                else getColor(R.color.btn_secondary_icon)
+                else android.graphics.Color.WHITE
             )
             binding.sleepTimerBar.visibility = if (timerActive) View.VISIBLE else View.GONE
             binding.tvSleepTimerRemaining.visibility = if (timerActive) View.VISIBLE else View.GONE

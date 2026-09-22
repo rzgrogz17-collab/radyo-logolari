@@ -148,7 +148,7 @@ class HomeFragment : Fragment() {
 
     private fun animateTabActive(btn: TextView) {
         btn.setBackgroundResource(R.drawable.bg_section_active)
-        btn.setTextColor(btn.context.getColor(R.color.bone_white))
+        btn.setTextColor(Color.WHITE)
 
         val scaleX = ObjectAnimator.ofFloat(btn, "scaleX", 0.85f, 1.08f, 1.0f)
         val scaleY = ObjectAnimator.ofFloat(btn, "scaleY", 0.85f, 1.08f, 1.0f)

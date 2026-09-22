@@ -227,7 +227,7 @@ class MainActivity : AppCompatActivity() {
             val timerActive = ms > 0
             binding.btnMiniSleepTimer.setColorFilter(
                 if (timerActive) getColor(R.color.timer_active)
-                else getColor(R.color.btn_secondary_icon)
+                else android.graphics.Color.WHITE
             )
             // Geri sayım göster/gizle
             binding.sleepTimerBar.visibility = if (timerActive) View.VISIBLE else View.GONE

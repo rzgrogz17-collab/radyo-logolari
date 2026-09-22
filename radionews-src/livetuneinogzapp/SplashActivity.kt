@@ -39,6 +39,7 @@ class SplashActivity : AppCompatActivity() {
         // (Türkçe: "Türk ve Dünya Radyo İstasyonları", diğer diller: o dildeki
         // "Dünya Radyo İstasyonları", çevirisi yoksa İngilizce)
         binding.tvSplashSubtitle.text = LocaleCountryMapper.getHomeSubtitle()
+        binding.tvAppName.setTextColor(android.graphics.Color.WHITE)
 
         // 2. Şık bir giriş: logo + yazılar + noktalar sırayla belirir,
         // ardından logo "nefes alır" gibi sürekli hafifçe büyüyüp küçülür

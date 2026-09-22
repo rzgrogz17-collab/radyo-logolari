@@ -690,13 +690,17 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         if (!isAdded || _binding == null) return
         binding.ivBlurBackground.setImageDrawable(null)
         binding.ivBlurBackground.visibility = android.view.View.GONE
+        applyFrostedBackground()
     }
 
     private fun applyFrostedBackground() {
         if (!isAdded || _binding == null) return
-        binding.root.background = null
-        binding.ivBlurBackground.setImageDrawable(null)
-        binding.ivBlurBackground.visibility = View.GONE
+        binding.root.setBackgroundColor(Color.parseColor("#EBF0FA"))
+        binding.tvStationName.setTextColor(Color.parseColor("#1A1A2E"))
+        binding.tvCountry.setTextColor(Color.parseColor("#2E3A5C"))
+        binding.tvTags.setTextColor(Color.parseColor("#3A4A6E"))
+        binding.tvStatus.setTextColor(Color.parseColor("#1A1A2E"))
+        binding.tvStationIndex.setTextColor(Color.parseColor("#3A4A6E"))
     }
 
     private fun loadBannerAd() {
@@ -728,7 +732,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     private fun setFavIcon(fav: Boolean) {
         if (_binding == null) return
-        FavoriteIcon.apply(binding.btnFavorite, fav, emptyColor = Color.WHITE)
+        FavoriteIcon.apply(binding.btnFavorite, fav, onLightSurface = true)
     }
 
     private fun startEq() {

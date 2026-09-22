@@ -233,6 +233,7 @@
             android:layout_weight="1"
             android:text="@string/eq_save"
             android:textAllCaps="false"
+            android:textColor="#FFFFFF"
             app:backgroundTint="#E91E63"
             app:cornerRadius="12dp" />
     </LinearLayout>

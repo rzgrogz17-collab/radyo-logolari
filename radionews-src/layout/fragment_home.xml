@@ -144,7 +144,7 @@
                 android:maxLines="1"
                 android:paddingHorizontal="16dp"
                 android:text="@string/section_all"
-                android:textColor="@color/bone_white"
+                android:textColor="#FFFFFF"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 app:autoSizeMaxTextSize="13sp"
