@@ -19,7 +19,6 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,7 +35,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -75,7 +73,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -84,6 +81,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -215,7 +213,7 @@ fun MainAppLogic(
         if (currentLocaleTag.isNotEmpty()) viewModel.reorderByLocale()
     }
 
-    if (viewModel.adsConsentEnabled) {
+    if (AppConfig.ADS_CONSENT_ENABLED) {
         LaunchedEffect(Unit) { activity.initializeAds() }
     }
 
@@ -265,7 +263,16 @@ fun MainAppLogic(
         }
         hasError = false
         try {
-            player.setMediaItem(MediaItem.fromUri(Uri.parse(ch.url)))
+            player.setMediaItem(
+                MediaItem.Builder()
+                    .setUri(Uri.parse(ch.url))
+                    .setMediaMetadata(
+                        MediaMetadata.Builder()
+                            .setTitle(ch.name)
+                            .build()
+                    )
+                    .build()
+            )
             player.prepare()
             player.play()
             viewModel.addToHistory(ch)
@@ -437,30 +444,6 @@ fun MainAppLogic(
                     }
                 }
 
-                playingChannel?.let { ch ->
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .statusBarsPadding()
-                            .padding(start = 14.dp, top = 12.dp)
-                            .background(Color.Black.copy(0.45f), RoundedCornerShape(20.dp))
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        MiniFlag(ch.country, ch.group, size = 16)
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            ch.name,
-                            color = Color.White,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.width(180.dp)
-                        )
-                    }
-                }
-
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
@@ -586,13 +569,13 @@ fun MainAppLogic(
             Column(Modifier.weight(0.65f)) {
                 Column(
                     Modifier
+                        .fillMaxWidth()
                         .background(DiamondPanel)
                         .padding(horizontal = 8.dp, vertical = 6.dp)
                 ) {
                     Row(
                         Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         CompactSearchField(
                             value = viewModel.searchQuery,
@@ -605,9 +588,10 @@ fun MainAppLogic(
                                 )
                             },
                             hint = LanguageManager.searchHint,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.fillMaxWidth(0.33f)
                         )
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        Spacer(Modifier.weight(1f))
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             TvFocusableIconButton(
                                 onClick = {
                                     try {
@@ -659,39 +643,30 @@ fun MainAppLogic(
                     Spacer(Modifier.height(5.dp))
 
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         NeonGlassButton(
                             LanguageManager.menuAll,
-                            viewModel.activeFilterMode == "ALL"
+                            viewModel.activeFilterMode == "ALL",
+                            Modifier.weight(1f)
                         ) { viewModel.applyFilter("ALL", "") }
                         NeonGlassButton(
                             LanguageManager.menuGenres,
-                            viewModel.activeFilterMode == "COUNTRY"
+                            viewModel.activeFilterMode == "COUNTRY",
+                            Modifier.weight(1f)
                         ) { showCountryDialog = true }
                         NeonGlassButton(
                             LanguageManager.menuFavs,
-                            viewModel.activeFilterMode == "FAV"
+                            viewModel.activeFilterMode == "FAV",
+                            Modifier.weight(1f)
                         ) { viewModel.applyFilter("FAV", "") }
                         NeonGlassButton(
                             LanguageManager.menuHistory,
-                            viewModel.activeFilterMode == "HISTORY"
+                            viewModel.activeFilterMode == "HISTORY",
+                            Modifier.weight(1f)
                         ) { viewModel.applyFilter("HISTORY", "") }
-                    }
-                    val total = viewModel.displayedChannels.size
-                    val playingIdx = currentChannel?.let { ch ->
-                        viewModel.displayedChannels.indexOfFirst { it.id == ch.id }
-                    } ?: -1
-                    if (total > 0) {
-                        Text(
-                            if (playingIdx >= 0) "${playingIdx + 1} / $total" else "$total",
-                            color = Color.Gray,
-                            fontSize = 10.sp,
-                            modifier = Modifier.padding(start = 4.dp, top = 3.dp, bottom = 1.dp)
-                        )
                     }
                 }
 
@@ -737,7 +712,11 @@ fun MainAppLogic(
                     else -> {
                         LazyColumn(
                             state = listState,
-                            contentPadding = PaddingValues(start = 6.dp, end = 6.dp, bottom = 60.dp)
+                            contentPadding = PaddingValues(
+                                start = 6.dp,
+                                end = 6.dp,
+                                bottom = if (AppConfig.ADS_CONSENT_ENABLED) 60.dp else 8.dp
+                            )
                         ) {
                             itemsIndexed(
                                 viewModel.displayedChannels,
@@ -748,7 +727,6 @@ fun MainAppLogic(
                                     isFav = viewModel.favSet.contains(item.url),
                                     isPlaying = currentChannel?.id == item.id,
                                     indexLabel = "${index + 1}",
-                                    epgText = viewModel.epgData[item.id] ?: "📺 ${LanguageManager.noEpg}",
                                     onPlay = {
                                         currentChannel = item
                                         hasError = false
@@ -762,7 +740,7 @@ fun MainAppLogic(
                 }
             }
 
-            if (viewModel.adsConsentEnabled) {
+            if (AppConfig.ADS_CONSENT_ENABLED) {
                 YandexBannerAdView()
             }
         }
@@ -782,7 +760,6 @@ fun MainAppLogic(
 
     if (showSettingsDialog) {
         SettingsDialog(
-            adsConsentEnabled = viewModel.adsConsentEnabled,
             hiddenCount = viewModel.blacklistedIds.size,
             onDismiss = { showSettingsDialog = false },
             onClearCache = {
@@ -798,10 +775,6 @@ fun MainAppLogic(
                 showSettingsDialog = false
                 if (minutes > 0) Toast.makeText(context, "Timer: $minutes min", Toast.LENGTH_SHORT)
                     .show()
-            },
-            onAdsConsent = { enabled ->
-                viewModel.setAdsConsent(enabled)
-                if (enabled) activity.initializeAds()
             },
             onOpenPrivacyPolicy = {
                 try {

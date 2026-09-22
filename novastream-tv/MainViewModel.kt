@@ -100,11 +100,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var lastListIndex by mutableStateOf(prefs.getInt("last_list_index", 0))
         private set
 
-    var adsConsentEnabled by mutableStateOf(prefs.getBoolean("ads_consent_enabled", false))
-        private set
+    val adsConsentEnabled: Boolean get() = AppConfig.ADS_CONSENT_ENABLED
     var consentType by mutableStateOf(
-        if (prefs.getBoolean("ads_consent_enabled", false)) ConsentType.PERSONALIZED
-        else ConsentType.NONE
+        if (AppConfig.ADS_CONSENT_ENABLED) ConsentType.PERSONALIZED else ConsentType.NONE
     )
     val hasConsent: Boolean get() = adsConsentEnabled
 
@@ -112,20 +110,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val gson = Gson()
 
     fun setConsent(type: ConsentType) {
-        setAdsConsent(type == ConsentType.PERSONALIZED || type == ConsentType.NON_PERSONALIZED)
+        consentType = type
     }
 
-    fun setAdsConsent(enabled: Boolean) {
-        adsConsentEnabled = enabled
+    init {
+        val enabled = AppConfig.ADS_CONSENT_ENABLED
         consentType = if (enabled) ConsentType.PERSONALIZED else ConsentType.NONE
         prefs.edit()
             .putBoolean("ads_consent_enabled", enabled)
             .putString("consent_type", consentType.name)
             .putBoolean("gdpr_consent", enabled)
             .apply()
-    }
-
-    init {
         fetchChannels()
     }
 

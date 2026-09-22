@@ -1,7 +1,6 @@
 package tv.garden.global.webapp
 
 import android.app.Activity
-import android.content.Context
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -47,8 +46,7 @@ fun showInterstitialAd(act: Activity, onDone: (() -> Unit)? = null) {
     interstitialCounter++
     if (onDone == null && interstitialCounter % 5 != 0) return
     val callback = onDone ?: {}
-    val prefs = act.getSharedPreferences(AppConfig.PREFS_NAME, Context.MODE_PRIVATE)
-    if (prefs.getString("consent_type", "NONE") == "NONE") {
+    if (!AppConfig.ADS_CONSENT_ENABLED) {
         callback(); return
     }
 
@@ -82,8 +80,7 @@ fun showInterstitialAd(act: Activity, onDone: (() -> Unit)? = null) {
 private var loadedRewarded: RewardedAd? = null
 
 fun showRewardedAd(act: Activity, onDone: () -> Unit) {
-    val prefs = act.getSharedPreferences(AppConfig.PREFS_NAME, Context.MODE_PRIVATE)
-    if (prefs.getString("consent_type", "NONE") == "NONE") {
+    if (!AppConfig.ADS_CONSENT_ENABLED) {
         onDone(); return
     }
 

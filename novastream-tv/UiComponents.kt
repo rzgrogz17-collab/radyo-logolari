@@ -2,9 +2,7 @@ package tv.garden.global.webapp
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.media.AudioManager
-import android.net.Uri
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -28,21 +26,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -54,14 +48,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.rounded.Brightness6
 import androidx.compose.material.icons.rounded.Public
 import androidx.compose.material.icons.rounded.VolumeUp
@@ -114,85 +105,19 @@ val PastelPurple = Color(0xFFC3B1E1)
 val PastelGreen = Color(0xFF9BE8A5)
 val FocusGlow = Color(0xFF7B68EE)
 
-@Composable
-fun GDPRConsentDialog(
-    onAcceptPersonalized: () -> Unit,
-    onAcceptNonPersonalized: () -> Unit,
-    onDecline: () -> Unit
-) {
-    val context = LocalContext.current
-    Dialog(onDismissRequest = {}) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = DiamondPanel),
-            shape = RoundedCornerShape(16.dp)
-        ) {
-            Column(
-                Modifier
-                    .padding(20.dp)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Icon(
-                    Icons.Default.Security,
-                    null,
-                    tint = DiamondRed,
-                    modifier = Modifier.size(40.dp)
-                )
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    LanguageManager.privacyTitle,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    fontSize = 18.sp
-                )
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    LanguageManager.privacyBody,
-                    color = Color.LightGray,
-                    textAlign = TextAlign.Start,
-                    fontSize = 13.sp,
-                    lineHeight = 18.sp
-                )
-                Spacer(Modifier.height(8.dp))
-                TextButton(onClick = {
-                    try {
-                        context.startActivity(
-                            Intent(Intent.ACTION_VIEW, Uri.parse(AppConfig.PRIVACY_POLICY_URL))
-                        )
-                    } catch (_: Exception) {
-                    }
-                }) {
-                    Text("🔗 ${LanguageManager.privacyPolicy}", color = PastelBlue, fontSize = 12.sp)
-                }
-                Spacer(Modifier.height(12.dp))
-                Button(
-                    onClick = onAcceptPersonalized,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = DiamondRed,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(LanguageManager.btnAcceptPersonalized, fontSize = 13.sp, color = Color.White)
-                }
-                Spacer(Modifier.height(8.dp))
-                OutlinedButton(
-                    onClick = onAcceptNonPersonalized,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
-                ) {
-                    Text(LanguageManager.btnAcceptNonPersonalized, fontSize = 12.sp)
-                }
-                Spacer(Modifier.height(8.dp))
-                TextButton(
-                    onClick = onDecline,
-                    colors = ButtonDefaults.textButtonColors(contentColor = Color.Gray)
-                ) {
-                    Text(LanguageManager.close, fontSize = 12.sp)
-                }
-            }
-        }
-    }
+private fun channelTypeLabel(channel: Channel): String {
+    val countryName = CountryCatalog.displayName(channel.country, channel.group)
+    val raw = channel.group.trim()
+    if (raw.isEmpty()) return ""
+    val translated = LanguageManager.getTranslatedCategory(raw).trim()
+    if (translated.isEmpty()) return ""
+    val foldedType = CountryCatalog.fold(translated)
+    val foldedCountry = CountryCatalog.fold(countryName)
+    if (foldedType == foldedCountry) return ""
+    if (foldedType == CountryCatalog.fold(channel.country)) return ""
+    val iso = CountryCatalog.isoFromAny(raw)
+    if (iso != null && !CountryCatalog.isGenre(raw)) return ""
+    return translated
 }
 
 @Composable
@@ -276,7 +201,7 @@ fun MiniFlag(country: String, group: String = "", size: Int = 18) {
     )
     val loaded = painter.state is AsyncImagePainter.State.Success
     Box(
-        modifier = Modifier.padding(horizontal = 4.dp, vertical = 3.dp),
+        modifier = Modifier.padding(end = 4.dp),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -321,7 +246,6 @@ fun ChannelRow(
     isFav: Boolean,
     isPlaying: Boolean,
     indexLabel: String,
-    epgText: String,
     onPlay: () -> Unit,
     onFav: () -> Unit
 ) {
@@ -334,9 +258,11 @@ fun ChannelRow(
     val borderMod = if (isFocused || isPlaying) Modifier.border(
         1.5.dp,
         if (isPlaying) PastelPurple.copy(0.55f) else FocusGlow.copy(0.5f),
-        RoundedCornerShape(10.dp)
+        RoundedCornerShape(8.dp)
     ) else Modifier
     val quality = detectQuality(channel)
+    val countryName = CountryCatalog.displayName(channel.country, channel.group)
+    val typeLabel = channelTypeLabel(channel)
 
     Row(
         borderMod
@@ -344,25 +270,25 @@ fun ChannelRow(
             .onFocusChanged { isFocused = it.isFocused }
             .focusable()
             .clickable { onPlay() }
-            .background(bgColor, RoundedCornerShape(10.dp))
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+            .background(bgColor, RoundedCornerShape(8.dp))
+            .padding(horizontal = 8.dp, vertical = 3.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             indexLabel,
             color = Color.Gray,
             fontSize = 10.sp,
-            modifier = Modifier.width(28.dp)
+            modifier = Modifier.width(24.dp)
         )
         SmartChannelLogo(channel.logo, channel.name)
-        Spacer(Modifier.width(10.dp))
+        Spacer(Modifier.width(8.dp))
         Column(Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     if (channel.is_premium) "⭐ ${channel.name}" else channel.name,
                     color = Color.White,
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 15.sp,
+                    fontSize = 14.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false)
@@ -388,39 +314,35 @@ fun ChannelRow(
                     }
                 }
             }
-            Text(
-                epgText,
-                color = PastelBlue.copy(0.9f),
-                fontSize = 11.sp,
-                maxLines = 1,
-                modifier = Modifier.padding(top = 2.dp, bottom = 4.dp)
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                MiniFlag(channel.country, channel.group, size = 12)
-                Spacer(Modifier.width(6.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 1.dp)
+            ) {
+                MiniFlag(channel.country, channel.group, size = 14)
                 Text(
-                    CountryCatalog.displayName(channel.country, channel.group),
-                    color = Color.Gray, fontSize = 9.sp,
-                    modifier = Modifier
-                        .background(Color.Black, RoundedCornerShape(4.dp))
-                        .padding(horizontal = 4.dp)
+                    countryName,
+                    color = Color.LightGray,
+                    fontSize = 11.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-                Spacer(Modifier.width(4.dp))
-                if (channel.group.isNotEmpty()) {
+                if (typeLabel.isNotEmpty()) {
+                    Spacer(Modifier.width(5.dp))
                     Text(
-                        LanguageManager.getTranslatedCategory(channel.group),
-                        color = Color.LightGray,
-                        fontSize = 9.sp,
+                        typeLabel,
+                        color = PastelBlue.copy(0.95f),
+                        fontSize = 11.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
             }
         }
-        IconButton(onClick = onFav, modifier = Modifier.size(36.dp)) {
+        IconButton(onClick = onFav, modifier = Modifier.size(32.dp)) {
             Icon(
                 if (isFav) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                null, tint = if (isFav) DiamondRed else Color.Gray
+                null, tint = if (isFav) DiamondRed else Color.Gray,
+                modifier = Modifier.size(20.dp)
             )
         }
     }
@@ -441,8 +363,8 @@ fun SmartChannelLogo(logoUrl: String, channelName: String) {
     )
     Box(
         modifier = Modifier
-            .padding(horizontal = 4.dp)
-            .size(40.dp)
+            .padding(horizontal = 2.dp)
+            .size(52.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(Color.Transparent)
     ) {
@@ -470,17 +392,16 @@ fun SmartChannelLogo(logoUrl: String, channelName: String) {
 
 @Composable
 fun SettingsDialog(
-    adsConsentEnabled: Boolean,
     hiddenCount: Int,
     onDismiss: () -> Unit,
     onClearCache: () -> Unit,
     onSetTimer: (Int) -> Unit,
-    onAdsConsent: (Boolean) -> Unit,
     onOpenPrivacyPolicy: () -> Unit,
     onRestoreHidden: () -> Unit
 ) {
     var timerInput by remember { mutableStateOf("") }
     val sectionShape = RoundedCornerShape(14.dp)
+    val actionButtonWidth = 148.dp
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -491,7 +412,8 @@ fun SettingsDialog(
             Column(
                 Modifier
                     .padding(18.dp)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     LanguageManager.settingsTitle,
@@ -502,64 +424,6 @@ fun SettingsDialog(
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.height(14.dp))
-
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(Color.White.copy(0.05f), sectionShape)
-                        .padding(14.dp)
-                ) {
-                    Text(
-                        LanguageManager.adsConsentTitle,
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        LanguageManager.adsConsentWhere,
-                        color = PastelBlue,
-                        fontSize = 12.sp
-                    )
-                    Spacer(Modifier.height(2.dp))
-                    Text(
-                        LanguageManager.adsConsentHint,
-                        color = Color.Gray,
-                        fontSize = 11.sp
-                    )
-                    Spacer(Modifier.height(10.dp))
-                    Row(
-                        Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            "false",
-                            color = if (!adsConsentEnabled) Color.White else Color.Gray,
-                            fontWeight = if (!adsConsentEnabled) FontWeight.Bold else FontWeight.Normal,
-                            fontSize = 13.sp
-                        )
-                        Spacer(Modifier.weight(1f))
-                        Switch(
-                            checked = adsConsentEnabled,
-                            onCheckedChange = onAdsConsent,
-                            colors = SwitchDefaults.colors(
-                                checkedThumbColor = Color.White,
-                                checkedTrackColor = DiamondRed,
-                                uncheckedThumbColor = Color.White,
-                                uncheckedTrackColor = Color.DarkGray
-                            )
-                        )
-                        Spacer(Modifier.weight(1f))
-                        Text(
-                            "true",
-                            color = if (adsConsentEnabled) Color.White else Color.Gray,
-                            fontWeight = if (adsConsentEnabled) FontWeight.Bold else FontWeight.Normal,
-                            fontSize = 13.sp
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(10.dp))
 
                 Column(
                     Modifier
@@ -601,9 +465,10 @@ fun SettingsDialog(
                                 containerColor = DiamondRed,
                                 contentColor = Color.White
                             ),
+                            modifier = Modifier.width(actionButtonWidth),
                             shape = RoundedCornerShape(10.dp)
                         ) {
-                            Text(LanguageManager.setTimer, color = Color.White)
+                            Text(LanguageManager.setTimer, color = Color.White, maxLines = 1)
                         }
                     }
                 }
@@ -644,10 +509,7 @@ fun SettingsDialog(
                     }
                 }
 
-                TextButton(
-                    onClick = onOpenPrivacyPolicy,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
+                TextButton(onClick = onOpenPrivacyPolicy) {
                     Text("🔗 ${LanguageManager.privacyPolicy}", color = PastelBlue, fontSize = 12.sp)
                 }
                 Button(
@@ -656,8 +518,8 @@ fun SettingsDialog(
                         containerColor = DiamondRed,
                         contentColor = Color.White
                     ),
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp)
+                    modifier = Modifier.width(actionButtonWidth),
+                    shape = RoundedCornerShape(10.dp)
                 ) {
                     Text(LanguageManager.close, color = Color.White, fontWeight = FontWeight.Bold)
                 }
@@ -729,8 +591,7 @@ fun TvFocusableIconButton(
     IconButton(
         onClick = onClick,
         modifier = modifier
-            .defaultMinSize(minWidth = 34.dp, minHeight = 34.dp)
-            .size(34.dp)
+            .size(40.dp)
             .onFocusChanged { isFocused = it.isFocused }
             .then(
                 if (isFocused) Modifier.border(2.dp, FocusGlow, RoundedCornerShape(8.dp))
@@ -741,7 +602,7 @@ fun TvFocusableIconButton(
                 RoundedCornerShape(8.dp)
             )
     ) {
-        Icon(icon, null, tint = Color.White, modifier = Modifier.size(18.dp))
+        Icon(icon, null, tint = Color.White, modifier = Modifier.size(20.dp))
     }
 }
 
@@ -784,21 +645,21 @@ fun NeonGlassButton(
     Box(
         modifier = modifier
             .scale(scale)
-            .heightIn(min = 32.dp)
-            .widthIn(min = 52.dp, max = 108.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .heightIn(min = 34.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
             .onFocusChanged { isFocused = it.isFocused }
             .focusable()
             .background(containerColor)
-            .border(if (isFocused) 2.dp else 1.dp, borderBrush, RoundedCornerShape(12.dp))
+            .border(if (isFocused) 2.dp else 1.dp, borderBrush, RoundedCornerShape(10.dp))
             .clickable(interactionSource = interactionSource, indication = null) { onClick() }
-            .padding(horizontal = 10.dp, vertical = 5.dp),
+            .padding(horizontal = 4.dp, vertical = 6.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
             color = if (isActive || isFocused) Color.White else Color.LightGray,
-            fontSize = 12.sp,
+            fontSize = 11.sp,
             fontWeight = if (isActive || isFocused) FontWeight.Bold else FontWeight.SemiBold,
             textAlign = TextAlign.Center,
             maxLines = 1,
