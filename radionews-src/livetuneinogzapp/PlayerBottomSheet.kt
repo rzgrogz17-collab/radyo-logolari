@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -667,7 +666,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         }
         binding.tvStationName.text = station.name
         binding.tvStationName.isSelected = true
-        binding.tvCountry.text = station.country
         renderTrackLine(radioService?.nowPlayingTitle?.value)
         val fav = isFavoriteNow(station.id)
         station.isFavorite = fav
@@ -682,7 +680,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         val station = radioService?.currentStation ?: currentStation
         val name = station?.name?.trim().orEmpty()
         val track = song?.trim().orEmpty().takeIf { it.isNotEmpty() && !it.equals(name, true) }
-        binding.tvTags.text = if (!track.isNullOrEmpty()) "$name   ·   $track" else name
+        binding.tvTags.text = track.orEmpty()
         binding.tvTags.isSelected = true
     }
 
@@ -697,8 +695,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         if (!isAdded || _binding == null) return
         binding.root.setBackgroundColor(Color.parseColor("#EBF0FA"))
         binding.tvStationName.setTextColor(Color.parseColor("#1A1A2E"))
-        binding.tvCountry.setTextColor(Color.parseColor("#2E3A5C"))
-        binding.tvTags.setTextColor(Color.parseColor("#3A4A6E"))
+        binding.tvTags.setTextColor(Color.parseColor("#1A1A2E"))
         binding.tvStatus.setTextColor(Color.parseColor("#1A1A2E"))
         binding.tvStationIndex.setTextColor(Color.parseColor("#3A4A6E"))
     }
@@ -735,17 +732,9 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         FavoriteIcon.apply(binding.btnFavorite, fav, onLightSurface = true)
     }
 
-    private fun startEq() {
-        binding.equalizerView.visibility = View.VISIBLE
-        binding.equalizerView.startAnimation(
-            AnimationUtils.loadAnimation(requireContext(), R.anim.equalizer_anim)
-        )
-    }
+    private fun startEq() {}
 
-    private fun stopEq() {
-        binding.equalizerView.clearAnimation()
-        binding.equalizerView.visibility = View.INVISIBLE
-    }
+    private fun stopEq() {}
 
     override fun onDestroyView() {
         recordingObserved = false

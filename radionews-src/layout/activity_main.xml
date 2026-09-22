@@ -107,7 +107,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/status_live"
-                                android:textColor="#ca005e"
+                                android:textColor="#FFFFFF"
                                 android:textSize="11sp" />
 
                         </LinearLayout>

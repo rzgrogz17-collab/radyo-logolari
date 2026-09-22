@@ -112,30 +112,12 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <!-- Ülke pill -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/bg_quality_badge"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp">
-
-                <TextView
-                    android:id="@+id/tvCountry"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="#AABBCC"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <!-- Tags + sıra -->
+            <!-- Şarkı ve şarkıcı — kayan bant -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="28dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -151,25 +133,25 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:textColor="#D0D6DE"
-                    android:textSize="13sp" />
+                    android:textColor="#1A1A2E"
+                    android:textSize="15sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="  ·  "
                     android:textColor="#556677"
-                    android:textSize="11sp" />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tvStationIndex"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#556677"
-                    android:textSize="11sp" />
+                    android:textSize="12sp" />
             </LinearLayout>
 
-            <!-- Canlı / duraklatıldı — tek satır, banner'a taşmaz -->
+            <!-- Canlı / duraklatıldı -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -178,40 +160,6 @@
                 android:layout_marginBottom="4dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/equalizerView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="14dp"
-                    android:layout_marginEnd="8dp"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:visibility="invisible">
-
-                    <View
-                        android:layout_width="3dp"
-                        android:layout_height="12dp"
-                        android:layout_marginHorizontal="1dp"
-                        android:background="@color/accent" />
-
-                    <View
-                        android:layout_width="3dp"
-                        android:layout_height="8dp"
-                        android:layout_marginHorizontal="1dp"
-                        android:background="@color/accent" />
-
-                    <View
-                        android:layout_width="3dp"
-                        android:layout_height="14dp"
-                        android:layout_marginHorizontal="1dp"
-                        android:background="@color/accent" />
-
-                    <View
-                        android:layout_width="3dp"
-                        android:layout_height="6dp"
-                        android:layout_marginHorizontal="1dp"
-                        android:background="@color/accent" />
-                </LinearLayout>
 
                 <View
                     android:layout_width="7dp"
@@ -263,7 +211,7 @@
                 android:padding="8dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_share"
-                app:tint="#1A1A2E" />
+                app:tint="#FFFFFF" />
 
             <View
                 android:layout_width="0dp"
@@ -403,7 +351,7 @@
                 android:padding="11dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_player_equalizer"
-                app:tint="#1A1A2E" />
+                app:tint="#FFFFFF" />
 
         </LinearLayout>
 
