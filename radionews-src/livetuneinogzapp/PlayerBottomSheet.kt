@@ -666,6 +666,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         }
         binding.tvStationName.text = station.name
         binding.tvStationName.isSelected = true
+        bindScrollingLabel(binding.tvStationName, station.name)
         renderTrackLine(radioService?.nowPlayingTitle?.value)
         val fav = isFavoriteNow(station.id)
         station.isFavorite = fav
@@ -679,9 +680,31 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         if (_binding == null) return
         val station = radioService?.currentStation ?: currentStation
         val name = station?.name?.trim().orEmpty()
-        val track = song?.trim().orEmpty().takeIf { it.isNotEmpty() && !it.equals(name, true) }
-        binding.tvTags.text = track.orEmpty()
-        binding.tvTags.isSelected = true
+        val track = song?.trim().orEmpty().takeIf { it.isNotEmpty() && !it.equals(name, true) }.orEmpty()
+        if (track.isEmpty()) {
+            binding.tvTags.visibility = View.GONE
+            binding.tvTags.text = ""
+            return
+        }
+        binding.tvTags.visibility = View.VISIBLE
+        bindScrollingLabel(binding.tvTags, track)
+    }
+
+    private fun bindScrollingLabel(view: android.widget.TextView, text: String) {
+        view.text = text
+        view.isSelected = true
+        view.post {
+            if (_binding == null || view.text?.toString() != text) return@post
+            val available = (view.width - view.paddingLeft - view.paddingRight).coerceAtLeast(0)
+            val fits = available > 0 && view.paint.measureText(text) <= available
+            view.gravity = if (fits) {
+                android.view.Gravity.CENTER
+            } else {
+                android.view.Gravity.CENTER_VERTICAL or android.view.Gravity.START
+            }
+            view.ellipsize = if (fits) null else android.text.TextUtils.TruncateAt.MARQUEE
+            view.isSelected = true
+        }
     }
 
     private fun applyGlassmorphism(bmp: Bitmap) {
@@ -697,7 +720,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         binding.tvStationName.setTextColor(Color.parseColor("#1A1A2E"))
         binding.tvTags.setTextColor(Color.parseColor("#1A1A2E"))
         binding.tvStatus.setTextColor(Color.parseColor("#1A1A2E"))
-        binding.tvStationIndex.setTextColor(Color.parseColor("#3A4A6E"))
+        binding.tvStationIndex.setTextColor(Color.WHITE)
     }
 
     private fun loadBannerAd() {
@@ -729,7 +752,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     private fun setFavIcon(fav: Boolean) {
         if (_binding == null) return
-        FavoriteIcon.apply(binding.btnFavorite, fav, onLightSurface = true)
+        FavoriteIcon.apply(binding.btnFavorite, fav, emptyColor = Color.WHITE)
     }
 
     private fun startEq() {}

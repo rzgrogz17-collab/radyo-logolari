@@ -67,6 +67,8 @@ class RadioPlayerService : Service() {
     private var lastSkipElapsed = 0L
     private var sessionStartedAt = 0L
     private var trackTitle: String = ""
+    private var streamSong: String = ""
+    private var streamArtist: String = ""
 
     private var recorder: StreamRecorder? = null
     val recordingState = MutableLiveData(false)
@@ -316,7 +318,10 @@ class RadioPlayerService : Service() {
             }
 
             override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-                publishTrackTitle(mediaMetadata.title?.toString())
+                publishSongOrArtist(
+                    mediaMetadata.title?.toString(),
+                    mediaMetadata.artist?.toString()
+                )
             }
 
             override fun onPlayerError(error: PlaybackException) {
@@ -345,13 +350,44 @@ class RadioPlayerService : Service() {
     }
 
     private fun publishTrackTitle(raw: String?) {
-        val title = raw?.trim().orEmpty()
-        if (title.isEmpty()) return
-        val stationName = currentStation?.name?.trim().orEmpty()
-        if (stationName.isNotEmpty() && title.equals(stationName, ignoreCase = true)) return
+        val title = sanitizeTrack(raw) ?: return
         if (title == trackTitle) return
         trackTitle = title
         nowPlayingTitle.postValue(title)
+    }
+
+    private fun publishSongOrArtist(song: String?, artist: String?) {
+        val cleanSong = sanitizeTrack(song)
+        val cleanArtist = sanitizeTrack(artist)
+        if (cleanSong != null) streamSong = cleanSong
+        if (cleanArtist != null) streamArtist = cleanArtist
+        val line = when {
+            streamArtist.isNotEmpty() && streamSong.isNotEmpty() &&
+                !streamArtist.equals(streamSong, true) -> "$streamArtist — $streamSong"
+            streamSong.isNotEmpty() -> streamSong
+            streamArtist.isNotEmpty() -> streamArtist
+            else -> return
+        }
+        publishTrackTitle(line)
+    }
+
+    private fun sanitizeTrack(raw: String?): String? {
+        val title = raw?.trim()?.replace(Regex("\\s+"), " ").orEmpty()
+        if (title.length < 2) return null
+        val station = currentStation
+        val blocked = listOfNotNull(
+            station?.name?.trim(),
+            station?.country?.trim(),
+            station?.tags?.trim()
+        ).filter { it.isNotEmpty() }
+        if (blocked.any { it.equals(title, ignoreCase = true) }) return null
+        if (title.startsWith("http", ignoreCase = true)) return null
+        if (title.contains("kbps", ignoreCase = true)) return null
+        if (title.equals("unknown", true) || title.equals("null", true) ||
+            title.equals("n/a", true) || title.equals("ad", true) ||
+            title.equals("stream", true) || title.equals("live", true)
+        ) return null
+        return title
     }
 
     private fun readStreamTitle(entry: Metadata.Entry): String? {
@@ -361,10 +397,17 @@ class RadioPlayerService : Service() {
                 "IcyInfo" -> cls.getField("title").get(entry) as? String
                 "TextInformationFrame" -> {
                     val id = cls.getMethod("getId").invoke(entry) as? String
-                    if (id == "TIT2" || id == "TT2") {
-                        cls.getMethod("getValue").invoke(entry) as? String
-                    } else {
-                        null
+                    val value = cls.getMethod("getValue").invoke(entry) as? String
+                    when (id) {
+                        "TIT2", "TT2" -> {
+                            publishSongOrArtist(value, null)
+                            null
+                        }
+                        "TPE1", "TP1" -> {
+                            publishSongOrArtist(null, value)
+                            null
+                        }
+                        else -> null
                     }
                 }
                 else -> null
@@ -438,6 +481,8 @@ class RadioPlayerService : Service() {
         if (currentStation?.id != station.id) {
             stopRecording()
             trackTitle = ""
+            streamSong = ""
+            streamArtist = ""
             nowPlayingTitle.postValue("")
         }
 
