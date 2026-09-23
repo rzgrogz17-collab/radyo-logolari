@@ -201,10 +201,11 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         }
         val pager = binding.logoPager
         pager.offscreenPageLimit = 2
-        pager.clipToPadding = true
-        pager.clipChildren = true
+        pager.clipToPadding = false
+        pager.clipChildren = false
         applyLogoPeekPadding()
         pager.adapter = logoPagerAdapter
+        applyLogoPageGap()
         applyLogoPeekPadding()
 
         pager.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
@@ -250,6 +251,17 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     private fun logoPeekPx(): Int = 0
 
+    private fun logoPageGapPx(): Int = (36f * resources.displayMetrics.density).toInt()
+
+    /** Kaydırırken logolar yapışmasın. Durunca ortadaki logo ölçüsü aynı kalır. */
+    private fun applyLogoPageGap() {
+        if (_binding == null) return
+        val gap = logoPageGapPx().toFloat()
+        binding.logoPager.setPageTransformer { page, position ->
+            page.translationX = gap * position
+        }
+    }
+
     /** Kare logo, kenarlardan içeride. Kaydırma aynı kalır; komşu kart görünmez. */
     private fun applySquareLogo(): Boolean {
         if (_binding == null) return false
@@ -279,16 +291,16 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         if (_binding == null) return false
         val pager = binding.logoPager
         val peek = logoPeekPx()
-        pager.clipToPadding = true
-        pager.clipChildren = true
+        pager.clipToPadding = false
+        pager.clipChildren = false
         var changed = false
         if (pager.paddingStart != 0 || pager.paddingEnd != 0) {
             pager.setPaddingRelative(0, pager.paddingTop, 0, pager.paddingBottom)
             changed = true
         }
         val rv = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return changed
-        rv.clipToPadding = true
-        rv.clipChildren = true
+        rv.clipToPadding = false
+        rv.clipChildren = false
         rv.overScrollMode = View.OVER_SCROLL_NEVER
         if (rv.paddingStart != peek || rv.paddingEnd != peek) {
             rv.setPaddingRelative(peek, 0, peek, 0)

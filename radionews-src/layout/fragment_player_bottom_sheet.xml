@@ -91,15 +91,15 @@
                 android:layout_height="280dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="6dp"
-                android:clipChildren="true"
-                android:clipToPadding="true">
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/logoPager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:clipChildren="true"
-                    android:clipToPadding="true"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
                     android:overScrollMode="never"
                     android:paddingStart="0dp"
                     android:paddingEnd="0dp" />
