@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/bg_surface"
-        app:navigationIconTint="@color/text_primary"
+        app:navigationIconTint="@color/settings_nav"
         app:titleTextColor="@color/text_primary" />
 
     <ScrollView
@@ -32,7 +32,7 @@
                 android:letterSpacing="0.12"
                 android:paddingBottom="8dp"
                 android:text="@string/settings_appearance"
-                android:textColor="#E94560"
+                android:textColor="@color/settings_section"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -53,6 +53,8 @@
                     android:paddingVertical="6dp">
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
+                        app:thumbTint="@color/switch_thumb"
+                        app:useMaterialThemeColors="false"
                         android:id="@+id/switchDarkTheme"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -66,7 +68,7 @@
                         android:layout_height="wrap_content"
                         android:paddingBottom="8dp"
                         android:text="@string/settings_dark_theme_desc"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="@color/settings_desc"
                         android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -77,7 +79,7 @@
                 android:letterSpacing="0.12"
                 android:paddingBottom="8dp"
                 android:text="@string/settings_playback"
-                android:textColor="#E94560"
+                android:textColor="@color/settings_section"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -98,6 +100,8 @@
                     android:paddingVertical="8dp">
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
+                        app:thumbTint="@color/switch_thumb"
+                        app:useMaterialThemeColors="false"
                         android:id="@+id/switchResumeLast"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -109,10 +113,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_resume_last_desc"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="@color/settings_desc"
                         android:textSize="12sp" />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
+                        app:thumbTint="@color/switch_thumb"
+                        app:useMaterialThemeColors="false"
                         android:id="@+id/switchLockControls"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -124,10 +130,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_lock_controls_desc"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="@color/settings_desc"
                         android:textSize="12sp" />
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
+                        app:thumbTint="@color/switch_thumb"
+                        app:useMaterialThemeColors="false"
                         android:id="@+id/switchDefaultVolume"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -139,7 +147,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/settings_default_volume_desc"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="@color/settings_desc"
                         android:textSize="12sp" />
 
                     <LinearLayout
@@ -169,6 +177,8 @@
                     </LinearLayout>
 
                     <com.google.android.material.switchmaterial.SwitchMaterial
+                        app:thumbTint="@color/switch_thumb"
+                        app:useMaterialThemeColors="false"
                         android:id="@+id/switchDataSaver"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -181,7 +191,7 @@
                         android:layout_height="wrap_content"
                         android:paddingBottom="8dp"
                         android:text="@string/settings_data_saver_desc"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="@color/settings_desc"
                         android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -192,7 +202,7 @@
                 android:letterSpacing="0.12"
                 android:paddingBottom="8dp"
                 android:text="@string/settings_data"
-                android:textColor="#E94560"
+                android:textColor="@color/settings_section"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -230,7 +240,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
 
@@ -260,7 +270,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -272,7 +282,7 @@
                 android:letterSpacing="0.12"
                 android:paddingBottom="8dp"
                 android:text="@string/settings_backup"
-                android:textColor="#E94560"
+                android:textColor="@color/settings_section"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -315,7 +325,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/settings_export_desc"
-                                android:textColor="@color/text_secondary"
+                                android:textColor="@color/settings_desc"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -323,7 +333,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
 
@@ -358,7 +368,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/settings_import_desc"
-                                android:textColor="@color/text_secondary"
+                                android:textColor="@color/settings_desc"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -366,7 +376,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -378,7 +388,7 @@
                 android:letterSpacing="0.12"
                 android:paddingBottom="8dp"
                 android:text="@string/settings_recordings"
-                android:textColor="#E94560"
+                android:textColor="@color/settings_section"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -416,7 +426,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
 
@@ -446,7 +456,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -458,7 +468,7 @@
                 android:letterSpacing="0.12"
                 android:paddingBottom="8dp"
                 android:text="@string/settings_contact_header"
-                android:textColor="#E94560"
+                android:textColor="@color/settings_section"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -491,7 +501,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="✉"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="@color/settings_desc"
                         android:textSize="18sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -502,7 +512,7 @@
                 android:letterSpacing="0.12"
                 android:paddingBottom="8dp"
                 android:text="@string/settings_more"
-                android:textColor="#E94560"
+                android:textColor="@color/settings_section"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -540,7 +550,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
 
@@ -570,7 +580,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
 
@@ -600,7 +610,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
 
@@ -630,7 +640,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="›"
-                            android:textColor="@color/text_secondary"
+                            android:textColor="@color/settings_desc"
                             android:textSize="22sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -642,7 +652,7 @@
                 android:letterSpacing="0.12"
                 android:paddingBottom="8dp"
                 android:text="@string/settings_about"
-                android:textColor="#E94560"
+                android:textColor="@color/settings_section"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -673,7 +683,7 @@
                         android:id="@+id/tvVersion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/text_secondary"
+                        android:textColor="@color/settings_desc"
                         android:textSize="13sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

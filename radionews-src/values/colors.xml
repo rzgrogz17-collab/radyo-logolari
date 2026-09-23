@@ -78,4 +78,10 @@
     <color name="on_dark_sheet">#FFFFFF</color>
     <color name="on_dark_sheet_muted">#AABBCC</color>
     <color name="favorite_empty">#2C2C34</color>
+
+    <color name="settings_desc">#5C6B7A</color>
+    <color name="settings_nav">#1A1A2E</color>
+    <color name="settings_section">#E01B3B</color>
+    <color name="switch_thumb_on">#E01B3B</color>
+    <color name="switch_thumb_off">#F4F4F6</color>
 </resources>

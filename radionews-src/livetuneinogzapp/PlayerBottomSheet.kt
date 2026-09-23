@@ -86,14 +86,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    private val progressRunnable = object : Runnable {
-        override fun run() {
-            if (!isAdded || _binding == null) return
-            updateProgressUi()
-            volumeHandler.postDelayed(this, 500)
-        }
-    }
-
     // ── Smart next/prev (servis çalma listesi öncelikli) ──
 
     private fun stationIndex(cur: RadioStation): Int {
@@ -209,8 +201,8 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         }
         val pager = binding.logoPager
         pager.offscreenPageLimit = 2
-        pager.clipToPadding = false
-        pager.clipChildren = false
+        pager.clipToPadding = true
+        pager.clipChildren = true
         applyLogoPeekPadding()
         pager.adapter = logoPagerAdapter
         applyLogoPeekPadding()
@@ -257,21 +249,24 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     private fun logoPeekPx(): Int = (32f * resources.displayMetrics.density).toInt()
 
-    /** Sağ/sol komşu logo kenarları görünsün — padding yalnızca iç RecyclerView'da. */
+    /**
+     * Logo beyaz çerçeve ölçüsünde kalır. Komşu kartlar padding dışında kırpılır,
+     * sağa/sola kaydırınca istasyon değişimi aynı şekilde sürer.
+     */
     private fun applyLogoPeekPadding(): Boolean {
         if (_binding == null) return false
         val pager = binding.logoPager
         val peek = logoPeekPx()
-        pager.clipToPadding = false
-        pager.clipChildren = false
+        pager.clipToPadding = true
+        pager.clipChildren = true
         var changed = false
         if (pager.paddingStart != 0 || pager.paddingEnd != 0) {
             pager.setPaddingRelative(0, pager.paddingTop, 0, pager.paddingBottom)
             changed = true
         }
         val rv = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return changed
-        rv.clipToPadding = false
-        rv.clipChildren = false
+        rv.clipToPadding = true
+        rv.clipChildren = true
         rv.overScrollMode = View.OVER_SCROLL_NEVER
         if (rv.paddingStart != peek || rv.paddingEnd != peek) {
             rv.setPaddingRelative(peek, 0, peek, 0)
@@ -387,7 +382,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             override fun onStopTrackingTouch(sb: SeekBar?) {}
         })
         volumeHandler.post(volumeRunnable)
-        volumeHandler.post(progressRunnable)
     }
 
     // ── İlerleme / geri sar / kaydet ─────────────────────────────────────────
@@ -395,7 +389,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     private fun setupProgressControls() {
         binding.btnSave.setOnClickListener { onSaveClicked() }
         updateSaveButton(radioService?.isRecording() == true)
-        updateProgressUi()
     }
 
     private fun onSaveClicked() {
@@ -416,23 +409,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         service.startRecording()
     }
 
-    private fun updateProgressUi() {
-        if (_binding == null) return
-        ensureServiceObservers()
-        val service = radioService ?: return
-        if (service.isRecording()) {
-            binding.tvSaveLabel.text = formatClock(service.recordingElapsedMs())
-        }
-    }
-
-    private fun formatClock(ms: Long): String {
-        val total = (ms / 1000L).coerceAtLeast(0L)
-        val h = total / 3600
-        val m = (total % 3600) / 60
-        val s = total % 60
-        return if (h > 0) "%d:%02d:%02d".format(h, m, s) else "%d:%02d".format(m, s)
-    }
-
     private fun updateSaveButton(recording: Boolean) {
         if (_binding == null) return
         binding.btnSave.setImageResource(
@@ -444,15 +420,12 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         )
         binding.btnSave.clearAnimation()
         if (recording) {
-            binding.tvSaveLabel.text = getString(R.string.recording_short)
             val pulse = AlphaAnimation(1f, 0.35f).apply {
                 duration = 700
                 repeatMode = Animation.REVERSE
                 repeatCount = Animation.INFINITE
             }
             binding.btnSave.startAnimation(pulse)
-        } else {
-            binding.tvSaveLabel.text = getString(R.string.save_short)
         }
     }
 
@@ -609,7 +582,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
                 setPlayIcon(true)
                 setBusy(false)
                 startEq()
-                binding.tvStatus.text = getString(R.string.status_live)
             }
 
             is PlayerState.Paused -> {
@@ -618,28 +590,22 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
                 setPlayIcon(false)
                 setBusy(false)
                 stopEq()
-                binding.tvStatus.text = getString(R.string.status_paused)
             }
 
             is PlayerState.Buffering -> {
-                setPlayIcon(false)
                 setBusy(true)
                 stopEq()
-                binding.tvStatus.text = getString(R.string.status_buffering)
             }
 
             is PlayerState.Reconnecting -> {
-                setPlayIcon(false)
                 setBusy(true)
                 stopEq()
-                binding.tvStatus.text = getString(R.string.status_reconnecting, state.attempt)
             }
 
             is PlayerState.Error -> {
                 setPlayIcon(false)
                 setBusy(false)
                 stopEq()
-                binding.tvStatus.text = "⚠ ${state.message}"
             }
 
             is PlayerState.Idle -> {
@@ -719,7 +685,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         binding.root.setBackgroundColor(Color.parseColor("#EBF0FA"))
         binding.tvStationName.setTextColor(Color.parseColor("#1A1A2E"))
         binding.tvTags.setTextColor(Color.parseColor("#1A1A2E"))
-        binding.tvStatus.setTextColor(Color.parseColor("#1A1A2E"))
         binding.tvStationIndex.setTextColor(Color.WHITE)
     }
 
@@ -747,7 +712,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     private fun setBusy(busy: Boolean) {
         binding.progressBuffering.visibility = if (busy) View.VISIBLE else View.GONE
-        binding.btnPlayPause.visibility = if (busy) View.INVISIBLE else View.VISIBLE
+        binding.btnPlayPause.visibility = View.VISIBLE
     }
 
     private fun setFavIcon(fav: Boolean) {
@@ -769,7 +734,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             binding.btnSave.clearAnimation()
         }
         volumeHandler.removeCallbacks(volumeRunnable)
-        volumeHandler.removeCallbacks(progressRunnable)
         super.onDestroyView()
         _binding = null
     }

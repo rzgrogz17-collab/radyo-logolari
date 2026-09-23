@@ -10,6 +10,8 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.media3.common.util.UnstableApi
 import com.bumptech.glide.Glide
 import com.globalradio.livetuneinogzapp.databinding.ActivitySettingsBinding
@@ -91,6 +93,12 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.apply {
             title = getString(R.string.settings)
             setDisplayHomeAsUpEnabled(true)
+        }
+        binding.toolbarSettings.navigationIcon = binding.toolbarSettings.navigationIcon?.mutate()?.also { icon ->
+            androidx.core.graphics.drawable.DrawableCompat.setTint(
+                icon,
+                ContextCompat.getColor(this, R.color.settings_nav)
+            )
         }
 
         bindValues()

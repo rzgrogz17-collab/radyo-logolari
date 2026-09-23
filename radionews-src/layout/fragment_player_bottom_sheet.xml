@@ -89,50 +89,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="332dp"
                 android:layout_marginTop="6dp"
-                android:clipChildren="false"
-                android:clipToPadding="false">
+                android:clipChildren="true"
+                android:clipToPadding="true">
 
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/logoPager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
+                    android:clipChildren="true"
+                    android:clipToPadding="true"
                     android:overScrollMode="never"
                     android:paddingStart="0dp"
                     android:paddingEnd="0dp" />
 
             </FrameLayout>
-
-            <!-- Canlı / duraklatıldı -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="4dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <View
-                    android:layout_width="7dp"
-                    android:layout_height="7dp"
-                    android:layout_marginEnd="5dp"
-                    android:background="@drawable/bg_live_dot" />
-
-                <TextView
-                    android:id="@+id/tvStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text="@string/status_live"
-                    android:textColor="@color/accent"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
 
         </LinearLayout>
 
@@ -179,9 +149,8 @@
                 android:id="@+id/btnShare"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:background="@drawable/bg_icon_soft_shadow"
+                android:background="@drawable/bg_glass_button"
                 android:contentDescription="@string/share"
-                android:elevation="2dp"
                 android:padding="8dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_share"
@@ -204,35 +173,16 @@
                 android:textSize="21sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="48dp"
-                android:layout_height="wrap_content"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageButton
-                    android:id="@+id/btnSave"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_icon_soft_shadow"
-                    android:contentDescription="@string/save_recording"
-                    android:elevation="2dp"
-                    android:padding="9dp"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_record"
-                    app:tint="#E01B3B" />
-
-                <TextView
-                    android:id="@+id/tvSaveLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/save_short"
-                    android:textColor="#3A4A6E"
-                    android:textSize="10sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+            <ImageButton
+                android:id="@+id/btnSave"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_glass_button"
+                android:contentDescription="@string/save_recording"
+                android:padding="9dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_record"
+                app:tint="#E01B3B" />
         </LinearLayout>
 
         <!-- ── SES SLIDER ── -->
@@ -287,10 +237,9 @@
                 android:id="@+id/btnFavorite"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/bg_icon_soft_shadow"
+                android:background="@drawable/bg_glass_button"
                 android:contentDescription="@string/favorite"
-                android:elevation="2dp"
-                android:padding="2dp"
+                android:padding="4dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_favorite_border"
                 app:tint="#FFFFFF" />
@@ -306,23 +255,29 @@
                 app:tint="#FFFFFF" />
 
             <FrameLayout
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginHorizontal="8dp">
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:layout_marginHorizontal="2dp">
 
                 <ImageButton
                     android:id="@+id/btnPlayPause"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
+                    android:layout_gravity="center"
                     android:background="@drawable/bg_play_button"
                     android:contentDescription="Play/Pause"
                     android:src="@drawable/ic_play_circle_large" />
 
                 <ProgressBar
                     android:id="@+id/progressBuffering"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:indeterminateTint="@color/accent"
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:indeterminate="true"
+                    android:indeterminateDrawable="@drawable/bg_loading_ring"
                     android:visibility="gone" />
             </FrameLayout>
 
@@ -340,9 +295,8 @@
                 android:id="@+id/btnEqualizerPlayer"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:background="@drawable/bg_icon_soft_shadow"
+                android:background="@drawable/bg_glass_button"
                 android:contentDescription="Equalizer"
-                android:elevation="2dp"
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_player_equalizer"
