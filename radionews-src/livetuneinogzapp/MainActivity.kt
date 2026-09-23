@@ -218,6 +218,12 @@ class MainActivity : AppCompatActivity() {
             val sid = radioService?.getAudioSessionId() ?: 0
             if (sid != 0) EqualizerManager.init(this, sid)
         }
+        _viewModel.allSectionStations.observe(this) { list ->
+            val service = radioService ?: return@observe
+            val current = service.currentStation ?: return@observe
+            if (service.getPlaylist().size >= 2 || list.size < 2) return@observe
+            service.expandPlaylistIfShort(_viewModel.playlistFor(current))
+        }
         _viewModel.favoritePayload.observe(this) { payload ->
             payload ?: return@observe
             radioService?.updateFavorite(payload.first, payload.second)

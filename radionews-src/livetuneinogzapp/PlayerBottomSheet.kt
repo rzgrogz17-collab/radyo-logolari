@@ -161,6 +161,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         observeFavorites()
         ensureServiceObservers()
         loadBannerAd()
+        observeStationCatalog()
 
         // Başlangıç UI — serviste çalan istasyon öncelikli
         (radioService?.currentStation ?: currentStation)?.let { updateUI(it) }
@@ -356,27 +357,42 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         currentStation = station
     }
 
+    private fun observeStationCatalog() {
+        activeViewModel?.allSectionStations?.observe(viewLifecycleOwner) {
+            if (_binding == null || isPagerScrolling) return@observe
+            if (::logoPagerAdapter.isInitialized && logoPagerAdapter.itemCount >= 2) return@observe
+            val st = radioService?.currentStation ?: currentStation ?: return@observe
+            updateLogoPager(st)
+        }
+    }
+
+    /** Servis kuyruğu tek istasyonsa (son istasyondan devam) katalog listesine genişlet. */
+    private fun logoQueue(cur: RadioStation): List<RadioStation> {
+        val serviceList = radioService?.getPlaylist().orEmpty()
+        if (serviceList.size >= 2 && serviceList.any { it.id == cur.id }) return serviceList
+
+        val candidates = buildList {
+            countryActivity?.getStationList()?.takeIf { it.isNotEmpty() }?.let { add(it) }
+            activeViewModel?.playlistFor(cur)?.takeIf { it.isNotEmpty() }?.let { add(it) }
+            activeViewModel?.allStationsList()?.takeIf { it.isNotEmpty() }?.let { add(it) }
+            if (serviceList.isNotEmpty()) add(serviceList)
+        }
+        val best = candidates
+            .map { list ->
+                if (list.any { it.id == cur.id }) list else (listOf(cur) + list).distinctBy { it.id }
+            }
+            .maxByOrNull { it.size }
+            ?: listOf(cur)
+        if (best.size > serviceList.size) radioService?.expandPlaylistIfShort(best)
+        return best
+    }
+
     /** Pager'ı aktif bölümün tüm listesiyle güncelle */
     private fun updateLogoPager(currentSt: RadioStation) {
         if (isPagerScrolling) return
         val cur = radioService?.currentStation ?: currentSt
 
-        // Hangi ekrandaysak o ekranın tüm listesini al
-        val fullList: List<RadioStation> = when {
-            radioService?.getPlaylist()?.isNotEmpty() == true -> radioService!!.getPlaylist()
-            countryActivity != null -> countryActivity!!.getStationList()
-            else -> {
-                val fromVm = activeViewModel?.playlistFor(cur).orEmpty()
-                if (fromVm.isNotEmpty()) fromVm
-                else {
-                    val active = activeViewModel?.getActiveSectionList() ?: emptyList()
-                    val fav = activeViewModel?.favoriteStations?.value ?: emptyList()
-                    if (active.any { it.id == cur.id }) active
-                    else if (fav.any { it.id == cur.id }) fav
-                    else activeViewModel?.allStationsList() ?: emptyList()
-                }
-            }
-        }
+        val fullList: List<RadioStation> = logoQueue(cur)
 
         val list = if (fullList.isNotEmpty() && fullList.any { it.id == cur.id }) fullList
         else if (fullList.isNotEmpty()) (listOf(cur) + fullList).distinctBy { it.id }
@@ -389,6 +405,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         val idx = logoPagerAdapter.indexOf(cur)
         if (idx < 0) return
         pendingLogoIndex = idx
+        binding.tvStationIndex.text = "${idx + 1} / ${list.size}"
         if (binding.logoPager.currentItem != idx) {
             binding.logoPager.setCurrentItem(idx, false)
         }
@@ -520,9 +537,8 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun play(st: RadioStation) {
-        val queue = radioService?.getPlaylist()?.takeIf { it.isNotEmpty() }
-            ?: countryActivity?.getStationList()?.takeIf { it.isNotEmpty() }
-            ?: activeViewModel?.playlistFor(st)
+        val serviceList = radioService?.getPlaylist().orEmpty()
+        val queue = if (serviceList.size >= 2) serviceList else logoQueue(st)
         radioService?.playStation(st, queue)
         activeViewModel?.recordPlay(st)
         currentStation = st

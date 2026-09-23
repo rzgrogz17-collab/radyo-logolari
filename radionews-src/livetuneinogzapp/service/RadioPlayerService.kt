@@ -231,6 +231,23 @@ class RadioPlayerService : Service() {
 
     fun getPlaylist(): List<RadioStation> = playlist.toList()
 
+    /**
+     * Açılışta son istasyon, katalog yüklenmeden tek başına kuyruğa düşer.
+     * Liste gelince kuyruğu genişletir; çalan yayını yeniden başlatmaz.
+     */
+    fun expandPlaylistIfShort(queue: List<RadioStation>) {
+        if (queue.size < 2) return
+        val current = currentStation
+        if (playlist.size >= 2 && (current == null || playlist.any { it.id == current.id })) return
+        val currentId = current?.id
+        playlist = queue.toMutableList()
+        if (current != null && playlist.none { it.id == current.id }) {
+            playlist.add(0, current)
+        }
+        currentIndex = if (currentId == null) 0
+        else playlist.indexOfFirst { it.id == currentId }.coerceAtLeast(0)
+    }
+
     fun playNextStation() = skipBy(1)
 
     fun playPreviousStation() = skipBy(-1)
