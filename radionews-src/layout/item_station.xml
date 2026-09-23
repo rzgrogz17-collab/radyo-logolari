@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    item_station.xml
+    ───────────────────────────────────────────────────────
+    • Kenar boşlukları kaldırıldı (marginHorizontal / marginVertical = 0)
+    • Köşe yuvarlaklığı kaldırıldı (cardCornerRadius = 0)
+    • Gölge kaldırıldı (cardElevation = 0)
+    • Satır altına ince, belirsiz bir ayırıcı çizgi eklendi
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/bg_card"
+    app:cardCornerRadius="0dp"
+    app:cardElevation="0dp"
+    app:rippleColor="@color/accent_dim"
+    app:strokeWidth="0dp">
+
+    <!-- Çizgi ve krem vurgu aynı genişlikte, kenardan 16dp içeride -->
+    <LinearLayout
+        android:id="@+id/rowHighlight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="vertical">
+
+        <!-- Asıl satır içeriği -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="12dp">
+
+            <!-- Kare logo + alt gölge -->
+            <FrameLayout
+                android:layout_width="62dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="4dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+                <View
+                    android:layout_width="52dp"
+                    android:layout_height="14dp"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:background="@drawable/bg_logo_soft_shadow" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cvAvatar"
+                    android:layout_width="58dp"
+                    android:layout_height="58dp"
+                    android:layout_gravity="top|center_horizontal"
+                    app:cardCornerRadius="11dp"
+                    app:cardElevation="3dp"
+                    app:strokeWidth="0dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/ivLogo"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Logo"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/baseline_audiotrack_24" />
+
+                    <TextView
+                        android:id="@+id/tvAvatar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+            </FrameLayout>
+
+            <!-- Oynuyor göstergesi -->
+            <View
+                android:id="@+id/playingIndicator"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible" />
+
+            <!-- Bilgi - sabit yükseklik sağ taraf -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvStationName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+
+                <!-- Tag'ler - yatay, taşmayı önlemek için sabit yükseklik -->
+                <LinearLayout
+                    android:id="@+id/tagContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="22dp"
+                    android:layout_marginTop="4dp"
+                    android:clipChildren="true"
+                    android:clipToPadding="true"
+                    android:orientation="horizontal" />
+
+            </LinearLayout>
+
+            <!-- Favori butonu -->
+            <ImageButton
+                android:id="@+id/ivFavorite"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Favori"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_favorite_border"
+                app:tint="@color/favorite_empty" />
+
+        </LinearLayout>
+
+        <!-- ── Alt ayırıcı çizgi (çok belirgin değil) ── -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.6dp"
+            android:background="@color/list_separator" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
