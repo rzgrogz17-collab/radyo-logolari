@@ -208,6 +208,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         applyLogoPeekPadding()
 
         pager.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            applySquareLogo()
             applyLogoPeekPadding()
             if (logoNeedsRecenter && !isPagerScrolling) {
                 pager.removeCallbacks(logoCenterRetry)
@@ -247,11 +248,31 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         })
     }
 
-    private fun logoPeekPx(): Int = (32f * resources.displayMetrics.density).toInt()
+    private fun logoPeekPx(): Int = 0
+
+    /** Kare logo, kenarlardan içeride. Kaydırma aynı kalır; komşu kart görünmez. */
+    private fun applySquareLogo(): Boolean {
+        if (_binding == null) return false
+        val frame = binding.logoFrame
+        val parent = frame.parent as? View ?: return false
+        if (parent.width <= 0 || parent.height <= 0) return false
+        val lp = frame.layoutParams as? android.widget.LinearLayout.LayoutParams ?: return false
+        val density = resources.displayMetrics.density
+        val gap = (48f * density).toInt()
+        val maxW = parent.width - gap * 2
+        val maxH = parent.height - binding.tvStationIndex.height - lp.topMargin - (12f * density).toInt()
+        val side = minOf(maxW, maxH)
+        if (side <= 0) return false
+        if (lp.width == side && lp.height == side) return false
+        lp.width = side
+        lp.height = side
+        lp.gravity = android.view.Gravity.CENTER_HORIZONTAL
+        frame.layoutParams = lp
+        return true
+    }
 
     /**
-     * Logo beyaz çerçeve ölçüsünde kalır. Komşu kartlar padding dışında kırpılır,
-     * sağa/sola kaydırınca istasyon değişimi aynı şekilde sürer.
+     * Komşu logolar görünmez. Sağa sola kaydırınca istasyon değişimi sürer.
      */
     private fun applyLogoPeekPadding(): Boolean {
         if (_binding == null) return false
@@ -286,6 +307,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         if (pager.scrollState != ViewPager2.SCROLL_STATE_IDLE) return LogoCenterResult.NOT_READY
         val index = pendingLogoIndex
         if (index < 0 || index >= logoPagerAdapter.itemCount) return LogoCenterResult.NOT_READY
+        if (applySquareLogo()) return LogoCenterResult.ADJUSTED
         if (applyLogoPeekPadding()) return LogoCenterResult.ADJUSTED
         val rv = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView ?: return LogoCenterResult.NOT_READY
         val peek = logoPeekPx()
