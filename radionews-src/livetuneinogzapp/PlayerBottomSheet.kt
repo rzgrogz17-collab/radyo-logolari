@@ -258,7 +258,8 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         if (parent.width <= 0 || parent.height <= 0) return false
         val lp = frame.layoutParams as? android.widget.LinearLayout.LayoutParams ?: return false
         val density = resources.displayMetrics.density
-        val gap = (48f * density).toInt()
+        // Kırmızı çerçeve: genişliğin yaklaşık %4'ü kadar kenar boşluğu, kare.
+        val gap = (parent.width * 0.043f).toInt().coerceAtLeast((12f * density).toInt())
         val maxW = parent.width - gap * 2
         val maxH = parent.height - binding.tvStationIndex.height - lp.topMargin - (12f * density).toInt()
         val side = minOf(maxW, maxH)

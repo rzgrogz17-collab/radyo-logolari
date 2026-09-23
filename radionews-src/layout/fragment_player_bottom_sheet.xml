@@ -156,7 +156,7 @@
                 android:padding="8dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/ic_share"
-                app:tint="#FFFFFF" />
+                app:tint="#1A1A2E" />
 
             <TextView
                 android:id="@+id/tvStationName"
@@ -302,7 +302,7 @@
                 android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_player_equalizer"
-                app:tint="#FFFFFF" />
+                app:tint="#1A1A2E" />
 
         </LinearLayout>
 
