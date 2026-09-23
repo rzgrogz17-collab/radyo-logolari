@@ -740,7 +740,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
 
     private fun setFavIcon(fav: Boolean) {
         if (_binding == null) return
-        FavoriteIcon.apply(binding.btnFavorite, fav, emptyColor = Color.WHITE)
+        FavoriteIcon.apply(binding.btnFavorite, fav, emptyColor = Color.parseColor("#b2b5c0"))
     }
 
     private fun startEq() {}
