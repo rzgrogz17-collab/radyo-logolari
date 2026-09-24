@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Splash Activity Teması -->
+    <style name="Theme.DiamondTV.Splash" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:statusBarColor">@color/splash_background</item>
+        <item name="android:navigationBarColor">@color/splash_background</item>
+        <!-- Android 12+ sistem splash ayarları -->
+        <item name="android:windowSplashScreenBackground" tools:ignore="NewApi">
+            @color/splash_background
+        </item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:ignore="NewApi">
+            @android:color/transparent
+        </item>
+        <item name="android:windowSplashScreenAnimationDuration" tools:ignore="NewApi">0</item>
+    </style>
+
+    <!-- Ana Activity Teması -->
+    <style name="Theme.DiamondTV" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/diamond_black</item>
+    </style>
+
+</resources>
