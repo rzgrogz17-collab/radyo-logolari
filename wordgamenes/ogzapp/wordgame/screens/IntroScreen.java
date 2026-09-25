@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -105,6 +106,7 @@ public class IntroScreen extends BaseScreen{
     }
 
     private Image logo;
+    private Texture wordLogoTexture;
     public TextButton playButton;
     private Image playButtonShadow;
 
@@ -150,15 +152,17 @@ public class IntroScreen extends BaseScreen{
         setTopPanel();
         topPanel.setY(stage.getHeight());
 
-        logo = new Image(AtlasRegions.splash_logo);
-        logo.setOrigin(Align.center);
-        logo.setScale(0);
-        float logoSize = stage.getWidth() * 0.40f;
-        logo.setSize(logoSize, logoSize);
-        logo.setPosition(
-                (stage.getWidth() - logoSize) * 0.5f,
-                stage.getHeight() * 0.70f - logoSize * 0.5f);
-        stage.addActor(logo);
+        logo = createWordLogo();
+        if (logo != null) {
+            logo.setOrigin(Align.center);
+            logo.setScale(0);
+            float logoSize = stage.getWidth() * 0.42f;
+            logo.setSize(logoSize, logoSize);
+            logo.setPosition(
+                    (stage.getWidth() - logoSize) * 0.5f,
+                    stage.getHeight() * 0.66f - logoSize * 0.5f);
+            stage.addActor(logo);
+        }
 
 
         if(LanguageManager.locale.LevelCount > 0) {
@@ -257,10 +261,30 @@ public class IntroScreen extends BaseScreen{
 
 
 
+    private Image createWordLogo() {
+        if (!Gdx.files.internal("textures/logo.png").exists()) {
+            return new Image(AtlasRegions.splash_logo);
+        }
+        wordLogoTexture = new Texture(Gdx.files.internal("textures/logo.png"));
+        wordLogoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        int w = wordLogoTexture.getWidth();
+        int h = wordLogoTexture.getHeight();
+        TextureRegion region = h > w
+                ? new TextureRegion(wordLogoTexture, 0, h - w, w, w)
+                : new TextureRegion(wordLogoTexture);
+        return new Image(region);
+    }
+
+    @Override
+    public void dispose() {
+        if (wordLogoTexture != null) wordLogoTexture.dispose();
+        super.dispose();
+    }
+
     private void animateIn(){
         topPanel.addAction(Actions.moveBy(0, -topPanel.getHeight(), 0.2f, ogzapp.wordgame.actions.Interpolation.backOut));
 
-        UiUtil.actorAnimIn(logo, 0.2f, null);
+        if (logo != null) UiUtil.actorAnimIn(logo, 0.2f, null);
         if (playButtonShadow != null) UiUtil.actorAnimIn(playButtonShadow, 0.3f, null);
         UiUtil.actorAnimIn(playButton, 0.3f, animateInFinished);
         // Yazı, butonun kendisinden önce belirmesin diye ölçek animasyonuna
@@ -313,7 +337,7 @@ public class IntroScreen extends BaseScreen{
 
     private void animateOut(Runnable callback){
         topPanel.addAction(Actions.moveBy(0, topPanel.getHeight(), 0.2f, ogzapp.wordgame.actions.Interpolation.backIn));
-        UiUtil.actorAnimOut(logo, 0.1f, null);
+        if (logo != null) UiUtil.actorAnimOut(logo, 0.1f, null);
         if (playButtonShadow != null) UiUtil.actorAnimOut(playButtonShadow, 0.2f, null);
         UiUtil.actorAnimOut(playButton, 0.2f, 0.08f, callback);
         // Yazı, butonun kendisinden önce kaybolmasın diye ölçek animasyonuna

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Interpolation;
@@ -50,6 +51,7 @@ public class SplashScreen extends BaseScreen {
     private Texture frostedBgTex;       // yükleme çubuğunun altındaki buzlu/şeffaf zemin dokusu
     private final Group group = new Group();
     private Image logoImg;
+    private Texture wordLogoTexture;
     private float time;
     // Çözünürlüğe göre seçilen dial/kutu BitmapFont yolu (gdx-freetype yok).
     private String dialBoardFontPath;
@@ -68,28 +70,16 @@ public class SplashScreen extends BaseScreen {
         wordConnectGame.resourceManager.finishLoading();
         setBackground(UIConfig.INTRO_SCREEN_BACKGROUND_COLOR, ResourceManager.introBackground);
 
-        // Siyah "GİRİŞ" ekranı (textures/logo.png) hiç çizilmez.
-        // Yuvarlak logo, yükleme manzarasında işaretlenen gökyüzü yerindedir.
-        try {
-            ResourceManager.ATLAS_1 = ResourceManager.resolveResolutionAwarePath(ResourceManager.ATLAS_1);
-            if (!wordConnectGame.resourceManager.contains(ResourceManager.ATLAS_1)) {
-                wordConnectGame.resourceManager.load(ResourceManager.ATLAS_1, TextureAtlas.class);
-                wordConnectGame.resourceManager.finishLoading();
-            }
-            TextureAtlas.AtlasRegion splashLogo = wordConnectGame.resourceManager
-                    .get(ResourceManager.ATLAS_1, TextureAtlas.class).findRegion("splash_logo");
-            if (splashLogo != null) {
-                logoImg = new Image(splashLogo);
-                logoImg.setOrigin(Align.center);
-                float logoSize = stage.getWidth() * 0.40f;
-                logoImg.setSize(logoSize, logoSize);
-                logoImg.setPosition(
-                        (stage.getWidth() - logoSize) * 0.5f,
-                        stage.getHeight() * 0.70f - logoSize * 0.5f);
-                stage.addActor(logoImg);
-            }
-        } catch (Exception e) {
-            // logo yoksa sorun değil
+        // Siyah GİRİŞ splash yok. WORD logosu yükleme manzarasının gökyüzünde.
+        logoImg = createWordLogo();
+        if (logoImg != null) {
+            logoImg.setOrigin(Align.center);
+            float logoSize = stage.getWidth() * 0.42f;
+            logoImg.setSize(logoSize, logoSize);
+            logoImg.setPosition(
+                    (stage.getWidth() - logoSize) * 0.5f,
+                    stage.getHeight() * 0.66f - logoSize * 0.5f);
+            stage.addActor(logoImg);
         }
 
         // Kod içinde üretilen yumuşak dairesel parıltı dokusu (yeni bir
@@ -196,6 +186,19 @@ public class SplashScreen extends BaseScreen {
         maxBarWidth = group.getWidth() - margin * 2f;
 
         loadAssets();
+    }
+
+    // WORD ikonu. Alttaki sarı GİRİŞ yazısı ve siyah splash ekranı alınmaz.
+    private Image createWordLogo() {
+        if (!Gdx.files.internal("textures/logo.png").exists()) return null;
+        wordLogoTexture = new Texture(Gdx.files.internal("textures/logo.png"));
+        wordLogoTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        int w = wordLogoTexture.getWidth();
+        int h = wordLogoTexture.getHeight();
+        TextureRegion region = h > w
+                ? new TextureRegion(wordLogoTexture, 0, h - w, w, w)
+                : new TextureRegion(wordLogoTexture);
+        return new Image(region);
     }
 
     // 128x128'lik, merkezden dışa doğru yumuşakça sönen dairesel bir alfa
@@ -488,6 +491,7 @@ public class SplashScreen extends BaseScreen {
         if (loadingHighlightImg != null) loadingHighlightImg.remove();
 
         if (logoImg != null) logoImg.remove();
+        if (wordLogoTexture != null) wordLogoTexture.dispose();
 
         if (glowTex != null) glowTex.dispose();
 
