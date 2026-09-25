@@ -361,7 +361,7 @@ public class AdActivity extends AndroidApplication implements AdManager {
     private void loadYandexBanner() {
         yandexBanner = new BannerAdView(this);
         yandexBanner.setAdUnitId(AdsConfig.YANDEX_BANNER_ID);
-        yandexBanner.setAdSize(com.yandex.mobile.ads.common.AdSize.stickySize(this, bannerWidthDp()));
+        yandexBanner.setAdSize(com.yandex.mobile.ads.banner.BannerAdSize.stickySize(this, bannerWidthDp()));
         yandexBanner.setBannerAdEventListener(new BannerAdEventListener() {
             @Override public void onAdLoaded() {}
             @Override public void onAdFailedToLoad(@NonNull AdRequestError error) {}
