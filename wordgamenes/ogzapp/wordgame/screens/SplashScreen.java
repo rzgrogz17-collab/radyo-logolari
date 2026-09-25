@@ -68,16 +68,24 @@ public class SplashScreen extends BaseScreen {
         wordConnectGame.resourceManager.finishLoading();
         setBackground(UIConfig.INTRO_SCREEN_BACKGROUND_COLOR, ResourceManager.introBackground);
 
-        // Logo
+        // Siyah "GİRİŞ" splash (logo.png) yok. Atlas ikonu, manzara
+        // yükleme ekranında yeşil dairenin olduğu yerde durur.
         try {
-            Texture logoTexture = new Texture(Gdx.files.internal("textures/logo.png"));
-            logoImg = new Image(logoTexture);
-            logoImg.setOrigin(Align.center);
-            logoImg.setSize(stage.getWidth() * 0.4f, stage.getWidth() * 0.4f * (logoTexture.getHeight() / (float) logoTexture.getWidth()));
-            logoImg.setPosition((stage.getWidth() - logoImg.getWidth()) * 0.5f, stage.getHeight() * 0.7f);
-            logoImg.getColor().a = 0f;
-            logoImg.addAction(Actions.fadeIn(1f));
-            stage.addActor(logoImg);
+            ResourceManager.ATLAS_1 = ResourceManager.resolveResolutionAwarePath(ResourceManager.ATLAS_1);
+            if (!wordConnectGame.resourceManager.contains(ResourceManager.ATLAS_1)) {
+                wordConnectGame.resourceManager.load(ResourceManager.ATLAS_1, TextureAtlas.class);
+                wordConnectGame.resourceManager.finishLoading();
+            }
+            TextureAtlas.AtlasRegion splashLogo = wordConnectGame.resourceManager
+                    .get(ResourceManager.ATLAS_1, TextureAtlas.class).findRegion("splash_logo");
+            if (splashLogo != null) {
+                logoImg = new Image(splashLogo);
+                logoImg.setOrigin(Align.center);
+                float logoSize = stage.getWidth() * 0.36f;
+                logoImg.setSize(logoSize, logoSize);
+                logoImg.setPosition((stage.getWidth() - logoSize) * 0.5f, stage.getHeight() * 0.58f);
+                stage.addActor(logoImg);
+            }
         } catch (Exception e) {
             // logo yoksa sorun değil
         }
@@ -302,7 +310,9 @@ public class SplashScreen extends BaseScreen {
         ResourceManager.ATLAS_3 = ResourceManager.resolveResolutionAwarePath(ResourceManager.ATLAS_3);
         ResourceManager.ATLAS_4 = ResourceManager.resolveResolutionAwarePath(ResourceManager.ATLAS_4);
 
-        wordConnectGame.resourceManager.load(ResourceManager.ATLAS_1, TextureAtlas.class);
+        if (!wordConnectGame.resourceManager.contains(ResourceManager.ATLAS_1)) {
+            wordConnectGame.resourceManager.load(ResourceManager.ATLAS_1, TextureAtlas.class);
+        }
         wordConnectGame.resourceManager.load(ResourceManager.ATLAS_2, TextureAtlas.class);
         wordConnectGame.resourceManager.load(ResourceManager.ATLAS_3, TextureAtlas.class);
         wordConnectGame.resourceManager.load(ResourceManager.ATLAS_4, TextureAtlas.class);
@@ -475,10 +485,7 @@ public class SplashScreen extends BaseScreen {
         if (loadingGlowImg != null) loadingGlowImg.remove();
         if (loadingHighlightImg != null) loadingHighlightImg.remove();
 
-        if (logoImg != null) {
-            logoImg.remove();
-            ((Texture) logoImg.getDrawable()).dispose();
-        }
+        if (logoImg != null) logoImg.remove();
 
         if (glowTex != null) glowTex.dispose();
 
