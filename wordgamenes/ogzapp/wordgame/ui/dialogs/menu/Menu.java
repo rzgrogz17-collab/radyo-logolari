@@ -98,6 +98,10 @@ public class Menu extends BaseDialog {
         // BaseDialog.setTitleLabel() ile AYNI merkezleme mantığı - font
         // ölçeği burada büyütüldüğü için getPrefHeight() yeniden alınıyor.
         titleLabel.setY(titleContainer.getHeight() * 0.30f - titleLabel.getPrefHeight() * 0.5f);
+        // Dil paneliyle aynı: başlık buzlu camın üzerinde koyu, gölgesiz.
+        titleLabel.getStyle().font = screen.wordConnectGame.resourceManager.get(ResourceManager.fontSemiBold, BitmapFont.class);
+        titleLabel.getStyle().fontColor = UIConfig.MENU_ITEM_TEXT_COLOR;
+        titleLabel.setColor(UIConfig.MENU_ITEM_TEXT_COLOR);
         setCloseButton();
         // Referans görseldeki gibi, kapatma butonu panelin sağ üst
         // köşesinin biraz DIŞINA taşsın diye konumu ayarlanıyor (sadece
@@ -220,9 +224,8 @@ public class Menu extends BaseDialog {
         group6.setName(MUSIC);
         group6.setSize(content.getWidth() - hmargin * 2, rowHeight);
 
-        // Kullanıcı isteğiyle kenarlık ÇİZGİSİ kaldırıldı - sadece buzlu
-        // cam zemin kaldı.
-        Image bg = new Image(NinePatches.round_rect_shadow);
+        // Dil paneli satırlarıyla aynı buzlu hap (rrect).
+        Image bg = new Image(NinePatches.rrect);
         bg.setName("bg");
         bg.setSize(group6.getWidth(), group6.getHeight());
         bg.setColor(UIConfig.MENU_ITEM_BG_COLOR);
@@ -291,9 +294,8 @@ public class Menu extends BaseDialog {
         container.setName(title);
         container.setSize(content.getWidth() - hmargin * 2, rowHeight);
 
-        // Kullanıcı isteğiyle kenarlık ÇİZGİSİ kaldırıldı - sadece buzlu
-        // cam zemin kaldı.
-        Image bg = new Image(NinePatches.round_rect_shadow);
+        // Dil paneli satırlarıyla aynı buzlu hap (rrect).
+        Image bg = new Image(NinePatches.rrect);
         bg.setName("bg");
         bg.setSize(container.getWidth(), container.getHeight());
         bg.setColor(UIConfig.MENU_ITEM_BG_COLOR);

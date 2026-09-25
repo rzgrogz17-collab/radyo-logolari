@@ -143,12 +143,10 @@ public class LuckyWheel extends Group {
 
         boolean dailyWheel = sliceConfig == GameConfig.dailyGiftSlices;
         BitmapFont sliceFont = resourceManager.get(dailyWheel ? ResourceManager.fontSemiBold : ResourceManager.fontSemiBoldShadow, BitmapFont.class);
-        Color sliceTextColor;
-        if (dailyWheel) {
-            sliceTextColor = new Color(0x2A2A2AFF);
-        } else {
-            sliceTextColor = index % 2 == 0 ? UIConfig.WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_DARK : UIConfig.WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_LIGHT;
-        }
+        // Çift index = beyaz dilim → turuncu yazı; tek index = turuncu dilim → beyaz yazı.
+        Color sliceTextColor = index % 2 == 0
+                ? UIConfig.WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_DARK
+                : UIConfig.WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_LIGHT;
         Label.LabelStyle labelStyle = new Label.LabelStyle(sliceFont, sliceTextColor);
         Label label = new Label(slice.text, labelStyle);
         label.setPosition(0f, 0f);

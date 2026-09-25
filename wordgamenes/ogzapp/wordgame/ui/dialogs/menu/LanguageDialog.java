@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -62,12 +61,12 @@ public class LanguageDialog extends BaseDialog {
         }
     };
 
-    // Seçili satırın İÇİ yeşil olmaz (diğerleriyle aynı buzlu cam).
-    // Yeşil yalnızca düğmenin DIŞ çerçevesindedir (içi boş stroke).
-    private static final Color ITEM_BG_COLOR = new Color(0xFFFFFF66);
-    private static final Color ITEM_BORDER_SELECTED_COLOR = new Color(0x3FAE53FF);
-    private static final Color ITEM_TEXT_COLOR = new Color(0x2C3540FF);
-    private static final Color ITEM_TEXT_SELECTED_COLOR = new Color(0x2C3540FF);
+    // Seçili satırın içi diğerleriyle aynı buzlu cam. Seçim: sağdaki boş
+    // radyo halkası + satırın etrafında hafif krem ışıltı (yeşil dolgu yok).
+    private static final Color ITEM_BG_COLOR = UIConfig.MENU_ITEM_BG_COLOR;
+    private static final Color ITEM_TEXT_COLOR = UIConfig.MENU_ITEM_TEXT_COLOR;
+    private static final Color ITEM_TEXT_SELECTED_COLOR = UIConfig.MENU_ITEM_TEXT_COLOR;
+    private static final Color RADIO_RING_COLOR = new Color(0xE8E8E8FF);
 
     private Runnable callback;
     private Table table = new Table();
@@ -75,7 +74,8 @@ public class LanguageDialog extends BaseDialog {
     private TextButton confirmButton;
 
     private final Map<String, Image> bgByCode = new HashMap<>();
-    private final Map<String, Image> borderByCode = new HashMap<>();
+    private final Map<String, Image> glowByCode = new HashMap<>();
+    private final Map<String, Image> radioByCode = new HashMap<>();
     private final Map<String, Label> labelByCode = new HashMap<>();
     private String selectedCode;
 
@@ -116,12 +116,12 @@ public class LanguageDialog extends BaseDialog {
         // (satır tableWidth'ten dar olunca) narrower satırlar otomatik
         // olarak ortalanıyor - ekstra bir X kayması gerekmiyor.
         float cellWidth = tableWidth * 0.90f;
-        float borderThickness = Math.max(3f, cellHeight * 0.07f);
-        NinePatch selectedStroke = createRoundedStrokeNinePatch(
-                cellHeight + borderThickness * 2f,
-                (cellHeight + borderThickness * 2f) * 0.22f,
-                borderThickness,
-                ITEM_BORDER_SELECTED_COLOR);
+        float radioSize = cellHeight * 0.30f;
+        float radioPad = cellHeight * 0.28f;
+        Texture radioTex = createRadioRingTexture(
+                Math.max(16, Math.round(radioSize)),
+                Math.max(2, Math.round(radioSize * 0.10f)),
+                RADIO_RING_COLOR);
 
         for (Map.Entry<String, Locale> entry : GameConfig.availableLanguages.entrySet()) {
             String code = entry.getKey();
@@ -133,14 +133,16 @@ public class LanguageDialog extends BaseDialog {
             cell.setTransform(true);
             cell.setOrigin(Align.center);
 
-            // Yeşil stroke hücrenin DIŞINDA; içi delik olduğu için
-            // yarı saydam buzlu camın altından yeşil sızmaz.
-            Image border = new Image(new NinePatchDrawable(selectedStroke));
-            border.setSize(cellWidth + borderThickness * 2f, cellHeight + borderThickness * 2f);
-            border.setPosition(-borderThickness, -borderThickness);
-            border.setVisible(isSelected);
-            cell.addActor(border);
-            borderByCode.put(code, border);
+            Image glow = new Image(AtlasRegions.glow);
+            float glowW = cellWidth * 1.18f;
+            float glowH = cellHeight * 1.55f;
+            glow.setSize(glowW, glowH);
+            glow.setPosition((cellWidth - glowW) * 0.5f, (cellHeight - glowH) * 0.5f);
+            glow.setColor(UIConfig.LANGUAGE_DIALOG_SELECTION_GLOW_COLOR);
+            glow.getColor().a = isSelected ? 0.55f : 0f;
+            glow.setVisible(isSelected);
+            cell.addActor(glow);
+            glowByCode.put(code, glow);
 
             Image bg = new Image(NinePatches.rrect);
             bg.setSize(cellWidth, cellHeight);
@@ -174,7 +176,7 @@ public class LanguageDialog extends BaseDialog {
             label.setColor(isSelected ? ITEM_TEXT_SELECTED_COLOR : ITEM_TEXT_COLOR);
 
             float labelX = cellHeight * 0.3f + iconSize + cellHeight * 0.35f;
-            float maxLabelWidth = cellWidth - labelX - cellHeight * 0.2f;
+            float maxLabelWidth = cellWidth - labelX - radioSize - radioPad;
             if (label.getWidth() > maxLabelWidth)
                 label.setFontScale(maxLabelWidth / label.getWidth());
 
@@ -183,11 +185,19 @@ public class LanguageDialog extends BaseDialog {
             cell.addActor(label);
             labelByCode.put(code, label);
 
+            Image radio = new Image(radioTex);
+            radio.setSize(radioSize, radioSize);
+            radio.setX(cellWidth - radioSize - radioPad);
+            radio.setY((cellHeight - radioSize) * 0.5f);
+            radio.setVisible(isSelected);
+            cell.addActor(radio);
+            radioByCode.put(code, radio);
+
             cell.addListener(clickListener);
 
             table.add(cell).size(cellWidth, cellHeight)
-                    .padLeft(borderThickness).padRight(borderThickness)
-                    .padTop(borderThickness).padBottom(Math.max(pad, borderThickness * 2f));
+                    .padLeft(pad).padRight(pad)
+                    .padTop(pad).padBottom(pad);
             table.row();
         }
         table.pack();
@@ -254,6 +264,9 @@ public class LanguageDialog extends BaseDialog {
         // BaseDialog.setTitleLabel() ile AYNI merkezleme mantığı - font
         // ölçeği burada büyütüldüğü için getPrefHeight() yeniden alınıyor.
         titleLabel.setY(titleContainer.getHeight() * 0.30f - titleLabel.getPrefHeight() * 0.5f);
+        titleLabel.getStyle().font = screen.wordConnectGame.resourceManager.get(ResourceManager.fontSemiBold, BitmapFont.class);
+        titleLabel.getStyle().fontColor = ITEM_TEXT_COLOR;
+        titleLabel.setColor(ITEM_TEXT_COLOR);
         confirmButton.toFront();
     }
 
@@ -269,54 +282,52 @@ public class LanguageDialog extends BaseDialog {
         if (selectedCode != null) {
             Image prevBg = bgByCode.get(selectedCode);
             Label prevLabel = labelByCode.get(selectedCode);
-            Image prevBorder = borderByCode.get(selectedCode);
+            Image prevGlow = glowByCode.get(selectedCode);
+            Image prevRadio = radioByCode.get(selectedCode);
             if (prevBg != null) prevBg.setColor(ITEM_BG_COLOR);
             if (prevLabel != null) prevLabel.setColor(ITEM_TEXT_COLOR);
-            if (prevBorder != null) prevBorder.setVisible(false);
+            if (prevGlow != null) {
+                prevGlow.setVisible(false);
+                prevGlow.getColor().a = 0f;
+            }
+            if (prevRadio != null) prevRadio.setVisible(false);
         }
 
         Image bg = bgByCode.get(code);
         Label label = labelByCode.get(code);
-        Image border = borderByCode.get(code);
+        Image glow = glowByCode.get(code);
+        Image radio = radioByCode.get(code);
         if (bg != null) bg.setColor(ITEM_BG_COLOR);
         if (label != null) label.setColor(ITEM_TEXT_SELECTED_COLOR);
-        if (border != null) border.setVisible(true);
+        if (glow != null) {
+            glow.setVisible(true);
+            glow.getColor().a = 0.55f;
+        }
+        if (radio != null) radio.setVisible(true);
 
         selectedCode = code;
     }
 
-    private static NinePatch createRoundedStrokeNinePatch(float height, float radius, float stroke, Color color) {
-        int h = Math.max(8, Math.round(height));
-        int r = Math.max(2, Math.round(radius));
-        int s = Math.max(1, Math.round(stroke));
-        int stretch = 4;
-        int w = r * 2 + stretch;
-        Pixmap pixmap = new Pixmap(w, h, Pixmap.Format.RGBA8888);
+    private static Texture createRadioRingTexture(int size, int stroke, Color color) {
+        int s = Math.max(8, size);
+        int ring = Math.max(2, stroke);
+        Pixmap pixmap = new Pixmap(s, s, Pixmap.Format.RGBA8888);
         pixmap.setBlending(Pixmap.Blending.None);
         pixmap.setColor(0, 0, 0, 0);
         pixmap.fill();
         pixmap.setBlending(Pixmap.Blending.SourceOver);
-        fillRoundedRect(pixmap, 0, 0, w, h, r, color);
+        int cx = s / 2;
+        int cy = s / 2;
+        int outer = Math.max(2, s / 2 - 1);
+        pixmap.setColor(color);
+        pixmap.fillCircle(cx, cy, outer);
         pixmap.setBlending(Pixmap.Blending.None);
         pixmap.setColor(0, 0, 0, 0);
-        int innerR = Math.max(1, r - s);
-        fillRoundedRect(pixmap, s, s, Math.max(1, w - s * 2), Math.max(1, h - s * 2), innerR, new Color(0, 0, 0, 0));
+        pixmap.fillCircle(cx, cy, Math.max(1, outer - ring));
         PixmapTextureData texData = new PixmapTextureData(pixmap, pixmap.getFormat(), false, false, true);
         Texture tex = new Texture(texData);
         tex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        return new NinePatch(tex, r, r, r, r);
-    }
-
-    private static void fillRoundedRect(Pixmap pixmap, int x, int y, int w, int h, int radius, Color color) {
-        if (w <= 0 || h <= 0) return;
-        int rad = Math.min(radius, Math.min(w, h) / 2);
-        pixmap.setColor(color);
-        pixmap.fillRectangle(x + rad, y, Math.max(1, w - rad * 2), h);
-        pixmap.fillRectangle(x, y + rad, w, Math.max(1, h - rad * 2));
-        pixmap.fillCircle(x + rad, y + rad, rad);
-        pixmap.fillCircle(x + w - rad - 1, y + rad, rad);
-        pixmap.fillCircle(x + rad, y + h - rad - 1, rad);
-        pixmap.fillCircle(x + w - rad - 1, y + h - rad - 1, rad);
+        return tex;
     }
 
 

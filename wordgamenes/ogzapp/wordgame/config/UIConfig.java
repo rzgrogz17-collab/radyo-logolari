@@ -113,7 +113,7 @@ public class UIConfig {
 
     public static final float CONFIRM_DIALOG_BUTTON_WIDTH_COEF          = 0.38f; // Daraltılmış
     public static final float CONFIRM_DIALOG_BUTTON_FONT_SCALE          = 1.0f;
-    public static final float CONFIRM_DIALOG_BUTTON_SCALE               = 0.80f; // Küçültülmüş
+    public static final float CONFIRM_DIALOG_BUTTON_SCALE               = 1.0f;
 
     public static final boolean CONFIRM_DIALOG_BUTTON_USE_SHADOW_FONT   = true;
     public static final float ALERT_DIALOG_BUTTON_WIDTH_COEF            = 0.7f;
@@ -133,9 +133,8 @@ public class UIConfig {
     public static final boolean MENU_ITEM_SOUND_ENABLED                 = true;
 
 
-    // --> RENK DEĞİŞTİ: Opak griden, referans görseldeki gibi yarı saydam
-    // "buzlu cam" (frosted glass) beyaza çevrildi.
-    public static final Color MENU_ITEM_BG_COLOR                        = new Color(0xFFFFFF40);
+    // Dil paneli satırlarıyla aynı buzlu cam: yarı saydam beyaz hap.
+    public static final Color MENU_ITEM_BG_COLOR                        = new Color(0xFFFFFF8C);
 
     // Referans görseldeki buzlu cam panel için: Menu ekranının kendi panel
     // arka planı, SADECE Menu'ye özel yarı saydam beyaz yapıldı. Diğer TÜM
@@ -158,8 +157,9 @@ public class UIConfig {
     // renkli) başlık kutusu bu değişiklikten ETKİLENMİYOR.
     public static final Color MENU_DIALOG_TITLE_BACKGROUND_COLOR       = new Color(1f, 1f, 1f, 0f);
 
-    public static final Color MENU_ITEM_TEXT_COLOR                      = Color.WHITE;
-    public static final boolean MENU_ITEM_USE_SHADOW_FONT               = true;
+    // Dil / Menü satır yazısı: buzlu cam üzerinde koyu antrasit (görseldeki gibi).
+    public static final Color MENU_ITEM_TEXT_COLOR                      = new Color(0x2C3540FF);
+    public static final boolean MENU_ITEM_USE_SHADOW_FONT               = false;
 
     // --> "Başarısız!" (bomba patladı) ve "Bomba patlamak üzere!" dialogları
     // için: Menü'deki AYNI buzlu cam (yarı saydam panel + görünmez başlık
@@ -184,9 +184,8 @@ public class UIConfig {
     // metninin okunabilirliği için, yazının arkasına hafif (yarı saydam)
     // siyah bir gölge kopyası eklendi (bkz. AlertDialog/BombDialog).
     public static final Color FROSTED_ALERT_DIALOG_TEXT_SHADOW_COLOR      = new Color(0x00000066);
-    // --> RENK DEĞİŞTİ: Koyu griden, cam panelin üzerinde daha iyi okunan
-    // yarı saydam beyaza çevrildi.
-    public static final Color MENU_DIALOG_VERSION_TEXT_COLOR            = new Color(0xFFFFFFB0);
+    // Dil paneliyle aynı: versiyon yazısı buzlu cam üzerinde koyu antrasit.
+    public static final Color MENU_DIALOG_VERSION_TEXT_COLOR            = new Color(0x2C354099);
     public static final boolean MENU_DIALOG_VERSION_USE_SHADOW_FONT     = false;
 
     // --> BOYUT: Kullanıcı isteğiyle biraz daha uzun (1.4 -> 1.55) - üstten
@@ -198,8 +197,8 @@ public class UIConfig {
 
 
     /**************************************************************************************************************************************************************************/
-    // Dil Seçimi
-    public static final Color LANGUAGE_DIALOG_SELECTION_GLOW_COLOR      = new Color(0xD1D0CEff);
+    // Dil Seçimi: seçili satırın hafif krem ışıltısı (yeşil çerçeve değil).
+    public static final Color LANGUAGE_DIALOG_SELECTION_GLOW_COLOR      = new Color(0xFFFFFFF2);
 
     /**************************************************************************************************************************************************************************/
 
@@ -212,7 +211,8 @@ public class UIConfig {
     public static final Color WHEEL_DIALOG_BACKGROUND_COLOR                     = new Color(0xFEFCFFff);
     public static final Color WHEEL_DIALOG_RAYS_COLOR                           = new Color(0xE5E4E2ff);
 
-    public static final Color WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_DARK        = Color.WHITE;
+    // Beyaz dilim yazısı = turuncu dilimin turuncusu; turuncu dilim yazısı = beyaz.
+    public static final Color WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_DARK        = new Color(0xE07A3AFF);
     public static final Color WHEEL_DIALOG_ITEM_QUANTITY_TEXT_COLOR_LIGHT       = Color.WHITE;
 
     public static final Color WHEEL_DIALOG_LIGHT_BULB_COLOR                     = Color.GREEN;

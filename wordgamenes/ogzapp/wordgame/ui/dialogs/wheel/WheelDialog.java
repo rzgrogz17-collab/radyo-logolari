@@ -89,7 +89,7 @@ public class WheelDialog extends BaseDialog {
         }
 
 
-        content.setSize(width * 0.8f, AtlasRegions.lucky_wheel.getRegionHeight() * 1.5f + NinePatches.btn_dialog_up.getTotalHeight());
+        content.setSize(width * 0.8f, AtlasRegions.lucky_wheel.getRegionHeight() * 1.5f + NinePatches.play_r_up.getTotalHeight());
 
         setContentBackground();
 
@@ -117,13 +117,14 @@ public class WheelDialog extends BaseDialog {
         String font = UIConfig.WHEEL_DIALOG_SPIN_BUTTON_USE_SHADOW_FONT ? ResourceManager.fontSemiBoldShadow : ResourceManager.fontSemiBold;
         style.font = screen.wordConnectGame.resourceManager.get(font, BitmapFont.class);
         style.fontColor = UIConfig.WHEEL_DIALOG_SPIN_BUTTON_TEXT_COLOR;
-        style.up = new NinePatchDrawable(NinePatches.btn_dialog_up);
-        style.down = new NinePatchDrawable(NinePatches.btn_dialog_down);
-        style.disabled = new NinePatchDrawable(NinePatches.btn_dialog_disabled);
+        style.up = new NinePatchDrawable(NinePatches.play_r_up);
+        style.down = new NinePatchDrawable(NinePatches.play_r_down);
+        style.disabled = new NinePatchDrawable(NinePatches.play_r_down);
 
         spinButton = new TextButton(LanguageManager.get("spin_btn_label"), style);
         spinButton.getLabel().setFontScale(UIConfig.WHEEL_DIALOG_SPIN_BUTTON_FONT_SCALE);
         spinButton.setWidth(luckyWheel.getWidth() * UIConfig.WHEEL_DIAL_SPIN_BUTTON_WIDTH_COEF);
+        spinButton.setHeight(Math.max(spinButton.getPrefHeight(), NinePatches.play_r_up.getTotalHeight()));
         spinButton.setX((content.getWidth() - spinButton.getWidth()) * 0.5f);
         spinButton.setY(getHeight() * 0.03f);
         spinButton.setOrigin(Align.center);

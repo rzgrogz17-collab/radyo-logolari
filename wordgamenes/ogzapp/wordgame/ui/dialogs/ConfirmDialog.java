@@ -1,5 +1,6 @@
 package ogzapp.wordgame.ui.dialogs;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -37,7 +38,7 @@ public class ConfirmDialog extends BaseDialog{
         msgLabel.setWidth(content.getWidth() * 0.8f);
         msgLabel.setAlignment(Align.center);
 
-        content.setHeight(msgLabel.getHeight() + NinePatches.btn_dialog_up.getTotalHeight() * 3.5f);
+        content.setHeight(msgLabel.getHeight() + NinePatches.play_r_up.getTotalHeight() * 3.5f);
 
         setContentBackground();
         // Referans görseldeki buzlu cam panel görünümü: Diğer dialoglarla
@@ -58,8 +59,10 @@ public class ConfirmDialog extends BaseDialog{
 
         String fontName = UIConfig.CONFIRM_DIALOG_BUTTON_USE_SHADOW_FONT ? ResourceManager.fontSemiBoldShadow : ResourceManager.fontSemiBold;
         buttonStyle.font = screen.wordConnectGame.resourceManager.get(fontName, BitmapFont.class);
-        buttonStyle.up = new NinePatchDrawable(NinePatches.btn_dialog_up);
-        buttonStyle.down = new NinePatchDrawable(NinePatches.btn_dialog_down);
+        buttonStyle.fontColor = Color.WHITE;
+        buttonStyle.up = new NinePatchDrawable(NinePatches.play_r_up);
+        buttonStyle.down = new NinePatchDrawable(NinePatches.play_r_down);
+        buttonStyle.disabled = new NinePatchDrawable(NinePatches.play_r_down);
         content.addActor(msgLabel);
 
         float bWidth = content.getWidth() * UIConfig.CONFIRM_DIALOG_BUTTON_WIDTH_COEF;
@@ -68,7 +71,7 @@ public class ConfirmDialog extends BaseDialog{
         yes = getButton(yesText);
         yes.setWidth(bWidth);
         yes.setX((halfWidth - bWidth * yes.getScaleX()) * 0.5f);
-        yes.setY(getHeight() * 0.03f);
+        yes.setY(Math.max(10f, NinePatches.play_r_up.getTotalHeight() * 0.18f));
         content.addActor(yes);
 
         no = getButton(noText);
@@ -90,7 +93,9 @@ public class ConfirmDialog extends BaseDialog{
         TextButton button = new TextButton(text, buttonStyle);
         button.setTransform(true);
         button.setScale(UIConfig.CONFIRM_DIALOG_BUTTON_SCALE);
+        button.setHeight(Math.max(button.getPrefHeight(), NinePatches.play_r_up.getTotalHeight()));
         button.getLabel().setFontScale(UIConfig.CONFIRM_DIALOG_BUTTON_FONT_SCALE);
+        button.getLabel().setColor(Color.WHITE);
         return button;
     }
 
