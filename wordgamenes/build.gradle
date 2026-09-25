@@ -76,6 +76,12 @@ dependencies {
     // Yandex Mobile Ads & Annotation
     implementation 'com.yandex.android:mobileads:7.4.0'
     implementation 'androidx.annotation:annotation:1.7.1'
+
+    // AdMob. Manifest APPLICATION_ID gerçek uygulama kimliği olmalı.
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
+
+    // Huawei Petal Ads. Kök Gradle deposuna maven { url 'https://developer.huawei.com/repo/' } ekle.
+    implementation 'com.huawei.hms:ads-lite:13.4.74.301'
 }
 
 tasks.register('copyAndroidNatives') {

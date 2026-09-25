@@ -25,4 +25,6 @@
 
 -keep class com.huawei.openalliance.ad.** { *; }
 -keep class com.huawei.hms.ads.** { *; }
+-keep class com.google.android.gms.ads.** { *; }
+-keep class com.yandex.mobile.ads.** { *; }
 

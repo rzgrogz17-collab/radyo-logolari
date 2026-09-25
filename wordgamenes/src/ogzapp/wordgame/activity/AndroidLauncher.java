@@ -72,6 +72,7 @@ public class AndroidLauncher extends AdActivity implements AppExit, RateUsLaunch
         RelativeLayout layout = new RelativeLayout(this);
         layout.addView(gdxView);
         setContentView(layout);
+        attachAdLayout(layout, gdxView);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             getWindow().getAttributes().layoutInDisplayCutoutMode =
