@@ -153,9 +153,11 @@ public class IntroScreen extends BaseScreen{
         logo = new Image(AtlasRegions.splash_logo);
         logo.setOrigin(Align.center);
         logo.setScale(0);
-        float logoSize = stage.getWidth() * 0.36f;
+        float logoSize = stage.getWidth() * 0.40f;
         logo.setSize(logoSize, logoSize);
-        logo.setPosition((stage.getWidth() - logoSize) * 0.5f, stage.getHeight() * 0.58f);
+        logo.setPosition(
+                (stage.getWidth() - logoSize) * 0.5f,
+                stage.getHeight() * 0.70f - logoSize * 0.5f);
         stage.addActor(logo);
 
 

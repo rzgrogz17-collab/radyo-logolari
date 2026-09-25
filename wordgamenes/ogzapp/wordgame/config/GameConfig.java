@@ -220,6 +220,21 @@ public class GameConfig {
      */
     public static final boolean SHOW_WATCH_AND_EARN_DIALOG                  = false;
 
+    /**
+     * Reklam ağı. true  → her ülkede yalnızca AdMob.
+     * false → aşağıdaki ülkelerde Yandex, diğerlerinde Huawei Petal Ads.
+     * YANDEX_ADS_ENABLED false ise Yandex hiç açılmaz, o ülkeler de Petal kullanır.
+     * BANNER_ADS_ENABLED false ise banner hiç yüklenmez.
+     * Ödüllü reklam üç ağda da aynı şekilde çalışır.
+     */
+    public static final boolean ADMOB_ENABLED                               = false;
+    public static final boolean YANDEX_ADS_ENABLED                          = true;
+    public static final boolean BANNER_ADS_ENABLED                          = false;
+
+    public static final String[] YANDEX_AD_COUNTRIES = {
+            "RU", "TR", "KZ", "BY", "UZ", "AM", "KG", "AZ", "TJ", "GE", "MD", "RS"
+    };
+
 
 
 

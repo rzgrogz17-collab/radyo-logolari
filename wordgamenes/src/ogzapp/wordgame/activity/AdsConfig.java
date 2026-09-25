@@ -5,24 +5,19 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
+import ogzapp.wordgame.config.GameConfig;
+
 /**
- * Reklam anahtarları. true/false değerlerini buradan değiştir.
- *
- * ADMOB_ENABLED = true  → her ülkede yalnızca AdMob.
- * ADMOB_ENABLED = false → Yandex ülke listesinde Yandex (YANDEX_ADS_ENABLED
- *                         açıksa), listenin dışında Huawei Petal Ads.
- * BANNER_ENABLED        → banner. Kapalıyken hiçbir ağ banner yüklemez.
- * YANDEX_ADS_ENABLED    → Yandex ağı. Kapalıyken listedeki ülkeler de Petal'a düşer.
+ * Birim kimlikleri burada. Aç/kapa anahtarları GameConfig içindedir:
+ * ADMOB_ENABLED, YANDEX_ADS_ENABLED, BANNER_ADS_ENABLED.
  */
 public final class AdsConfig {
 
-    public static final boolean ADMOB_ENABLED = false;
-    public static final boolean YANDEX_ADS_ENABLED = true;
-    public static final boolean BANNER_ENABLED = false;
+    public static final boolean ADMOB_ENABLED = GameConfig.ADMOB_ENABLED;
+    public static final boolean YANDEX_ADS_ENABLED = GameConfig.YANDEX_ADS_ENABLED;
+    public static final boolean BANNER_ENABLED = GameConfig.BANNER_ADS_ENABLED;
 
-    public static final String[] YANDEX_COUNTRIES = {
-            "RU", "TR", "KZ", "BY", "UZ", "AM", "KG", "AZ", "TJ", "GE", "MD", "RS"
-    };
+    public static final String[] YANDEX_COUNTRIES = GameConfig.YANDEX_AD_COUNTRIES;
 
     public static final String YANDEX_INTERSTITIAL_ID = "R-M-19388209-2";
     public static final String YANDEX_REWARDED_ID = "R-M-19388209-3";

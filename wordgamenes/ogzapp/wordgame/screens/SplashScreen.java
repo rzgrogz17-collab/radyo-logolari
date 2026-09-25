@@ -68,8 +68,8 @@ public class SplashScreen extends BaseScreen {
         wordConnectGame.resourceManager.finishLoading();
         setBackground(UIConfig.INTRO_SCREEN_BACKGROUND_COLOR, ResourceManager.introBackground);
 
-        // Siyah "GİRİŞ" splash (logo.png) yok. Atlas ikonu, manzara
-        // yükleme ekranında yeşil dairenin olduğu yerde durur.
+        // Siyah "GİRİŞ" ekranı (textures/logo.png) hiç çizilmez.
+        // Yuvarlak logo, yükleme manzarasında işaretlenen gökyüzü yerindedir.
         try {
             ResourceManager.ATLAS_1 = ResourceManager.resolveResolutionAwarePath(ResourceManager.ATLAS_1);
             if (!wordConnectGame.resourceManager.contains(ResourceManager.ATLAS_1)) {
@@ -81,9 +81,11 @@ public class SplashScreen extends BaseScreen {
             if (splashLogo != null) {
                 logoImg = new Image(splashLogo);
                 logoImg.setOrigin(Align.center);
-                float logoSize = stage.getWidth() * 0.36f;
+                float logoSize = stage.getWidth() * 0.40f;
                 logoImg.setSize(logoSize, logoSize);
-                logoImg.setPosition((stage.getWidth() - logoSize) * 0.5f, stage.getHeight() * 0.58f);
+                logoImg.setPosition(
+                        (stage.getWidth() - logoSize) * 0.5f,
+                        stage.getHeight() * 0.70f - logoSize * 0.5f);
                 stage.addActor(logoImg);
             }
         } catch (Exception e) {

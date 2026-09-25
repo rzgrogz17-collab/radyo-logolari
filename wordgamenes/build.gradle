@@ -1,6 +1,12 @@
 apply plugin: 'com.android.application'
 
 repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://developer.huawei.com/repo/' }
+}
+
+repositories {
     maven { url 'https://developer.huawei.com/repo/' }
 }
 
