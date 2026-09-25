@@ -231,6 +231,7 @@ public class AdActivity extends AndroidApplication implements AdManager {
             interstitialQueued = true;
             return;
         }
+        if (!AdsConfig.isInterstitialEnabled(network)) return;
         if (interstitialLoading || isInterstitialAdLoaded()) return;
         interstitialLoading = true;
         interstitialQueued = false;
@@ -337,7 +338,7 @@ public class AdActivity extends AndroidApplication implements AdManager {
 
     // ── BANNER ────────────────────────────────────────────────────────────────
     private void tryLoadBanner() {
-        if (!AdsConfig.BANNER_ENABLED || !sdkReady || rootLayout == null || bannerRequested) return;
+        if (!AdsConfig.isBannerEnabled(network) || !sdkReady || rootLayout == null || bannerRequested) return;
         bannerRequested = true;
         if (bannerSlot == null) {
             bannerSlot = new RelativeLayout(this);
@@ -399,7 +400,9 @@ public class AdActivity extends AndroidApplication implements AdManager {
     }
 
     // ── AdManager ─────────────────────────────────────────────────────────────
-    @Override public boolean isInterstitialAdEnabled()        { return true; }
+    @Override public boolean isInterstitialAdEnabled() {
+        return AdsConfig.isInterstitialEnabled(network);
+    }
     @Override public boolean isRewardedAdEnabledToEarnCoins() { return true; }
     @Override public boolean isRewardedAdEnabledToEarnMoves() { return true; }
     @Override public boolean isRewardedAdEnabledToSpinWheel() { return true; }
@@ -422,6 +425,10 @@ public class AdActivity extends AndroidApplication implements AdManager {
     public void showInterstitialAd(final Runnable closedCallback) {
         try {
             runOnUiThread(() -> {
+                if (!AdsConfig.isInterstitialEnabled(network)) {
+                    if (closedCallback != null) closedCallback.run();
+                    return;
+                }
                 interstitialClosedCallback = closedCallback;
                 if (network == AdsConfig.Network.ADMOB && admobInterstitialAd != null) {
                     admobInterstitialAd.show(AdActivity.this);

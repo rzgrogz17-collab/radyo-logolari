@@ -1152,12 +1152,14 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
     };
 
     private void showInterstitial() {
-        // GEÇİŞ (INTERSTITIAL) REKLAMI KALICI OLARAK KAPATILDI - kullanıcı
-        // isteğiyle kesinlikle gösterilmeyecek. Eski reklam gösterme
-        // mantığı (adManager/isInterstitialAdEnabled/shouldWeShowAnInterstitialAdForThisLevel
-        // kontrolleri) tamamen atlanıyor; doğrudan seviye bitiş ekranına
-        // geçiliyor - hiçbir koşulda reklam çağrısı yapılmıyor.
-        hideUI(showLevelFinishedView);
+        boolean show = wordConnectGame.adManager != null
+                && wordConnectGame.adManager.isInterstitialAdEnabled()
+                && GameConfig.shouldWeShowAnInterstitialAdForThisLevel(gameController.level.index);
+        if (show) {
+            wordConnectGame.adManager.showInterstitialAd(interstitialClosed);
+        } else {
+            hideUI(showLevelFinishedView);
+        }
     }
 
     private Runnable interstitialClosed = new Runnable() {

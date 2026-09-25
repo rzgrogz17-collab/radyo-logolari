@@ -8,14 +8,12 @@ import java.util.Set;
 import ogzapp.wordgame.config.GameConfig;
 
 /**
- * Birim kimlikleri burada. Aç/kapa anahtarları GameConfig içindedir:
- * ADMOB_ENABLED, YANDEX_ADS_ENABLED, BANNER_ADS_ENABLED.
+ * Birim kimlikleri burada. Aç/kapa anahtarları GameConfig içindedir.
  */
 public final class AdsConfig {
 
     public static final boolean ADMOB_ENABLED = GameConfig.ADMOB_ENABLED;
     public static final boolean YANDEX_ADS_ENABLED = GameConfig.YANDEX_ADS_ENABLED;
-    public static final boolean BANNER_ENABLED = GameConfig.BANNER_ADS_ENABLED;
 
     public static final String[] YANDEX_COUNTRIES = GameConfig.YANDEX_AD_COUNTRIES;
 
@@ -48,5 +46,17 @@ public final class AdsConfig {
         String code = countryCode == null ? "" : countryCode.trim().toUpperCase(Locale.US);
         if (YANDEX_ADS_ENABLED && YANDEX_SET.contains(code)) return Network.YANDEX;
         return Network.HUAWEI;
+    }
+
+    public static boolean isBannerEnabled(Network network) {
+        if (network == Network.ADMOB) return GameConfig.ADMOB_BANNER_ENABLED;
+        if (network == Network.HUAWEI) return GameConfig.HUAWEI_BANNER_ENABLED;
+        return GameConfig.YANDEX_BANNER_ENABLED;
+    }
+
+    public static boolean isInterstitialEnabled(Network network) {
+        if (network == Network.ADMOB) return GameConfig.ADMOB_INTERSTITIAL_ENABLED;
+        if (network == Network.HUAWEI) return GameConfig.HUAWEI_INTERSTITIAL_ENABLED;
+        return GameConfig.YANDEX_INTERSTITIAL_ENABLED;
     }
 }

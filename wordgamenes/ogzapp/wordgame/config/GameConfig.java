@@ -174,11 +174,10 @@ public class GameConfig {
      * @return true or false
      */
     public static boolean shouldWeShowAnInterstitialAdForThisLevel(int levelIndex){
-        // GEÇİŞ (INTERSTITIAL) REKLAMI KALICI OLARAK KAPATILDI - kullanıcı
-        // isteğiyle kesinlikle gösterilmeyecek. Bu fonksiyon artık
-        // GameScreen.showInterstitial() tarafından hiç çağrılmıyor; burada
-        // da her koşulda false dönmesi ek bir güvence olarak bırakıldı.
-        return false;
+        if (levelIndex < 10) return false;
+        if (levelIndex < 30) return levelIndex % 3 == 0;
+        if (levelIndex < 50) return levelIndex % 2 == 0;
+        return true;
     }
 
 
@@ -224,12 +223,18 @@ public class GameConfig {
      * Reklam ağı. true  → her ülkede yalnızca AdMob.
      * false → aşağıdaki ülkelerde Yandex, diğerlerinde Huawei Petal Ads.
      * YANDEX_ADS_ENABLED false ise Yandex hiç açılmaz, o ülkeler de Petal kullanır.
-     * BANNER_ADS_ENABLED false ise banner hiç yüklenmez.
+     * Banner ve geçiş, her ağ için ayrı açılır. true = göster, false = gizle.
      * Ödüllü reklam üç ağda da aynı şekilde çalışır.
      */
     public static final boolean ADMOB_ENABLED                               = false;
     public static final boolean YANDEX_ADS_ENABLED                          = true;
-    public static final boolean BANNER_ADS_ENABLED                          = false;
+
+    public static final boolean ADMOB_BANNER_ENABLED                        = false;
+    public static final boolean ADMOB_INTERSTITIAL_ENABLED                  = false;
+    public static final boolean YANDEX_BANNER_ENABLED                       = false;
+    public static final boolean YANDEX_INTERSTITIAL_ENABLED                 = false;
+    public static final boolean HUAWEI_BANNER_ENABLED                       = false;
+    public static final boolean HUAWEI_INTERSTITIAL_ENABLED                 = false;
 
     public static final String[] YANDEX_AD_COUNTRIES = {
             "RU", "TR", "KZ", "BY", "UZ", "AM", "KG", "AZ", "TJ", "GE", "MD", "RS"
