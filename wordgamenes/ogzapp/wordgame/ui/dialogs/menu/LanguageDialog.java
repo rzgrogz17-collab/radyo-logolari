@@ -221,7 +221,9 @@ public class LanguageDialog extends BaseDialog {
         confirmStyle.down = new NinePatchDrawable(NinePatches.play_r_down);
         confirmStyle.disabled = new NinePatchDrawable(NinePatches.play_r_down);
 
-        String confirmText = LanguageManager.bundle != null ? LanguageManager.get("okay") : "OK";
+        // İlk açılışta dil henüz seçili değilken bundle İngilizce "OK" düşüyordu.
+        // Referans ekran her zaman "Tamam" yazar.
+        String confirmText = "Tamam";
         confirmButton = new TextButton(confirmText, confirmStyle);
         confirmButton.getLabel().setFontScale(UIConfig.ALERT_DIALOG_BUTTON_FONT_SCALE);
         confirmButton.setSize(Math.min(cellWidth, content.getWidth() * 0.72f), cellHeight);
@@ -256,7 +258,7 @@ public class LanguageDialog extends BaseDialog {
         content.addActor(scrollPane);
 
 
-        setTitleLabel(LanguageManager.getSelectedLocaleCode() == null ? "Please Select a Language" : LanguageManager.get("language"));
+        setTitleLabel("Dil");
         setTitleBackgroundColor(UIConfig.MENU_DIALOG_TITLE_BACKGROUND_COLOR);
         // Başlık yazısı üst kenara çok yakın duruyordu - biraz aşağı
         // indirildi ve çok az büyütüldü (diğer 4 dialogla aynı oranlarda).
