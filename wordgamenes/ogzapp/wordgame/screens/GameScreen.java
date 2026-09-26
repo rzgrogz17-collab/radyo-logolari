@@ -107,6 +107,8 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
     public SideComboDisplay sideComboDisplay;
 
     private Smoke smoke;
+    // Alttaki banner dial ve ikonların üstüne bindiği için uygulanan sahne payı.
+    private float appliedBannerLift;
     private Ufo ufo;
     public boolean offeredBoosterInThisLevel;
     public int nextBoosterType;
@@ -1176,9 +1178,64 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
     private void createSmoke() {
         smoke = new Smoke();
         smoke.setX((stage.getWidth() - smoke.getWidth()) * 0.5f);
-        float dialY = AtlasRegions.dial.getRegionHeight() * 0.1f;
-        smoke.setY(dialY + (AtlasRegions.dial.getRegionHeight() - smoke.getHeight()) * 0.5f);
+        float dialBottom = dial != null ? dial.getY() : AtlasRegions.dial.getRegionHeight() * 0.1f;
+        float dialHeight = dial != null ? dial.getHeight() : AtlasRegions.dial.getRegionHeight();
+        smoke.setY(dialBottom + (dialHeight - smoke.getHeight()) * 0.5f);
         stage.addActor(smoke);
+    }
+
+    /** Banner piksel yüksekliğini sahne birimine çevirir. Banner yoksa 0. */
+    private float bannerLiftStage() {
+        if (wordConnectGame.adManager == null || stage == null) return 0f;
+        int px = wordConnectGame.adManager.getBannerHeightPixels();
+        if (px <= 0) return 0f;
+        float screenPx = Gdx.graphics.getHeight();
+        if (screenPx <= 1f) return 0f;
+        return px * (stage.getHeight() / screenPx);
+    }
+
+    private void shiftAboveBanner(Actor actor, float delta) {
+        if (actor != null) actor.setY(actor.getY() + delta);
+    }
+
+    /**
+     * Oyun tablosunda banner, dial dairesi ile alttaki ikonların (yıldız, reklam)
+     * üstüne biniyor. Dil paneline dokunulmaz; sadece bu ekrandaki alt küme
+     * ölçülen banner yüksekliği kadar yukarı alınır. Banner sonradan gelirse
+     * fark kadar kaydırılır.
+     */
+    private void applyBannerClearance() {
+        if (dial == null) return;
+        float lift = bannerLiftStage();
+        float delta = lift - appliedBannerLift;
+        if (Math.abs(delta) < 0.5f) return;
+        appliedBannerLift = lift;
+
+        shiftAboveBanner(dial, delta);
+        shiftAboveBanner(preview, delta);
+        shiftAboveBanner(shuffleButton, delta);
+        shiftAboveBanner(fingerHintBtn, delta);
+        shiftAboveBanner(singleRandomHintBtn, delta);
+        shiftAboveBanner(multiRandomHintBtn, delta);
+        shiftAboveBanner(rocketHintBtn, delta);
+        shiftAboveBanner(extraWordsButton, delta);
+        shiftAboveBanner(rewardedVideoButton, delta);
+        shiftAboveBanner(smoke, delta);
+        shiftAboveBanner(sideComboDisplay, delta);
+        shiftAboveBanner(feedback, delta);
+        if (rocket != null) {
+            rocket.defaultY += delta;
+            rocket.setY(rocket.getY() + delta);
+        }
+        if (dialAnimationContainer != null && dialAnimationContainer.dialAnimation != null) {
+            dialAnimationContainer.dialAnimation.setUniformVec2(
+                    "u_center",
+                    new Vector2(0.5f, (dial.getY() + dial.getHeight() * 0.5f) / stage.getHeight()));
+        }
+        if (boardView != null && preview != null && topPanel != null
+                && gameController != null && gameController.level != null) {
+            createAndPositionBoard(gameController.level.getBoardModel());
+        }
     }
 
     private void createAndPositionDial(char[] letters) {
@@ -1189,9 +1246,11 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
             dial.setGameScreen(this);
             dial.setOrigin(Align.center);
             dial.setX((stage.getWidth() - dial.getWidth()) * 0.5f);
-            if (UiUtil.isScreenWide())
-                dial.setY(dial.getHeight() * UIConfig.MARGIN_BOTTOM_WIDE_SCREEN);
-            else dial.setY(dial.getHeight() * UIConfig.MARGIN_BOTTOM_NORMAL_SCREEN);
+            float bottomMargin = UiUtil.isScreenWide()
+                    ? UIConfig.MARGIN_BOTTOM_WIDE_SCREEN
+                    : UIConfig.MARGIN_BOTTOM_NORMAL_SCREEN;
+            appliedBannerLift = bannerLiftStage();
+            dial.setY(dial.getHeight() * bottomMargin + appliedBannerLift);
             dial.setGameController(gameController);
             gameController.setDial(dial);
             stage.addActor(dial);
@@ -1236,6 +1295,7 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
         // boyutuna göre değiştiği için hata sadece BAZI cihazlarda/anlarda
         // (büyük bir "yukseklik" değeriyle) belirgin oluyordu.
         float height = calculateHeightForBoard();
+        if (height < 1f) height = 1f;
         boardView.init(boardModel, this, stage.getWidth() - stage.getWidth() * UIConfig.LEFT_AND_RIGHT_MARGIN * 2f, height);
         boardView.setOrigin(Align.center);
         boardView.setX((stage.getWidth() - boardView.getWidth()) * 0.5f);
@@ -1526,6 +1586,7 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
         // değişiyor ve arka plan görseli eski boyutta kalıp kenarlarda
         // siyah boşluk bırakabiliyordu.
         refreshBackgroundSize();
+        applyBannerClearance();
 
         // KÖK NEDEN DÜZELTMESİ ("üst kenarı altta girmiş, alt kısım
         // reklamın altına" hatası - banner reklam kaynaklı boyut değişimi):
@@ -1757,6 +1818,7 @@ public class GameScreen extends BaseScreen implements ShowDictionaryEvent {
 
     @Override
     public void render(float delta) {
+        applyBannerClearance();
         super.render(delta);
         IdleTimer.update(delta);
         if (cameraShaker.isCameraShaking()) {

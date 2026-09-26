@@ -65,6 +65,14 @@ public class Dial extends Group implements Disposable {
         background.setColor(color);
     }
 
+    @Override
+    public void setY(float y) {
+        super.setY(y);
+        // Çizgi grubu dial'in eski konumunu iptal edecek şekilde yerleştiriliyor.
+        // Banner payı dial'i yukarı alınca harf çizgileri kaymasın.
+        if (lineContainer != null) lineContainer.setPosition(-getX(), -y);
+    }
+
 
 
     public void setGameScreen(GameScreen gameScreen) {
