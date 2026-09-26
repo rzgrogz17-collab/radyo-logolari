@@ -72,6 +72,10 @@ public class LanguageDialog extends BaseDialog {
     private Table table = new Table();
     private String currentLanguage;
     private TextButton confirmButton;
+    private ScrollPane languageList;
+    private float originalContentHeight;
+    private float originalScrollHeight;
+    private float appliedBannerInset = -1f;
 
     private final Map<String, Image> bgByCode = new HashMap<>();
     private final Map<String, Image> borderByCode = new HashMap<>();
@@ -237,12 +241,14 @@ public class LanguageDialog extends BaseDialog {
         // BonusWordsIncompleteDialog'daki İLE AYNI, zaten kanıtlanmış
         // ScrollPane deseni: varsayılan stil, görünmez kaydırma çubuğu -
         // parmakla sürükleyerek kaydırılıyor.
-        ScrollPane scrollPane = new ScrollPane(table);
-        scrollPane.setScrollbarsVisible(false);
-        scrollPane.setScrollingDisabled(true, false);
-        scrollPane.setSize(tableWidth, scrollAreaHeight);
-        scrollPane.setPosition((content.getWidth() - tableWidth) * 0.5f, scrollAreaBottom);
-        content.addActor(scrollPane);
+        languageList = new ScrollPane(table);
+        languageList.setScrollbarsVisible(false);
+        languageList.setScrollingDisabled(true, false);
+        languageList.setSize(tableWidth, scrollAreaHeight);
+        languageList.setPosition((content.getWidth() - tableWidth) * 0.5f, scrollAreaBottom);
+        content.addActor(languageList);
+        originalContentHeight = content.getHeight();
+        originalScrollHeight = languageList.getHeight();
 
 
         setTitleLabel("Dil");
@@ -262,8 +268,42 @@ public class LanguageDialog extends BaseDialog {
     @Override
     public void show() {
         super.show();
+        appliedBannerInset = -1f;
+        placeAboveBanner();
         if (LanguageManager.locale != null && LanguageManager.locale.code != null)
             currentLanguage = LanguageManager.locale.code;
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        placeAboveBanner();
+    }
+
+    /** Banner piksel yüksekliğini sahne birimine çevirir. Yandex daha yüksekse o ölçü kullanılır. */
+    private float bannerInsetStage() {
+        if (screen.wordConnectGame.adManager == null) return 0f;
+        int px = screen.wordConnectGame.adManager.getBannerHeightPixels();
+        if (px <= 0) return 0f;
+        float screenPx = Gdx.graphics.getHeight();
+        if (screenPx <= 1f) return 0f;
+        return px * (getHeight() / screenPx);
+    }
+
+    private void placeAboveBanner() {
+        float inset = bannerInsetStage();
+        if (Math.abs(inset - appliedBannerInset) < 1f) return;
+        appliedBannerInset = inset;
+
+        float topGap = getHeight() * 0.02f;
+        float maxH = Math.max(originalScrollHeight, getHeight() - inset - topGap);
+        float h = Math.min(originalContentHeight, maxH);
+        float cut = originalContentHeight - h;
+        content.setHeight(h);
+        if (contentBackground != null) contentBackground.setHeight(h);
+        if (titleContainer != null) titleContainer.setY(h - titleContainer.getHeight() * 0.83f);
+        if (languageList != null) languageList.setHeight(Math.max(1f, originalScrollHeight - cut));
+        content.setY(inset + Math.max(0f, (getHeight() - inset - h) * 0.5f));
     }
 
 

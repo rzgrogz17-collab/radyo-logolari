@@ -12,6 +12,8 @@ public interface AdManager {
     void showInterstitialAd(Runnable closedCallback);
     void showRewardedAd(RewardedVideoCloseCallback finishedCallback);
     int getIntervalBetweenRewardedAds();
+    /** Alttaki banner'ın piksel yüksekliği. Banner yoksa 0. */
+    int getBannerHeightPixels();
     void openGDPRForm();
     boolean isUserInEU();
 }

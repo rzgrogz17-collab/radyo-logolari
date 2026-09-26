@@ -78,6 +78,7 @@ public class AdActivity extends AndroidApplication implements AdManager {
     private View gameView;
     private RelativeLayout bannerSlot;
     private boolean bannerRequested;
+    private int bannerHeightPx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -347,12 +348,10 @@ public class AdActivity extends AndroidApplication implements AdManager {
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             slotLp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             rootLayout.addView(bannerSlot, slotLp);
-            if (gameView != null) {
-                RelativeLayout.LayoutParams gameLp = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                gameLp.addRule(RelativeLayout.ABOVE, bannerSlot.getId());
-                gameView.setLayoutParams(gameLp);
-            }
+            bannerSlot.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+                int measured = bottom - top;
+                if (measured > 0) bannerHeightPx = measured;
+            });
         }
         if (network == AdsConfig.Network.ADMOB) loadAdmobBanner();
         else if (network == AdsConfig.Network.HUAWEI) loadHuaweiBanner();
@@ -362,7 +361,10 @@ public class AdActivity extends AndroidApplication implements AdManager {
     private void loadYandexBanner() {
         yandexBanner = new BannerAdView(this);
         yandexBanner.setAdUnitId(AdsConfig.YANDEX_BANNER_ID);
-        yandexBanner.setAdSize(com.yandex.mobile.ads.banner.BannerAdSize.stickySize(this, bannerWidthDp()));
+        com.yandex.mobile.ads.banner.BannerAdSize yandexSize =
+                com.yandex.mobile.ads.banner.BannerAdSize.stickySize(this, bannerWidthDp());
+        yandexBanner.setAdSize(yandexSize);
+        reserveBannerHeight(yandexSize.getHeight());
         yandexBanner.setBannerAdEventListener(new BannerAdEventListener() {
             @Override public void onAdLoaded() {}
             @Override public void onAdFailedToLoad(@NonNull AdRequestError error) {}
@@ -380,6 +382,7 @@ public class AdActivity extends AndroidApplication implements AdManager {
         admobBanner = new AdView(this);
         admobBanner.setAdUnitId(AdsConfig.ADMOB_BANNER_ID);
         admobBanner.setAdSize(com.google.android.gms.ads.AdSize.BANNER);
+        reserveBannerHeight(com.google.android.gms.ads.AdSize.BANNER.getHeightInPixels(this));
         bannerSlot.addView(admobBanner, new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         admobBanner.loadAd(new AdRequest.Builder().build());
@@ -389,9 +392,19 @@ public class AdActivity extends AndroidApplication implements AdManager {
         huaweiBanner = new BannerView(this);
         huaweiBanner.setAdId(AdsConfig.HUAWEI_BANNER_ID);
         huaweiBanner.setBannerAdSize(BannerAdSize.BANNER_SIZE_320_50);
+        reserveBannerHeight(Math.round(50f * getResources().getDisplayMetrics().density));
         bannerSlot.addView(huaweiBanner, new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         huaweiBanner.loadAd(new AdParam.Builder().build());
+    }
+
+    private void reserveBannerHeight(int px) {
+        if (px > bannerHeightPx) bannerHeightPx = px;
+    }
+
+    @Override
+    public int getBannerHeightPixels() {
+        return bannerHeightPx;
     }
 
     private int bannerWidthDp() {

@@ -85,6 +85,11 @@ public class AdManagerImpl implements AdManager {
     }
 
     @Override
+    public int getBannerHeightPixels() {
+        return 0;
+    }
+
+    @Override
     public void openGDPRForm() {
         Gdx.net.openURI("https://wordconnectbrainfungame.blogspot.com/");
     }
