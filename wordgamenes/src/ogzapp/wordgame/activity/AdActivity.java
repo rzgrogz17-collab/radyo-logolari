@@ -361,10 +361,16 @@ public class AdActivity extends AndroidApplication implements AdManager {
     private void loadYandexBanner() {
         yandexBanner = new BannerAdView(this);
         yandexBanner.setAdUnitId(AdsConfig.YANDEX_BANNER_ID);
+        // AdMob standart banner: 320x50 dp. stickySize ekranı uzatıp tabloyu ve dil satırlarını kaydırıyordu.
         com.yandex.mobile.ads.banner.BannerAdSize yandexSize =
-                com.yandex.mobile.ads.banner.BannerAdSize.stickySize(this, bannerWidthDp());
+                com.yandex.mobile.ads.banner.BannerAdSize.fixedSize(this, 320, 50);
         yandexBanner.setAdSize(yandexSize);
-        reserveBannerHeight(yandexSize.getHeight());
+        int bannerPxH = Math.round(50f * getResources().getDisplayMetrics().density);
+        int bannerPxW = Math.round(320f * getResources().getDisplayMetrics().density);
+        reserveBannerHeight(bannerPxH);
+        RelativeLayout.LayoutParams yandexLp = new RelativeLayout.LayoutParams(bannerPxW, bannerPxH);
+        yandexLp.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        bannerSlot.addView(yandexBanner, yandexLp);
         yandexBanner.setBannerAdEventListener(new BannerAdEventListener() {
             @Override public void onAdLoaded() {}
             @Override public void onAdFailedToLoad(@NonNull AdRequestError error) {}
@@ -373,8 +379,6 @@ public class AdActivity extends AndroidApplication implements AdManager {
             @Override public void onLeftApplication() {}
             @Override public void onReturnedToApplication() {}
         });
-        bannerSlot.addView(yandexBanner, new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         yandexBanner.loadAd(new com.yandex.mobile.ads.common.AdRequest.Builder().build());
     }
 
