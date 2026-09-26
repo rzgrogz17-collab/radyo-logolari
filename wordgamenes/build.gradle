@@ -1,0 +1,149 @@
+apply plugin: 'com.android.application'
+
+repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://developer.huawei.com/repo/' }
+}
+
+repositories {
+    maven { url 'https://developer.huawei.com/repo/' }
+}
+
+android {
+    compileSdk = 35
+    namespace "ogzapp.wordgame"
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/robovm/ios/robovm.xml']
+        }
+    }
+    defaultConfig {
+        applicationId 'com.kelime.oyunu.wordle.ogzapp'
+        minSdk 25
+        targetSdk 35
+        versionName '9.3.5'
+        multiDexEnabled true
+        versionCode 935
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    lint {
+        disable += ['MobileAdsSdkOutdatedVersion']
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations { natives }
+
+dependencies {
+    implementation project(":core")
+    api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
+    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+    api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi-v7a"
+    natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
+    natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
+    natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
+
+    implementation 'org.jsoup:jsoup:1.15.3'
+
+    // BURASI DÜZELTİLDİ: Eski support kütüphanesi yerine AndroidX
+    implementation 'androidx.multidex:multidex:2.0.1'
+
+    implementation "com.badlogicgames.gdx-controllers:gdx-controllers-android:2.2.1"
+
+    // Yandex Mobile Ads & Annotation
+    implementation 'com.yandex.android:mobileads:7.4.0'
+    implementation 'androidx.annotation:annotation:1.7.1'
+
+    // AdMob. Manifest APPLICATION_ID gerçek uygulama kimliği olmalı.
+    implementation 'com.google.android.gms:play-services-ads:23.6.0'
+
+    // Huawei Petal Ads. Yalnızca developer.huawei.com deposunda var.
+    implementation 'com.huawei.hms:ads-lite:13.4.77.300'
+}
+
+tasks.register('copyAndroidNatives') {
+    doFirst {
+        file("libs/armeabi-v7a/").mkdirs()
+        file("libs/arm64-v8a/").mkdirs()
+        file("libs/x86_64/").mkdirs()
+        file("libs/x86/").mkdirs()
+
+        configurations.natives.copy().files.each { jar ->
+            def outputDir = null
+            if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
+            if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
+            if (jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
+            if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+            if (outputDir != null) {
+                copy {
+                    from zipTree(jar)
+                    into outputDir
+                    include "*.so"
+                }
+            }
+        }
+    }
+}
+
+tasks.configureEach { packageTask ->
+    if (packageTask.name.contains("package")) {
+        packageTask.dependsOn 'copyAndroidNatives'
+    }
+}
+
+tasks.register('run', Exec) {
+    def path
+    def localProperties = project.file("../local.properties")
+    if (localProperties.exists()) {
+        Properties properties = new Properties()
+        localProperties.withInputStream { instr ->
+            properties.load(instr)
+        }
+        def sdkDir = properties.getProperty('sdk.dir')
+        if (sdkDir) {
+            path = sdkDir
+        } else {
+            path = "$System.env.ANDROID_HOME"
+        }
+    } else {
+        path = "$System.env.ANDROID_HOME"
+    }
+
+    def adb = path + "/platform-tools/adb"
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'word.game/word.game.activity.AndroidLauncher'
+}
+
+eclipse.project.name = appName + "-android"
