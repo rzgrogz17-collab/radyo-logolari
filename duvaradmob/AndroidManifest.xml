@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+
+    <queries>
+        <package android:name="com.google.android.gms" />
+    </queries>
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <application
+        android:name=".data.ThisApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Waller">
+
+        <activity
+            android:name=".activity.ActivityFavorite"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivityOnboarding"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivityCropWallpaper"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivitySplash"
+            android:exported="true"
+            android:theme="@style/Theme.RemoveSplashScreenTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.ActivityBilling"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivityMain"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivitySetting"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivityNotification"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivitySearch"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivityCategoryDetail"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivityListingDetail"
+            android:exported="false"
+            android:theme="@style/Theme.Waller.Translucent" />
+        <activity
+            android:name=".activity.ActivityDialogNotification"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:theme="@style/Theme.Waller.Dialog" />
+        <activity
+            android:name=".activity.ActivityWebView"
+            android:exported="false" />
+        <activity
+            android:name=".activity.ActivityFullScreenImage"
+            android:exported="false" />
+
+        <!-- OneSignal -->
+        <meta-data
+            android:name="com.onesignal.NotificationServiceExtension"
+            android:value="com.blogger.waller.notification.OneSignalServiceExtension" />
+        <meta-data
+            android:name="com.onesignal.NotificationOpened.DEFAULT"
+            android:value="DISABLE" />
+
+        <!-- AdMob -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_app_id" />
+        <meta-data
+            android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
+            android:value="true" />
+
+        <!-- FileProvider -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+    
+        <service
+            android:name="com.wello.wallpaperose.clock.ClockLiveWallpaper"
+            android:exported="true"
+            android:label="@string/clock_live_desc"
+            android:permission="android.permission.BIND_WALLPAPER">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/clock_wallpaper" />
+        </service>
+    
+        <service
+            android:name="com.wello.wallpaperose.clock.ClockOverlayService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:stopWithTask="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Live clock drawn over the wallpaper" />
+        </service>
+    
+        <receiver
+            android:name="com.wello.wallpaperose.clock.ClockOverlayBoot"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
