@@ -81,39 +81,6 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.18.3'
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-
-    implementation('com.github.dream-space:dreamspace-ads-sdk:3.0.1-custom') {
-        exclude group: 'com.yandex.android'
-        exclude group: 'com.yandex.ads.adapter'
-        exclude group: 'com.yandex.ads.mediation'
-        exclude group: 'com.huawei.hms', module: 'ads-lite'
-        exclude group: 'com.huawei.hms', module: 'ads-base'
-        exclude group: 'com.huawei.hms', module: 'ads-banner'
-        exclude group: 'com.huawei.hms', module: 'ads-interstitial'
-        exclude group: 'com.huawei.hms', module: 'ads-reward'
-        exclude group: 'com.huawei.hms', module: 'ads-splash'
-        exclude group: 'com.huawei.hms', module: 'ads-native'
-        exclude group: 'com.huawei.hms', module: 'ads-template'
-        exclude group: 'com.huawei.hms', module: 'ads-lang'
-        exclude group: 'com.huawei.hms', module: 'ads-consent'
-    }
-
-    configurations.configureEach {
-        exclude group: 'com.yandex.android'
-        exclude group: 'com.yandex.ads.adapter'
-        exclude group: 'com.yandex.ads.mediation'
-        exclude group: 'com.huawei.hms', module: 'ads-lite'
-        exclude group: 'com.huawei.hms', module: 'ads-base'
-        exclude group: 'com.huawei.hms', module: 'ads-banner'
-        exclude group: 'com.huawei.hms', module: 'ads-interstitial'
-        exclude group: 'com.huawei.hms', module: 'ads-reward'
-        exclude group: 'com.huawei.hms', module: 'ads-splash'
-        exclude group: 'com.huawei.hms', module: 'ads-native'
-        exclude group: 'com.huawei.hms', module: 'ads-template'
-        exclude group: 'com.huawei.hms', module: 'ads-lang'
-        exclude group: 'com.huawei.hms', module: 'ads-consent'
-        exclude group: 'com.huawei.hms', module: 'ads-installreferrer'
-    }
 }
 
 tasks.register("injectClockWallpaperService") {
