@@ -70,7 +70,7 @@ dependencies {
     // REKLAM SDK'LARI — hangisinin kullanılacağına AdConfig.kt karar verir
     // ============================================================
     // --- YANDEX ADS (RU, TR, KZ, BY, UZ, AM, KG, AZ, TJ, GE, MD, RS) ---
-    implementation("com.yandex.android:mobileads:7.4.0")
+    implementation("com.yandex.android:mobileads:8.5.0")
     // --- HUAWEI PETAL ADS (listedeki ülkeler DIŞINDAKİ tüm ülkeler) ---
     implementation("com.huawei.hms:ads-lite:13.4.91.300")
     // --- GOOGLE ADMOB (AdConfig.USE_YANDEX_AND_HUAWEI = false olduğunda) ---

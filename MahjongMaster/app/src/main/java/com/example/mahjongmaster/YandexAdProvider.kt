@@ -8,10 +8,9 @@ import com.yandex.mobile.ads.banner.BannerAdEventListener
 import com.yandex.mobile.ads.banner.BannerAdSize
 import com.yandex.mobile.ads.common.AdError
 import com.yandex.mobile.ads.common.AdRequest
-import com.yandex.mobile.ads.common.AdRequestConfiguration
 import com.yandex.mobile.ads.common.AdRequestError
 import com.yandex.mobile.ads.common.ImpressionData
-import com.yandex.mobile.ads.common.MobileAds
+import com.yandex.mobile.ads.common.YandexAds
 import com.yandex.mobile.ads.interstitial.InterstitialAd
 import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener
 import com.yandex.mobile.ads.interstitial.InterstitialAdLoadListener
@@ -24,8 +23,11 @@ import com.yandex.mobile.ads.rewarded.RewardedAdLoader
 import com.yandex.mobile.ads.banner.BannerAdView as YandexBannerAdView
 
 /**
- * YANDEX MOBILE ADS — AdConfig.YANDEX_COUNTRIES listesindeki ülkelerde kullanılır.
+ * YANDEX MOBILE ADS 8 — AdConfig.YANDEX_COUNTRIES listesindeki ülkelerde kullanılır.
  * Reklam birim ID'leri: strings.xml -> yandex_banner_id / yandex_interstitial_id / yandex_rewarded_id
+ *
+ * SDK 8: MobileAds -> YandexAds, AdRequestConfiguration kalktı,
+ * loadAd(AdRequest, listener) ve banner boyutu BannerAdSize.sticky.
  */
 internal class YandexAdProvider(private val appContext: Context) : AdProvider {
     override val network = AdNetwork.YANDEX
@@ -39,39 +41,12 @@ internal class YandexAdProvider(private val appContext: Context) : AdProvider {
     private var rewardedLoading = false
 
     override fun initialize(activity: Activity, onReady: () -> Unit) {
-        MobileAds.initialize(appContext) {
+        YandexAds.initialize(appContext) {
             Log.i(TAG, "Yandex Mobile Ads SDK initialized")
         }
 
-        interstitialAdLoader = InterstitialAdLoader(appContext).apply {
-            setAdLoadListener(object : InterstitialAdLoadListener {
-                override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                    this@YandexAdProvider.interstitialAd = interstitialAd
-                    interstitialLoading = false
-                }
-
-                override fun onAdFailedToLoad(error: AdRequestError) {
-                    Log.w(TAG, "Interstitial failed: ${error.description}")
-                    interstitialAd = null
-                    interstitialLoading = false
-                }
-            })
-        }
-
-        rewardedAdLoader = RewardedAdLoader(appContext).apply {
-            setAdLoadListener(object : RewardedAdLoadListener {
-                override fun onAdLoaded(rewarded: RewardedAd) {
-                    rewardedAd = rewarded
-                    rewardedLoading = false
-                }
-
-                override fun onAdFailedToLoad(error: AdRequestError) {
-                    Log.w(TAG, "Rewarded failed: ${error.description}")
-                    rewardedAd = null
-                    rewardedLoading = false
-                }
-            })
-        }
+        interstitialAdLoader = InterstitialAdLoader(appContext)
+        rewardedAdLoader = RewardedAdLoader(appContext)
 
         loadInterstitial()
         loadRewarded()
@@ -81,11 +56,26 @@ internal class YandexAdProvider(private val appContext: Context) : AdProvider {
     override fun isInterstitialReady(): Boolean = interstitialAd != null
 
     override fun loadInterstitial() {
+        val loader = interstitialAdLoader ?: return
         if (interstitialAd != null || interstitialLoading) return
         try {
             val adUnitId = appContext.getString(R.string.yandex_interstitial_id)
             interstitialLoading = true
-            interstitialAdLoader?.loadAd(AdRequestConfiguration.Builder(adUnitId).build())
+            loader.loadAd(
+                AdRequest.Builder(adUnitId).build(),
+                object : InterstitialAdLoadListener {
+                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
+                        this@YandexAdProvider.interstitialAd = interstitialAd
+                        interstitialLoading = false
+                    }
+
+                    override fun onAdFailedToLoad(error: AdRequestError) {
+                        Log.w(TAG, "Interstitial failed: ${error.description}")
+                        interstitialAd = null
+                        interstitialLoading = false
+                    }
+                }
+            )
         } catch (e: Exception) {
             interstitialLoading = false
             Log.e(TAG, "loadInterstitial error", e)
@@ -123,11 +113,26 @@ internal class YandexAdProvider(private val appContext: Context) : AdProvider {
     override fun isRewardedReady(): Boolean = rewardedAd != null
 
     override fun loadRewarded() {
+        val loader = rewardedAdLoader ?: return
         if (rewardedAd != null || rewardedLoading) return
         try {
             val adUnitId = appContext.getString(R.string.yandex_rewarded_id)
             rewardedLoading = true
-            rewardedAdLoader?.loadAd(AdRequestConfiguration.Builder(adUnitId).build())
+            loader.loadAd(
+                AdRequest.Builder(adUnitId).build(),
+                object : RewardedAdLoadListener {
+                    override fun onAdLoaded(rewarded: RewardedAd) {
+                        rewardedAd = rewarded
+                        rewardedLoading = false
+                    }
+
+                    override fun onAdFailedToLoad(error: AdRequestError) {
+                        Log.w(TAG, "Rewarded failed: ${error.description}")
+                        rewardedAd = null
+                        rewardedLoading = false
+                    }
+                }
+            )
         } catch (e: Exception) {
             rewardedLoading = false
             Log.e(TAG, "loadRewarded error", e)
@@ -166,8 +171,7 @@ internal class YandexAdProvider(private val appContext: Context) : AdProvider {
 
     override fun createBannerView(context: Context, adWidthDp: Int): View =
         YandexBannerAdView(context).apply {
-            setAdUnitId(context.getString(R.string.yandex_banner_id))
-            setAdSize(BannerAdSize.stickySize(context, adWidthDp))
+            setAdSize(BannerAdSize.sticky(context, adWidthDp))
             setBannerAdEventListener(object : BannerAdEventListener {
                 override fun onAdLoaded() {
                     Log.i(TAG, "Banner loaded successfully")
@@ -178,11 +182,10 @@ internal class YandexAdProvider(private val appContext: Context) : AdProvider {
                 }
 
                 override fun onAdClicked() {}
-                override fun onLeftApplication() {}
-                override fun onReturnedToApplication() {}
+
                 override fun onImpression(impressionData: ImpressionData?) {}
             })
-            loadAd(AdRequest.Builder().build())
+            loadAd(AdRequest.Builder(context.getString(R.string.yandex_banner_id)).build())
         }
 
     override fun destroyBannerView(view: View) {
