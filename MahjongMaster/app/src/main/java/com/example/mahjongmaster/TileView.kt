@@ -5,13 +5,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseOutBack
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -28,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -162,8 +157,6 @@ internal fun Modifier.drawTile(
     dim: Float = 0f,
     selected: Boolean = false,
     hinted: Boolean = false,
-    showGlow: Boolean = false,
-    pulse: State<Float>? = null,
     burst: (() -> Float)? = null
 ): Modifier = drawWithCache {
     val w = size.width
@@ -180,7 +173,6 @@ internal fun Modifier.drawTile(
     )
     val hairline = 1.dp.toPx()
     val borderStroke = Stroke(hairline)
-    val glowStroke = Stroke(2.6.dp.toPx())
     val glowSoft = Stroke(6.dp.toPx())
     val selectStroke = Stroke(3.dp.toPx())
     val hintStroke = Stroke(3.5.dp.toPx())
@@ -219,21 +211,14 @@ internal fun Modifier.drawTile(
                 drawRoundRect(Color.Black.copy(alpha = GameTuning.LOCKED_TILE_DIM * 0.8f * dim), Offset(0f, d), faceSize, radius)
             }
         }
-        if (showGlow && pulse != null) {
-            val g = pulse.value
-            drawRoundRect(theme.accent.copy(alpha = 0.10f * g), Offset.Zero, faceSize, radius)
-            drawRoundRect(theme.accent.copy(alpha = 0.30f * g), Offset.Zero, faceSize, radius, style = glowSoft)
-            drawRoundRect(theme.accent.copy(alpha = 0.95f * g), Offset.Zero, faceSize, radius, style = glowStroke)
-        }
         if (selected) {
             drawRoundRect(GameColors.selectedBorder.copy(alpha = 0.16f), Offset.Zero, faceSize, radius)
             drawRoundRect(GameColors.selectedBorder.copy(alpha = 0.35f), Offset.Zero, faceSize, radius, style = glowSoft)
             drawRoundRect(GameColors.selectedBorder, Offset.Zero, faceSize, radius, style = selectStroke)
         }
         if (hinted) {
-            val g = pulse?.value ?: 1f
-            drawRoundRect(GameColors.hintBorder.copy(alpha = 0.10f + 0.12f * g), Offset.Zero, faceSize, radius)
-            drawRoundRect(GameColors.hintBorder.copy(alpha = 0.55f + 0.45f * g), Offset.Zero, faceSize, radius, style = hintStroke)
+            drawRoundRect(GameColors.hintBorder.copy(alpha = 0.18f), Offset.Zero, faceSize, radius)
+            drawRoundRect(GameColors.hintBorder, Offset.Zero, faceSize, radius, style = hintStroke)
         }
         if (burst != null) {
             val b = burst()
@@ -264,15 +249,10 @@ fun TilePreview(
     modifier: Modifier = Modifier,
     dimmed: Boolean = false,
     selected: Boolean = false,
-    glowing: Boolean = false,
     hinted: Boolean = false
 ) {
     val height = width * TILE_ASPECT
     val depth = width * DEPTH_RATIO
-    val pulse = rememberInfiniteTransition(label = "previewPulse").animateFloat(
-        0.35f, 1f, infiniteRepeatable(tween(750, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-        label = "previewGlow"
-    )
     val filter = remember(dimmed) {
         if (dimmed) ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(GameTuning.LOCKED_TILE_SATURATION) }) else null
     }
@@ -281,8 +261,7 @@ fun TilePreview(
             .size(width, height + depth)
             .drawTile(
                 style, theme, height, depth, type == "Haku",
-                dim = if (dimmed) 1f else 0f, selected = selected, hinted = hinted,
-                showGlow = glowing, pulse = if (glowing || hinted) pulse else null
+                dim = if (dimmed) 1f else 0f, selected = selected, hinted = hinted
             )
     ) {
         TileGlyph(
@@ -300,7 +279,6 @@ internal data class ScorePopup(val id: Long, val x: Float, val y: Float, val poi
 @Composable
 internal fun MahjongBoard(
     tiles: List<Tile>,
-    matchableTypes: Set<String>,
     settings: GameSettings,
     boardEpoch: Int,
     shuffleEpoch: Int,
@@ -316,13 +294,6 @@ internal fun MahjongBoard(
         val metrics = remember(boardEpoch, tiles.size, boxW, boxH) {
             computeBoardMetrics(tiles, boxW - 12.dp, boxH - 18.dp, maxTile)
         }
-
-        val pulseTransition = rememberInfiniteTransition(label = "pairPulse")
-        val pulse = pulseTransition.animateFloat(
-            0.35f, 1f,
-            infiniteRepeatable(tween(750, easing = FastOutSlowInEasing), RepeatMode.Reverse),
-            label = "pulse"
-        )
 
         val dealStart = remember(boardEpoch) { SystemClock.uptimeMillis() }
         val latestTiles by rememberUpdatedState(tiles)
@@ -387,8 +358,6 @@ internal fun MahjongBoard(
                             tile = tile,
                             metrics = metrics,
                             settings = settings,
-                            isMatchable = matchableTypes.contains(tile.type),
-                            pulse = pulse,
                             matchTarget = matchTargets[tile.id],
                             dealDelayMs = dealDelay,
                             shuffleEpoch = shuffleEpoch,
@@ -413,8 +382,6 @@ private fun BoxScope.BoardTile(
     tile: Tile,
     metrics: BoardMetrics,
     settings: GameSettings,
-    isMatchable: Boolean,
-    pulse: State<Float>,
     matchTarget: Offset?,
     dealDelayMs: Long,
     shuffleEpoch: Int,
@@ -492,8 +459,6 @@ private fun BoxScope.BoardTile(
 
     val zIndex = if (tile.isMatched) 100000f + tile.id
     else tile.layer * 1000f + tile.gridY * 100 + tile.gridX
-    val showGlow = settings.highlightPairs && isMatchable && tile.isSelectable &&
-            !tile.isSelected && !tile.isHinted && !tile.isMatched
     val saturationFilter = remember(dim) {
         if (dim <= 0.01f) null
         else ColorFilter.colorMatrix(ColorMatrix().apply {
@@ -564,8 +529,6 @@ private fun BoxScope.BoardTile(
                 dim = dim,
                 selected = tile.isSelected,
                 hinted = tile.isHinted,
-                showGlow = showGlow,
-                pulse = pulse,
                 burst = burst
             )
     ) {

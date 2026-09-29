@@ -271,14 +271,6 @@ fun SettingsScreen(viewModel: GameViewModel, soundManager: SoundManager, onBack:
                         viewModel.updateSettings { it.copy(dimBlockedTiles = !it.dimBlockedTiles) }
                         soundManager.playButton()
                     }
-                    SettingRow(
-                        stringResource(R.string.settings_highlight),
-                        stringResource(R.string.settings_highlight_sub),
-                        settings.highlightPairs
-                    ) {
-                        viewModel.updateSettings { it.copy(highlightPairs = !it.highlightPairs) }
-                        soundManager.playButton()
-                    }
                 }
                 Spacer(Modifier.height(14.dp))
                 Text(stringResource(R.string.settings_theme), color = Color.White.copy(alpha = 0.8f), fontWeight = FontWeight.Bold)
@@ -446,11 +438,11 @@ fun TutorialScreen(viewModel: GameViewModel, onDone: () -> Unit) {
             if (page == 1) {
                 Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.Bottom) {
                     TilePreview("Man3", 64.dp, settings.tileStyle, settings.boardTheme, dimmed = true)
-                    TilePreview("Man3", 64.dp, settings.tileStyle, settings.boardTheme, glowing = true)
+                    TilePreview("Man3", 64.dp, settings.tileStyle, settings.boardTheme)
                     TilePreview("Man5", 64.dp, settings.tileStyle, settings.boardTheme, selected = true)
                 }
             } else {
-                TilePreview(tile, 88.dp, settings.tileStyle, settings.boardTheme, glowing = page == 0, hinted = page == 2)
+                TilePreview(tile, 88.dp, settings.tileStyle, settings.boardTheme, hinted = page == 2)
             }
             Spacer(Modifier.height(22.dp))
             Text(

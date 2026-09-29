@@ -123,7 +123,7 @@ data class GameSettings(
     val sfxEnabled: Boolean = true,
     val hapticsEnabled: Boolean = true,
     val dimBlockedTiles: Boolean = true,
-    val highlightPairs: Boolean = true,
+    val highlightPairs: Boolean = false,
     val boardTheme: BoardTheme = BoardTheme.JADE,
     val tileStyle: TileStyle = TileStyle.IVORY
 )
@@ -759,6 +759,88 @@ object LevelPatterns {
         return p
     }
 
+    // -- 33: Haç — üstte basamaklı gövde, altta dar sap (28 taş) --
+    fun layout33(): List<Triple<Int, Int, Int>> {
+        val p = mutableListOf<Triple<Int, Int, Int>>()
+        p.add(Triple(0, 0, 0))
+        listOf(-2, 0, 2).forEach { p.add(Triple(it, 2, 0)) }
+        listOf(-4, -2, 0, 2, 4).forEach { p.add(Triple(it, 4, 0)) }
+        listOf(-5, -3, -1, 1, 3, 5).forEach { p.add(Triple(it, 6, 0)) }
+        listOf(-6, -4, -2, 0, 2, 4, 6).forEach { p.add(Triple(it, 8, 0)) }
+        for (y in listOf(10, 12, 14)) {
+            p.add(Triple(-1, y, 0))
+            p.add(Triple(1, y, 0))
+        }
+        return p
+    }
+
+    // -- 34: Pencere — ortası açık çerçeve, yan kulaklar ve ayaklar (46 taş) --
+    fun layout34(): List<Triple<Int, Int, Int>> {
+        val p = mutableListOf<Triple<Int, Int, Int>>()
+        listOf(-5, 5).forEach { p.add(Triple(it, 0, 0)) }
+        listOf(-8, -6, -4, -2, 0, 2, 4, 6, 8).forEach { p.add(Triple(it, 2, 0)) }
+        listOf(-6, -4, -2, 0, 2, 4, 6).forEach { p.add(Triple(it, 4, 0)) }
+        for (y in listOf(6, 8)) {
+            listOf(-6, -4, 4, 6).forEach { p.add(Triple(it, y, 0)) }
+        }
+        listOf(-6, -4, -2, 0, 2, 4, 6).forEach { p.add(Triple(it, 10, 0)) }
+        listOf(-8, -6, -4, -2, 0, 2, 4, 6, 8).forEach { p.add(Triple(it, 12, 0)) }
+        for (y in listOf(14, 16)) {
+            listOf(-5, 5).forEach { p.add(Triple(it, y, 0)) }
+        }
+        return p
+    }
+
+    // -- 35: Elmas — baklava gövde ve altta iki ayak (34 taş) --
+    fun layout35(): List<Triple<Int, Int, Int>> {
+        val p = mutableListOf<Triple<Int, Int, Int>>()
+        val rows = listOf(
+            0 to listOf(0),
+            2 to listOf(-2, 0, 2),
+            4 to listOf(-4, -2, 0, 2, 4),
+            6 to listOf(-6, -4, -2, 0, 2, 4, 6),
+            8 to listOf(-6, -4, -2, 0, 2, 4, 6),
+            10 to listOf(-4, -2, 0, 2, 4),
+            12 to listOf(-2, 0, 2),
+            14 to listOf(0)
+        )
+        rows.forEach { (y, xs) -> xs.forEach { p.add(Triple(it, y, 0)) } }
+        p.add(Triple(-1, 16, 0))
+        p.add(Triple(1, 16, 0))
+        return p
+    }
+
+    // -- 36: Kale — dişli tepe, dolu gövde, alt kapı ve üst kat (54 taş) --
+    fun layout36(): List<Triple<Int, Int, Int>> {
+        val p = mutableListOf<Triple<Int, Int, Int>>()
+        listOf(-6, -2, 2, 6).forEach { p.add(Triple(it, 0, 0)) }
+        for (y in listOf(2, 4, 6, 8, 10, 12)) {
+            listOf(-6, -4, -2, 0, 2, 4, 6).forEach { p.add(Triple(it, y, 0)) }
+        }
+        listOf(-6, -4, 4, 6).forEach { p.add(Triple(it, 14, 0)) }
+        listOf(-1, 1).forEach { x ->
+            p.add(Triple(x, 4, 1))
+            p.add(Triple(x, 6, 1))
+        }
+        return p
+    }
+
+    // -- 37: Figür — baş, yan kollar, gövde ve ayrık bacaklar (58 taş) --
+    fun layout37(): List<Triple<Int, Int, Int>> {
+        val p = mutableListOf<Triple<Int, Int, Int>>()
+        listOf(-2, 0, 2).forEach { p.add(Triple(it, 0, 0)) }
+        listOf(-4, -2, 0, 2, 4).forEach { p.add(Triple(it, 2, 0)) }
+        listOf(-8, -6, -4, -2, 0, 2, 4, 6, 8).forEach { p.add(Triple(it, 4, 0)) }
+        listOf(-6, -4, -2, 0, 2, 4, 6).forEach { p.add(Triple(it, 6, 0)) }
+        for (y in listOf(8, 10)) {
+            listOf(-4, -2, 0, 2, 4).forEach { p.add(Triple(it, y, 0)) }
+        }
+        for (y in listOf(12, 14, 16, 18)) {
+            listOf(-6, -4, -2, 2, 4, 6).forEach { p.add(Triple(it, y, 0)) }
+        }
+        return p
+    }
+
     // ZORLUK SEVİYELERİNE GÖRE GRUPLAR
     // Kolay: az katman, kompakt yapılar
     private val easyLayouts = listOf(
@@ -771,7 +853,8 @@ object LevelPatterns {
         ::layout22,  // Halka (YENİ)
         ::layout24,  // Kum Saati (YENİ)
         ::layout25,  // Altıgen (YENİ)
-        ::layout26   // Uçurtma (YENİ)
+        ::layout26,  // Uçurtma (YENİ)
+        ::layout35   // Elmas
     )
 
     // Orta: dengeli katman ve genişlik
@@ -788,7 +871,9 @@ object LevelPatterns {
         ::layout23,  // Çiçek (YENİ)
         ::layout27,  // Balık (YENİ)
         ::layout28,  // Kaplumbağa (YENİ)
-        ::layout32   // Taç (YENİ)
+        ::layout32,  // Taç (YENİ)
+        ::layout33,  // Haç
+        ::layout34   // Pencere
     )
 
     // Zor: çok katman, geniş gövde, dolgun yapılar
@@ -801,7 +886,9 @@ object LevelPatterns {
         ::layout21,  // Üçgen (YENİ)
         ::layout29,  // Merdiven (YENİ — 5 katmanlı)
         ::layout30,  // Sarmal (YENİ — iç içe halkalar)
-        ::layout31   // Kale (YENİ)
+        ::layout31,  // Kale (YENİ)
+        ::layout36,  // Kale burcu
+        ::layout37   // Figür
     )
 
     val allLevels = easyLayouts + mediumLayouts + hardLayouts
@@ -918,7 +1005,7 @@ class GameRepository(context: Context) {
         sfxEnabled = settingsPrefs.getBoolean(KEY_SFX, true),
         hapticsEnabled = settingsPrefs.getBoolean(KEY_HAPTICS, true),
         dimBlockedTiles = settingsPrefs.getBoolean(KEY_DIM_BLOCKED, true),
-        highlightPairs = settingsPrefs.getBoolean(KEY_HIGHLIGHT_PAIRS, true),
+        highlightPairs = settingsPrefs.getBoolean(KEY_HIGHLIGHT_PAIRS, false),
         boardTheme = BoardTheme.fromName(settingsPrefs.getString(KEY_BOARD_THEME, null)),
         tileStyle = TileStyle.fromName(settingsPrefs.getString(KEY_TILE_STYLE, null))
     )

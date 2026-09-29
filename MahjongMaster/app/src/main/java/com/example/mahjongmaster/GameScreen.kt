@@ -75,7 +75,6 @@ fun GameScreen(
     val hintCount by viewModel.hintCount.collectAsState()
     val shuffleCount by viewModel.shuffleCount.collectAsState()
     val showRescueDialog by viewModel.showRescueDialog.collectAsState()
-    val matchableTypes by viewModel.matchableTypes.collectAsState()
     val isMatchAnimating by viewModel.isMatchAnimating.collectAsState()
     val combo by viewModel.comboStreak.collectAsState()
     val elapsed by viewModel.elapsedSeconds.collectAsState()
@@ -212,7 +211,7 @@ fun GameScreen(
                 Row(Modifier.fillMaxSize()) {
                     Box(Modifier.weight(1f).fillMaxHeight().padding(8.dp)) {
                         MahjongBoard(
-                            tiles, matchableTypes, settings, boardEpoch, shuffleEpoch,
+                            tiles, settings, boardEpoch, shuffleEpoch,
                             viewModel.events, viewModel::onTileClick, viewModel::onBlockedTileTap,
                             Modifier.fillMaxSize()
                         )
@@ -263,7 +262,7 @@ fun GameScreen(
                             .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         MahjongBoard(
-                            tiles, matchableTypes, settings, boardEpoch, shuffleEpoch,
+                            tiles, settings, boardEpoch, shuffleEpoch,
                             viewModel.events, viewModel::onTileClick, viewModel::onBlockedTileTap,
                             Modifier.fillMaxSize()
                         )
