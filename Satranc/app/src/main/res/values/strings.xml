@@ -1,0 +1,103 @@
+<resources>
+    <string name="app_name">Satranç Salonu</string>
+    <string name="menu_kicker">KLASİK SALON</string>
+    <string name="menu_title">Satranç</string>
+    <string name="menu_sub">Tahtanı seç, rengi ayarla, oyuna otur.</string>
+    <string name="continue_game">Devam et</string>
+    <string name="play_ai">Bilgisayara karşı</string>
+    <string name="play_local">İki oyuncu</string>
+    <string name="puzzles">Bulmacalar</string>
+    <string name="settings">Ayarlar</string>
+    <string name="stats">İstatistik</string>
+    <string name="rules">Kurallar</string>
+    <string name="difficulty">Zorluk</string>
+    <string name="easy">Kolay</string>
+    <string name="medium">Orta</string>
+    <string name="hard">Zor</string>
+    <string name="side">Senin rengin</string>
+    <string name="white">Beyaz</string>
+    <string name="black">Siyah</string>
+    <string name="themes">Tahta rengi</string>
+    <string name="you">Sen</string>
+    <string name="salon">Salon</string>
+    <string name="thinking">Salon düşünüyor…</string>
+    <string name="check">Şah!</string>
+    <string name="white_turn">Beyaz oynar</string>
+    <string name="black_turn">Siyah oynar</string>
+    <string name="mate_title">Mat</string>
+    <string name="draw_title">Berabere</string>
+    <string name="resign_title">Teslim</string>
+    <string name="time_title">Süre bitti</string>
+    <string name="you_win">Kazandın</string>
+    <string name="you_lose">Salon kazandı</string>
+    <string name="white_wins">Beyaz kazandı</string>
+    <string name="black_wins">Siyah kazandı</string>
+    <string name="draw_body">Oyun berabere bitti.</string>
+    <string name="new_game">Yeni oyun</string>
+    <string name="menu">Ana menü</string>
+    <string name="review">Tahtayı gör</string>
+    <string name="undo">Geri</string>
+    <string name="hint">İpucu</string>
+    <string name="flip">Çevir</string>
+    <string name="resign">Teslim</string>
+    <string name="confirm_new">Yeni oyun?</string>
+    <string name="confirm_new_body">Bu parti silinir.</string>
+    <string name="confirm_resign">Teslim ol?</string>
+    <string name="confirm_resign_body">Bu parti burada biter.</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="promotion">Terfi</string>
+    <string name="puzzle_ok">Çözüldü</string>
+    <string name="puzzle_ok_body">Mat geldi. Sıradaki bulmacaya geçebilirsin.</string>
+    <string name="puzzle_no">Bu hamle mat değil.</string>
+    <string name="puzzle_next">Sıradaki</string>
+    <string name="puzzle_help">Her bulmaca tek hamlede mattır. Yanlış hamle geri alınır.</string>
+    <string name="puzzle_side">Rakip</string>
+    <string name="mate_in_one">1 hamlede mat</string>
+    <string name="puzzles_solved">Çözülen: %1$d</string>
+    <string name="settings_title">Ayarlar</string>
+    <string name="sound_label">Ses</string>
+    <string name="haptics">Titreşim</string>
+    <string name="coords">Koordinatlar</string>
+    <string name="dots">Yasal kareler</string>
+    <string name="clock">Satranç saati</string>
+    <string name="minutes">Süre (dakika)</string>
+    <string name="piece_style">Taş stili</string>
+    <string name="pieces_classic">Klasik</string>
+    <string name="pieces_gold">Altın</string>
+    <string name="pieces_night">Gece</string>
+    <string name="privacy">Gizlilik seçenekleri</string>
+    <string name="ad_switch_on">Yandex + Huawei</string>
+    <string name="ad_switch_off">Yalnızca AdMob</string>
+    <string name="ad_line">Reklam anahtarı: %1$s\nÜlke: %2$s   ·   Ağ: %3$s</string>
+    <string name="stats_title">İstatistik</string>
+    <string name="played">Bilgisayara karşı parti</string>
+    <string name="wins">Galibiyet</string>
+    <string name="losses">Mağlubiyet</string>
+    <string name="draws">Beraberlik</string>
+    <string name="puzzles_solved_label">Çözülen bulmaca</string>
+    <string name="rules_title">Nasıl oynanır</string>
+    <string name="rule_1_title">Hamle</string>
+    <string name="rule_1_body">Kendi taşını seç, yanan kareye bas. Son hamle renkli, şah kırmızı yanar.</string>
+    <string name="rule_2_title">Rok, geçerken alma, terfi</string>
+    <string name="rule_2_body">Şah ve kale hiç oynamadıysa ve araları boşsa rok yapılır. Rakip piyonu iki kare ilerlediyse yanında geçerken alabilirsin. Piyon son sıraya varınca vezir, kale, fil veya at seçersin.</string>
+    <string name="rule_3_title">Mat ve beraberlik</string>
+    <string name="rule_3_body">Şah kaçamazsa mat. Hamle yoksa ve şah tehdit altında değilse pat. 50 hamle, üç kez tekrar ve yetersiz taş da beraberliktir.</string>
+    <string name="rule_4_title">İpucu ve reklam</string>
+    <string name="rule_4_body">Her partide 3 ipucu vardır. Bitince kısa bir ödüllü reklam 3 ipucu daha verir. Parti bitip menüye veya yeni oyuna geçince geçiş reklamı gösterilir. Alt şerit standart bannerın iki katı yükseklikte büyük bannerdır.</string>
+    <string name="no_internet_msg">İnternet bağlantını kontrol et</string>
+    <string name="ad_not_ready_msg">Reklam hazır değil, tekrar dene</string>
+
+    <string name="yandex_banner_id" translatable="false">demo-banner-yandex</string>
+    <string name="yandex_interstitial_id" translatable="false">demo-interstitial-yandex</string>
+    <string name="yandex_rewarded_id" translatable="false">demo-rewarded-yandex</string>
+
+    <string name="huawei_banner_id" translatable="false">testw6vs28auh3</string>
+    <string name="huawei_interstitial_id" translatable="false">teste9ig9jnh3i</string>
+    <string name="huawei_rewarded_id" translatable="false">testx9dtjwj8hp</string>
+
+    <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_banner_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_interstitial_id" translatable="false">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="admob_rewarded_id" translatable="false">ca-app-pub-3940256099942544/5224354917</string>
+</resources>
