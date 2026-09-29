@@ -33,8 +33,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -197,7 +197,7 @@ fun HomeScreen(
                 HomeMiniButton(stringResource(R.string.home_stats), Icons.Default.BarChart, theme) {
                     soundManager.playButton(); onStats()
                 }
-                HomeMiniButton(stringResource(R.string.home_how_to), Icons.Default.HelpOutline, theme) {
+                HomeMiniButton(stringResource(R.string.home_how_to), Icons.AutoMirrored.Filled.HelpOutline, theme) {
                     soundManager.playButton(); onTutorial()
                 }
             }
@@ -313,7 +313,7 @@ fun SettingsScreen(viewModel: GameViewModel, soundManager: SoundManager, onBack:
                                 .padding(12.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            TilePreview("Chun", 56.dp, s, theme)
+                            TilePreview("Man5", 56.dp, s, theme)
                             Spacer(Modifier.height(8.dp))
                             Text(stringResource(s.titleRes), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 13.sp)
                         }

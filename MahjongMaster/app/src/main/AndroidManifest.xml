@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MahjongMaster"
         android:usesCleartextTraffic="true"
+        android:enableOnBackInvokedCallback="true"
         tools:targetApi="31">
 
         <!-- Google AdMob uygulama kimliği (strings.xml -> admob_app_id).
