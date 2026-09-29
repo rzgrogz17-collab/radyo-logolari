@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Boş/şeffaf drawable: Sistem splash'taki icon'u tamamen gizler.
+     Sadece arka plan rengi görünür, sonra Compose splash devralır. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+</shape>
