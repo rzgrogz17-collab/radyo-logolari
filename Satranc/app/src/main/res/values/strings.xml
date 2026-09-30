@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="tr">
     <string name="app_name">Satranç Salonu</string>
     <string name="menu_kicker">KLASİK SALON</string>
     <string name="menu_title">Satranç</string>
@@ -67,9 +67,7 @@
     <string name="pieces_gold">Altın</string>
     <string name="pieces_night">Gece</string>
     <string name="privacy">Gizlilik seçenekleri</string>
-    <string name="ad_switch_on">Yandex + Huawei</string>
-    <string name="ad_switch_off">Yalnızca AdMob</string>
-    <string name="ad_line">Reklam anahtarı: %1$s\nÜlke: %2$s   ·   Ağ: %3$s</string>
+    <string name="ad_line">Reklam: Google AdMob</string>
     <string name="stats_title">İstatistik</string>
     <string name="played">Bilgisayara karşı parti</string>
     <string name="wins">Galibiyet</string>
@@ -89,14 +87,6 @@
     <string name="ad_not_ready_msg">Reklam hazır değil, tekrar dene</string>
     <string name="connection_error_title">Bağlantı hatası</string>
     <string name="connection_error_msg">İnternet bağlantısı kurulamadı. Tekrar dene.</string>
-
-    <string name="yandex_banner_id" translatable="false">demo-banner-yandex</string>
-    <string name="yandex_interstitial_id" translatable="false">demo-interstitial-yandex</string>
-    <string name="yandex_rewarded_id" translatable="false">demo-rewarded-yandex</string>
-
-    <string name="huawei_banner_id" translatable="false">testw6vs28auh3</string>
-    <string name="huawei_interstitial_id" translatable="false">teste9ig9jnh3i</string>
-    <string name="huawei_rewarded_id" translatable="false">testx9dtjwj8hp</string>
 
     <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
     <string name="admob_banner_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>

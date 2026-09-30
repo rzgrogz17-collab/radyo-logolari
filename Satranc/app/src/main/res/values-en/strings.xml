@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <string name="app_name">Chess Salon</string>
     <string name="menu_kicker">CLASSIC SALON</string>
     <string name="menu_title">Chess</string>
@@ -67,9 +67,7 @@
     <string name="pieces_gold">Gold</string>
     <string name="pieces_night">Night</string>
     <string name="privacy">Privacy options</string>
-    <string name="ad_switch_on">Yandex + Huawei</string>
-    <string name="ad_switch_off">AdMob only</string>
-    <string name="ad_line">Ad switch: %1$s\nCountry: %2$s   ·   Network: %3$s</string>
+    <string name="ad_line">Ads: Google AdMob</string>
     <string name="stats_title">Statistics</string>
     <string name="played">Games vs salon</string>
     <string name="wins">Wins</string>

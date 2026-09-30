@@ -67,8 +67,6 @@ dependencies {
     // Compose Material3 tek başına bu stili getirmez.
     implementation("com.google.android.material:material:1.12.0")
 
-    implementation("com.yandex.android:mobileads:8.5.0")
-    implementation("com.huawei.hms:ads-lite:13.4.91.300")
     implementation("com.google.android.gms:play-services-ads:25.5.0")
     implementation("com.google.android.ump:user-messaging-platform:4.0.0")
 

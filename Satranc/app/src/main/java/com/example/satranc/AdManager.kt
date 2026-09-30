@@ -2,11 +2,9 @@ package com.example.satranc
 
 import android.app.Activity
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -25,11 +23,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.Locale
-import java.util.TimeZone
 import java.util.concurrent.atomic.AtomicBoolean
-
-enum class AdNetwork { YANDEX, HUAWEI, ADMOB }
 
 /** Tam ekran (geçiş / ödüllü) reklam olayları — her ağ bunları kendi SDK olaylarından çağırır. */
 internal class FullscreenCallbacks(
@@ -40,13 +34,10 @@ internal class FullscreenCallbacks(
 )
 
 /**
- * Her reklam ağı (Yandex / Huawei / AdMob) bu arayüzü uygular.
- * Ortak davranış (internet kontrolü, Toast mesajları, yeniden yükleme,
- * yedek/acil hak verme) AdManager içinde TEK yerde yönetilir; böylece
- * üç ağda da oyunun reklam mantığı birebir aynı çalışır.
+ * Google AdMob sağlayıcısı. Ortak davranış (internet kontrolü, Toast,
+ * yeniden yükleme) AdManager içinde yönetilir.
  */
 internal interface AdProvider {
-    val network: AdNetwork
 
     /** SDK'yı başlatır, geçiş + ödüllü reklamları önceden yükler, hazır olunca [onReady] çağrılır. */
     fun initialize(activity: Activity, onReady: () -> Unit)
@@ -64,86 +55,9 @@ internal interface AdProvider {
 }
 
 // ============================================================
-// ÜLKE TESPİTİ — Yandex mi Huawei mi?
-// Sıra: 1) Mobil şebeke ülkesi  2) SIM kart ülkesi
-//       3) Daha önce tespit edilmiş şebeke/SIM ülkesi (Wi-Fi tabletler için)
-//       4) Saat dilimi  5) Cihaz dili/bölgesi
-// ============================================================
-object CountryDetector {
-    private const val PREFS = "SatrancAdPrefs"
-    private const val KEY_LAST_COUNTRY = "last_telephony_country"
-
-    data class Result(val countryCode: String, val source: String)
-
-    fun detect(context: Context): Result {
-        val forced = AdConfig.DEBUG_FORCE_COUNTRY
-        if (!forced.isNullOrBlank() && isDebuggable(context)) {
-            return Result(forced.uppercase(Locale.ROOT), "debug-force")
-        }
-
-        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
-        val network = normalize(runCatching { tm?.networkCountryIso }.getOrNull())
-        val sim = normalize(runCatching { tm?.simCountryIso }.getOrNull())
-        val telephony = network ?: sim
-        if (telephony != null) {
-            prefs.edit().putString(KEY_LAST_COUNTRY, telephony).apply()
-            return Result(telephony, if (network != null) "network" else "sim")
-        }
-
-        normalize(prefs.getString(KEY_LAST_COUNTRY, null))?.let { return Result(it, "cached") }
-
-        val zoneId = TimeZone.getDefault().id
-        yandexCountryForTimeZone(zoneId)?.let { return Result(it, "timezone") }
-
-        val localeCountry = normalize(Locale.getDefault().country)
-        // Coğrafi bir saat dilimi (ör. Europe/Berlin) listede yoksa cihaz
-        // Yandex bölgesinde değildir; dil ayarı tek başına belirleyici olmaz.
-        if (isGeographicZone(zoneId)) {
-            val code = localeCountry?.takeUnless { it in AdConfig.YANDEX_COUNTRIES } ?: "ZZ"
-            return Result(code, "timezone")
-        }
-        return Result(localeCountry ?: "ZZ", "locale")
-    }
-
-    private fun normalize(code: String?): String? =
-        code?.trim()?.uppercase(Locale.ROOT)?.takeIf { it.length == 2 && it.all(Char::isLetter) }
-
-    private fun isDebuggable(context: Context): Boolean =
-        (context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
-
-    private fun isGeographicZone(id: String): Boolean =
-        id.contains('/') && !id.startsWith("Etc/") && !id.startsWith("SystemV/")
-
-    private fun yandexCountryForTimeZone(id: String): String? = when (id) {
-        "Europe/Istanbul", "Asia/Istanbul", "Turkey" -> "TR"
-        "Europe/Minsk" -> "BY"
-        "Europe/Chisinau", "Europe/Tiraspol" -> "MD"
-        "Europe/Belgrade" -> "RS"
-        "Asia/Tbilisi" -> "GE"
-        "Asia/Yerevan" -> "AM"
-        "Asia/Baku" -> "AZ"
-        "Asia/Bishkek" -> "KG"
-        "Asia/Dushanbe" -> "TJ"
-        "Asia/Tashkent", "Asia/Samarkand" -> "UZ"
-        "Asia/Almaty", "Asia/Qostanay", "Asia/Qyzylorda", "Asia/Aqtobe",
-        "Asia/Aqtau", "Asia/Atyrau", "Asia/Oral" -> "KZ"
-
-        "Europe/Moscow", "W-SU", "Europe/Kaliningrad", "Europe/Kirov", "Europe/Volgograd",
-        "Europe/Astrakhan", "Europe/Saratov", "Europe/Ulyanovsk", "Europe/Samara",
-        "Asia/Yekaterinburg", "Asia/Omsk", "Asia/Novosibirsk", "Asia/Barnaul", "Asia/Tomsk",
-        "Asia/Novokuznetsk", "Asia/Krasnoyarsk", "Asia/Irkutsk", "Asia/Chita", "Asia/Yakutsk",
-        "Asia/Khandyga", "Asia/Vladivostok", "Asia/Ust-Nera", "Asia/Magadan", "Asia/Sakhalin",
-        "Asia/Srednekolymsk", "Asia/Kamchatka", "Asia/Anadyr" -> "RU"
-
-        else -> null
-    }
-}
-
-// ============================================================
-// 1. REKLAM YÖNETİCİSİ — Yandex / Huawei Petal / Google AdMob
-// Oyunun geri kalanı yalnızca bu nesnenin initialize / showInterstitial /
-// showRewarded fonksiyonlarını ve BannerAdView() composable'ını kullanır.
+// REKLAM YÖNETİCİSİ — yalnızca Google AdMob
+// Oyunun geri kalanı initialize / showInterstitial / showRewarded
+// ve BannerAdView() kullanır.
 // ============================================================
 object AdManager {
     private const val TAG = "AdManager"
@@ -159,41 +73,15 @@ object AdManager {
     private var fullscreenInProgress = false
     private var fullscreenStartedAt = 0L
 
-    private val _activeNetwork = MutableStateFlow<AdNetwork?>(null)
-    val activeNetwork: StateFlow<AdNetwork?> = _activeNetwork.asStateFlow()
-
-    /** SDK hazır (ve AdMob için kullanıcı onayı alınmış) olduğunda true olur. */
+    /** SDK hazır ve kullanıcı onayı alınmış olduğunda true olur. */
     private val _adsReady = MutableStateFlow(false)
     val adsReady: StateFlow<Boolean> = _adsReady.asStateFlow()
-
-    var detectedCountry: String = ""
-        private set
-
-    /** Hangi ağın kullanılacağını belirler — tek karar noktası. */
-    fun resolveNetwork(context: Context): AdNetwork {
-        val result = CountryDetector.detect(context)
-        detectedCountry = result.countryCode
-        val network = when {
-            !AdConfig.USE_YANDEX_AND_HUAWEI -> AdNetwork.ADMOB
-            result.countryCode in AdConfig.YANDEX_COUNTRIES -> AdNetwork.YANDEX
-            else -> AdNetwork.HUAWEI
-        }
-        Log.i(TAG, "Country=${result.countryCode} (source=${result.source}) -> $network")
-        return network
-    }
 
     fun initialize(activity: Activity) {
         if (provider != null) return
         try {
-            val appContext = activity.applicationContext
-            val network = resolveNetwork(appContext)
-            val created: AdProvider = when (network) {
-                AdNetwork.YANDEX -> YandexAdProvider(appContext)
-                AdNetwork.HUAWEI -> HuaweiAdProvider(appContext)
-                AdNetwork.ADMOB -> AdMobAdProvider(appContext)
-            }
+            val created = AdMobAdProvider(activity.applicationContext)
             provider = created
-            _activeNetwork.value = network
             created.initialize(activity) { runOnMain { _adsReady.value = true } }
         } catch (e: Throwable) {
             Log.e(TAG, "Ad initialization failed", e)
@@ -351,13 +239,11 @@ object AdManager {
 }
 
 /**
- * Aktif reklam ağına göre (Yandex / Huawei / AdMob) alt banner reklamı.
- * Büyük banner: standart 50dp yüksekliğin iki katı (100dp) ayrılır.
- * Mevcut şerit bir standart banner kadar yukarı taşınır; tahta ve alt düğmeler bu kadar yükselir.
+ * Google AdMob büyük banner. Yükseklik 100dp: standart 50dp şeridin
+ * bir standart banner kadar yukarı uzatılmış hali.
  */
 @Composable
 fun BannerAdView(modifier: Modifier = Modifier) {
-    val network by AdManager.activeNetwork.collectAsState()
     val ready by AdManager.adsReady.collectAsState()
     BoxWithConstraints(
         modifier
@@ -366,8 +252,8 @@ fun BannerAdView(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center
     ) {
         val widthDp = maxWidth.value.toInt().coerceAtLeast(1)
-        if (network != null && ready) {
-            key(network, widthDp) {
+        if (ready) {
+            key(widthDp) {
                 AndroidView(
                     modifier = Modifier
                         .fillMaxWidth()
