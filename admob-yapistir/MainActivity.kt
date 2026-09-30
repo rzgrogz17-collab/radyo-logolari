@@ -3,6 +3,7 @@ package com.gamelogic.satrancpro
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -20,18 +21,6 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 
-/**
- * Yalnızca Google AdMob.
- * Büyük banner yüksekliği 100dp.
- *
- * AndroidManifest.xml içine, <application> etiketinin içine ekle:
- * <meta-data
- *     android:name="com.google.android.gms.ads.APPLICATION_ID"
- *     android:value="ca-app-pub-3940256099942544~3347511713" />
- *
- * app/build.gradle bağımlılığı:
- * implementation("com.google.android.gms:play-services-ads:25.5.0")
- */
 class MainActivity : AppCompatActivity() {
 
     private var bannerView: AdView? = null
@@ -64,6 +53,10 @@ class MainActivity : AppCompatActivity() {
         adView.adUnitId = BANNER_ID
         adView.setAdSize(AdSize.getInlineAdaptiveBannerAdSize(widthDp, BANNER_HEIGHT_DP))
         adView.adListener = object : AdListener() {
+            override fun onAdLoaded() {
+                Log.i(TAG, "Banner loaded")
+            }
+
             override fun onAdFailedToLoad(error: LoadAdError) {
                 Log.w(TAG, "Banner: ${error.code} ${error.message}")
             }
@@ -80,8 +73,7 @@ class MainActivity : AppCompatActivity() {
                 ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, heightPx)
             )
         } else {
-            val root = findViewById<ViewGroup>(android.R.id.content)
-            root.addView(
+            findViewById<ViewGroup>(android.R.id.content).addView(
                 adView,
                 FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -104,7 +96,7 @@ class MainActivity : AppCompatActivity() {
         for (name in names) {
             val id = resources.getIdentifier(name, "id", packageName)
             if (id != 0) {
-                val view = findViewById<android.view.View>(id)
+                val view = findViewById<View>(id)
                 if (view is ViewGroup) return view
             }
         }
@@ -203,6 +195,8 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         bannerView?.destroy()
         bannerView = null
+        interstitialAd = null
+        rewardedAd = null
         super.onDestroy()
     }
 

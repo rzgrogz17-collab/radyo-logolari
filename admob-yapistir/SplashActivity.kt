@@ -8,9 +8,6 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.ads.MobileAds
 
-/**
- * Yalnızca Google AdMob. Açılışta SDK başlar, ardından MainActivity açılır.
- */
 class SplashActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
