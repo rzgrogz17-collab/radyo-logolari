@@ -63,6 +63,9 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+    // XML teması Theme.Material3.DayNight.NoActionBar bu kütüphanede.
+    // Compose Material3 tek başına bu stili getirmez.
+    implementation("com.google.android.material:material:1.12.0")
 
     implementation("com.yandex.android:mobileads:8.5.0")
     implementation("com.huawei.hms:ads-lite:13.4.91.300")

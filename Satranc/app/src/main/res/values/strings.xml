@@ -87,6 +87,8 @@
     <string name="rule_4_body">Her partide 3 ipucu vardır. Bitince kısa bir ödüllü reklam 3 ipucu daha verir. Parti bitip menüye veya yeni oyuna geçince geçiş reklamı gösterilir. Alt şerit standart bannerın iki katı yükseklikte büyük bannerdır.</string>
     <string name="no_internet_msg">İnternet bağlantını kontrol et</string>
     <string name="ad_not_ready_msg">Reklam hazır değil, tekrar dene</string>
+    <string name="connection_error_title">Bağlantı hatası</string>
+    <string name="connection_error_msg">İnternet bağlantısı kurulamadı. Tekrar dene.</string>
 
     <string name="yandex_banner_id" translatable="false">demo-banner-yandex</string>
     <string name="yandex_interstitial_id" translatable="false">demo-interstitial-yandex</string>

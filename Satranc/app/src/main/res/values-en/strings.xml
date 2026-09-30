@@ -87,4 +87,6 @@
     <string name="rule_4_body">Each game starts with 3 hints. When they run out, a rewarded ad grants 3 more. An interstitial plays when a finished game returns to the menu or starts again. The bottom banner is a large banner, twice a standard banner tall.</string>
     <string name="no_internet_msg">Check your internet connection</string>
     <string name="ad_not_ready_msg">Ad not ready, try again</string>
+    <string name="connection_error_title">Connection error</string>
+    <string name="connection_error_msg">Could not connect. Please try again.</string>
 </resources>
