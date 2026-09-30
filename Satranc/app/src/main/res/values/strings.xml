@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="tr">
     <string name="app_name">Satranç Salonu</string>
     <string name="menu_kicker">KLASİK SALON</string>
     <string name="menu_title">Satranç</string>

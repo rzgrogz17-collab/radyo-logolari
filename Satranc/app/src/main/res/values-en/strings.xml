@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:locale="en">
     <string name="app_name">Chess Salon</string>
     <string name="menu_kicker">CLASSIC SALON</string>
     <string name="menu_title">Chess</string>
