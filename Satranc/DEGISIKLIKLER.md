@@ -1,27 +1,17 @@
 # Satranç Salonu — yapılanlar
 
-Bu paket, depoya `satranc.zip` hiç yüklenmediği için mevcut bir satranç projesinin üstüne yama değil, oynanabilir yeni bir Android Studio projesidir. Reklam kararı, diğer oyunlardaki (Mahjong / Sudoku) anahtarla aynı kuralla kuruldu; ülke listesi ve true/false geçişi bozulmadı.
+Bu paket, depoya `satranc.zip` hiç yüklenmediği için mevcut bir satranç projesinin üstüne yama değil, oynanabilir yeni bir Android Studio projesidir.
 
-## Reklam anahtarı
+## Reklam
 
-Tek yer: `app/src/main/java/com/example/satranc/AdConfig.kt`
+Yalnızca Google AdMob kullanılır.
 
-- `USE_YANDEX_AND_HUAWEI = true`  
-  RU, TR, KZ, BY, UZ, AM, KG, AZ, TJ, GE, MD, RS → Yandex  
-  Bu ülkelerin dışı → Huawei Petal
-- `USE_YANDEX_AND_HUAWEI = false`  
-  Yandex ve Huawei hiç açılmaz. Her ülkede yalnızca AdMob.
-
-Ülke sırası: şebeke, SIM, daha önce görülen şebeke, saat dilimi, cihaz dili. Ayarlar ekranının altında ülke ve seçilen ağ yazılır.
-
-Birim kimlikleri `res/values/strings.xml` içindedir. Yandex şu an demo kimlik (`demo-banner-yandex` vb.), Huawei ve AdMob resmi test kimlikleridir. Yayına çıkmadan önce kendi kimliklerinle değiştir. AdMob uygulama kimliği manifestteki `APPLICATION_ID` alanından okunur.
+Birim kimlikleri `res/values/strings.xml` içindedir (`admob_app_id`, `admob_banner_id`, `admob_interstitial_id`, `admob_rewarded_id`). Şu an Google’ın resmi test kimlikleridir. Yayına çıkmadan önce kendi kimliklerinle değiştir. Uygulama kimliği manifestteki `APPLICATION_ID` alanından okunur.
 
 ## Büyük banner
 
 Alt şerit artık 50dp standart banner değil. Yükseklik 100dp: bir standart banner kadar yukarı uzar. Tahta ve alttaki düğmeler bu kadar yükselir.
 
-- Yandex: `BannerAdSize.inline`, en fazla 100dp
-- Huawei: `BannerAdSize(genişlik, 100)`
 - AdMob: `getInlineAdaptiveBannerAdSize(genişlik, 100)`
 
 Aynı büyük şerit ana menünün altında da durur.

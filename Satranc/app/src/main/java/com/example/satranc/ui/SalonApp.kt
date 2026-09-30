@@ -62,7 +62,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.satranc.AdConfig
 import com.example.satranc.AdManager
 import com.example.satranc.BannerAdView
 import com.example.satranc.EndReason
@@ -476,8 +475,6 @@ private fun ConfirmSheet(title: String, body: String, onYes: () -> Unit, onNo: (
 
 @Composable
 private fun SettingsScreen(model: GameModel, state: com.example.satranc.GameState, activity: Activity) {
-    val ready by AdManager.adsReady.collectAsState()
-    val network by AdManager.activeNetwork.collectAsState()
     val s = state.settings
     InfoScreen(stringResource(R.string.settings_title), { model.open(Screen.MENU) }) {
         ToggleRow(stringResource(R.string.sound_label), s.sound) { model.updateSettings { it.copy(sound = !it.sound) } }
@@ -503,9 +500,8 @@ private fun SettingsScreen(model: GameModel, state: com.example.satranc.GameStat
             }
         }
         Spacer(Modifier.height(16.dp))
-        val mode = if (AdConfig.USE_YANDEX_AND_HUAWEI) stringResource(R.string.ad_switch_on) else stringResource(R.string.ad_switch_off)
         Text(
-            stringResource(R.string.ad_line, mode, AdManager.detectedCountry.ifBlank { "…" }, network?.name ?: if (ready) "…" else "…"),
+            stringResource(R.string.ad_line),
             color = Mist,
             fontSize = 12.sp
         )
