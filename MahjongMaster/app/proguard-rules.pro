@@ -4,10 +4,6 @@
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
 
-# --- Huawei Ads ---
--keep class com.huawei.openalliance.ad.** { *; }
--keep class com.huawei.hms.ads.** { *; }
-
 # --- Google AdMob / UMP ---
 -keep class com.google.android.gms.ads.** { *; }
 -keep class com.google.android.ump.** { *; }
@@ -28,13 +24,3 @@
 # --- Data classes (keep for SharedPreferences serialization) ---
 -keep class com.example.mahjongmaster.Tile { *; }
 -keep class com.example.mahjongmaster.MoveRecord { *; }
-
-
-# --- Yandex Mobile Ads ---
--keep class com.yandex.mobile.ads.** { *; }
--keep class com.yandex.mobile.ads.banner.** { *; }
--keep class com.yandex.mobile.ads.interstitial.** { *; }
--keep class com.yandex.mobile.ads.rewarded.** { *; }
--keep class com.yandex.mobile.ads.common.** { *; }
--dontwarn com.yandex.mobile.ads.**
--dontwarn com.yandex.mobile.**

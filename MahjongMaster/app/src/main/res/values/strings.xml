@@ -112,16 +112,6 @@
     <string name="tutorial_4_title">Combos and stars</string>
     <string name="tutorial_4_body">Chain matches for a combo bonus. Finish under par time for 3 stars. Next level plays after a short interstitial ad.</string>
 
-    <!-- Yandex Mobile Ads — gerçek birim ID\'leri (mevcut proje) -->
-    <string name="yandex_banner_id" translatable="false">R-M-19535866-1</string>
-    <string name="yandex_interstitial_id" translatable="false">R-M-19535866-2</string>
-    <string name="yandex_rewarded_id" translatable="false">R-M-19535866-3</string>
-
-    <!-- Huawei Petal Ads — resmi TEST ID\'leri. Yayınlamadan önce kendi Petal Ads ID\'lerinizle değiştirin. -->
-    <string name="huawei_banner_id" translatable="false">testw6vs28auh3</string>
-    <string name="huawei_interstitial_id" translatable="false">teste9ig9jnh3i</string>
-    <string name="huawei_rewarded_id" translatable="false">testx9dtjwj8hp</string>
-
     <!-- Google AdMob — resmi TEST ID\'leri. Yayınlamadan önce kendi AdMob ID\'lerinizle değiştirin.
          AdMob konsolunda GDPR mesajı (Privacy & messaging) oluşturmayı unutmayın. -->
     <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>

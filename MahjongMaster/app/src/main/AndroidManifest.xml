@@ -4,7 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
     <application
@@ -16,13 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MahjongMaster"
-        android:usesCleartextTraffic="true"
         android:enableOnBackInvokedCallback="true"
         tools:targetApi="31">
 
-        <!-- Google AdMob uygulama kimliği (strings.xml -> admob_app_id).
-             AdConfig.USE_YANDEX_AND_HUAWEI = false iken AdMob SDK bunu okur.
-             true olsa bile manifest'te bulunması AdMob SDK birleştirme kuralı gereğidir. -->
+        <!-- Google AdMob uygulama kimliği (strings.xml -> admob_app_id). -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/admob_app_id"

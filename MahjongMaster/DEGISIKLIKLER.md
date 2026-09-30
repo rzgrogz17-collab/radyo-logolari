@@ -15,50 +15,29 @@ AGP 8.7.3, Kotlin 2.2.21, compileSdk / targetSdk 35, minSdk 24.
 
 ---
 
-## 1. Reklam anahtarı (istediğiniz true / false)
+## 1. Reklam — yalnızca Google AdMob
 
-Dosya:
+Tüm ülkelerde banner, geçiş ve ödüllü reklam Google AdMob ile gösterilir.
+Yandex ve Huawei SDK, depo ve kodu projede yoktur.
 
-`app/src/main/java/com/example/mahjongmaster/AdConfig.kt`
+Reklam birim ID'leri: `app/src/main/res/values/strings.xml`
 
-```
-const val USE_YANDEX_AND_HUAWEI = true
-```
+- `admob_app_id`
+- `admob_banner_id`
+- `admob_interstitial_id`
+- `admob_rewarded_id`
 
-- **true** (şu an böyle)
-  - Şu ülkelerde **Yandex**: RU, TR, KZ, BY, UZ, AM, KG, AZ, TJ, GE, MD, RS
-  - Bu listenin **dışındaki tüm ülkelerde** **Huawei Petal Ads**
-- **false**
-  - Yandex ve Huawei tamamen kapanır
-  - **Tüm ülkelerde yalnızca Google AdMob** gösterilir
+Şu an Google'ın resmi test ID'leri yazılıdır. Yayınlamadan önce kendi AdMob ID'lerinizle değiştirin.
+AdMob konsolunda Privacy & messaging bölümünden GDPR mesajı oluşturun.
 
-Ülke sırası: mobil şebeke ülkesi, SIM ülkesi, daha önce kaydedilmiş şebeke/SIM,
-saat dilimi, cihaz dili. Emülatörde ABD şebekesiyle denendi:
-`Country=US -> HUAWEI` (liste dışı olduğu için Petal).
+Oyun akışı:
 
-Reklam birim ID’leri tek yerde:
-
-`app/src/main/res/values/strings.xml`
-
-| Anahtar | Durum |
-|---|---|
-| `yandex_banner_id` / `yandex_interstitial_id` / `yandex_rewarded_id` | Sizin mevcut gerçek Yandex ID’leri, değiştirilmedi |
-| `huawei_banner_id` / `huawei_interstitial_id` / `huawei_rewarded_id` | Huawei’nin resmi **test** ID’leri. Yayına almadan kendi Petal Ads ID’lerinizle değiştirin |
-| `admob_app_id` / `admob_banner_id` / `admob_interstitial_id` / `admob_rewarded_id` | Google’ın resmi **test** ID’leri. Yayına almadan kendi AdMob ID’lerinizle değiştirin |
-
-AdMob’u açacaksanız (`USE_YANDEX_AND_HUAWEI = false`) AdMob konsolunda
-**Privacy & messaging** bölümünden GDPR mesajı oluşturun. Uygulama, gerekli
-olduğunda Google UMP onay formunu gösterir; Ayarlar’da “Gizlilik seçenekleri”
-çıkar.
-
-Oyun içindeki reklam mantığı bozulmadı:
-
-- İpucu hakkı bitince ödüllü reklam → 3 ipucu
-- Karıştırma hakkı bitince ödüllü reklam → 10 karıştırma
-- Reklam yüklenemezse acil 1 karıştırma (oyuncu kilitlenmesin)
-- İnternet yoksa “bağlantınızı kontrol edin” uyarısı, reklam açılmaz
-- Seviye bitince “Sonraki seviye” geçiş (interstitial) reklamından sonra ilerler
-- Banner, ekranın altında, seçilen ağa göre (Yandex / Huawei / AdMob)
+- İpucu hakkı bitince ödüllü reklam, 3 ipucu verir
+- Karıştırma hakkı bitince ödüllü reklam, 10 karıştırma verir
+- Reklam yüklenemezse acil 1 karıştırma verilir
+- İnternet yoksa uyarı çıkar, reklam açılmaz
+- Seviye bitince geçiş reklamından sonra sonraki seviye açılır
+- Banner ekranın altındadır
 
 ---
 
@@ -125,14 +104,12 @@ Müzik ve efekt Ayarlar’dan kapanır. Eski `music_enabled` anahtarı duruyor.
 
 `app/src/main/java/com/example/mahjongmaster/`
 
-- `AdConfig.kt` — true/false anahtar ve ülke listesi
-- `AdManager.kt` — ülke tespiti ve ortak reklam akışı
-- `YandexAdProvider.kt` / `HuaweiAdProvider.kt` / `AdMobAdProvider.kt`
+- `AdManager.kt` — AdMob geçiş, ödüllü ve banner akışı
+- `AdMobAdProvider.kt` — Google AdMob ve UMP onay formu
 - `GameEngine.kt` — kurallar, kayıt, süre, yıldız (dizilimler orijinal)
 - `SoundManager.kt` — efekt ve müzik
 - `Theme.kt` — renk, 5 tema, 2 taş stili
 - `TileView.kt` / `Scene.kt` / `UiComponents.kt` — taş ve cam arayüz
 - `GameScreen.kt` / `Screens.kt` / `MainActivity.kt` — ekranlar
 
-Manifest’e AdMob `APPLICATION_ID`, internet ve reklam kimliği izinleri eklendi.
-Huawei deposu `settings.gradle.kts` içinde: `https://developer.huawei.com/repo/`
+Manifest’te AdMob `APPLICATION_ID` vardır. Bağımlılık: `play-services-ads` ve `user-messaging-platform`.

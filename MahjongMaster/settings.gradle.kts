@@ -16,10 +16,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // Huawei Petal Ads (HMS Ads Kit) SDK'sı sadece bu depoda yayınlanıyor.
-        maven { url = uri("https://developer.huawei.com/repo/") }
     }
 }
 
-rootProject.name = "MahjongYandex"
+rootProject.name = "MahjongMaster"
 include(":app")

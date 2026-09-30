@@ -22,7 +22,7 @@ import com.google.android.ump.UserMessagingPlatform
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * GOOGLE ADMOB — AdConfig.USE_YANDEX_AND_HUAWEI = false olduğunda TÜM ülkelerde kullanılır.
+ * GOOGLE ADMOB — tüm ülkelerde kullanılan tek reklam ağı.
  * Reklam birim ID'leri: strings.xml -> admob_app_id / admob_banner_id /
  * admob_interstitial_id / admob_rewarded_id
  *
@@ -30,8 +30,6 @@ import java.util.concurrent.atomic.AtomicBoolean
  * (AdMob panelinde "Gizlilik ve mesajlaşma" bölümünden GDPR mesajı oluşturulmalıdır).
  */
 internal class AdMobAdProvider(private val appContext: Context) : AdProvider {
-    override val network = AdNetwork.ADMOB
-
     private val sdkStarted = AtomicBoolean(false)
     private var consentInformation: ConsentInformation? = null
     private var onReady: (() -> Unit)? = null

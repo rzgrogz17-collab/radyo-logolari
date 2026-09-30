@@ -66,14 +66,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
 
-    // ============================================================
-    // REKLAM SDK'LARI — hangisinin kullanılacağına AdConfig.kt karar verir
-    // ============================================================
-    // --- YANDEX ADS (RU, TR, KZ, BY, UZ, AM, KG, AZ, TJ, GE, MD, RS) ---
-    implementation("com.yandex.android:mobileads:8.5.0")
-    // --- HUAWEI PETAL ADS (listedeki ülkeler DIŞINDAKİ tüm ülkeler) ---
-    implementation("com.huawei.hms:ads-lite:13.4.91.300")
-    // --- GOOGLE ADMOB (AdConfig.USE_YANDEX_AND_HUAWEI = false olduğunda) ---
+    // --- GOOGLE ADMOB ---
     implementation("com.google.android.gms:play-services-ads:25.5.0")
     // AdMob için GDPR/KVKK onay formu (Google UMP) — AB/İngiltere kullanıcıları için
     implementation("com.google.android.ump:user-messaging-platform:4.0.0")
