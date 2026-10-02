@@ -1,0 +1,245 @@
+input: 9388
+output: 8841
+stats: {'country_from_api_name': 854, 'custom_url': 1250, 'country_from_exact_url': 6674, 'url_in_iptv_org': 6071, 'country_changed': 1169, 'fragile_url': 2067, 'country_from_host': 824, 'group_tr_genre_localized': 25, 'country_from_tr_host': 40, 'probe_fail': 1978, 'probe_ok': 1339, 'replaced_after_fail': 305, 'replaced_unprobed_https': 90, 'url_replaced': 395, 'dup_url_dropped': 547}
+still-dead: 1583
+countries:
+  US: 1477
+  IN: 592
+  INT: 423
+  DE: 372
+  ES: 330
+  IT: 292
+  UK: 288
+  RU: 285
+  TR: 251
+  CN: 236
+  DO: 194
+  CA: 178
+  BR: 165
+  NL: 153
+  FR: 146
+  ID: 130
+  IR: 118
+  CH: 117
+  MX: 114
+  AR: 91
+  CL: 88
+  PL: 80
+  RO: 79
+  CO: 75
+  GR: 75
+  HU: 75
+  KR: 73
+  EC: 71
+  PK: 68
+  VN: 66
+  PE: 63
+  UA: 59
+  TH: 58
+  CR: 57
+  SA: 57
+  MN: 56
+  GT: 52
+  HN: 51
+  IQ: 48
+  AE: 45
+  PT: 45
+  TW: 44
+  AU: 40
+  NG: 40
+  VE: 40
+  ZA: 40
+  SK: 33
+  AT: 32
+  BO: 31
+  PR: 30
+  BE: 27
+  CZ: 27
+  LB: 27
+  RS: 27
+  KZ: 26
+  SV: 26
+  MK: 25
+  SE: 25
+  UZ: 24
+  FI: 23
+  GB: 22
+  UG: 22
+  MT: 21
+  AZ: 20
+  BZ: 20
+  AL: 19
+  PY: 19
+  BG: 18
+  HK: 18
+  IL: 18
+  JO: 18
+  PS: 18
+  BA: 17
+  HR: 17
+  HT: 17
+  MY: 17
+  CI: 16
+  EG: 16
+  KH: 16
+  LK: 16
+  PA: 16
+  SI: 16
+  CD: 15
+  QA: 15
+  MD: 14
+  TJ: 14
+  CM: 13
+  GE: 13
+  LU: 13
+  NI: 12
+  NZ: 12
+  PH: 12
+  BD: 11
+  CY: 11
+  EE: 11
+  IE: 11
+  JP: 11
+  NO: 11
+  SG: 11
+  SN: 11
+  BY: 10
+  DK: 10
+  KW: 10
+  LA: 10
+  LT: 10
+  LV: 10
+  AW: 9
+  XK: 9
+  AF: 8
+  KG: 8
+  ME: 8
+  MO: 8
+  TG: 8
+  TM: 8
+  GH: 7
+  KE: 7
+  MA: 7
+  NP: 7
+  SO: 7
+  SX: 7
+  SY: 7
+  AM: 6
+  MQ: 6
+  MV: 6
+  BF: 5
+  BH: 5
+  BJ: 5
+  BQ: 5
+  GP: 5
+  JM: 5
+  LY: 5
+  MM: 5
+  OM: 5
+  TT: 5
+  BN: 4
+  CG: 4
+  CW: 4
+  ET: 4
+  GN: 4
+  GY: 4
+  IS: 4
+  NE: 4
+  RW: 4
+  TO: 4
+  TZ: 4
+  YE: 4
+  AO: 3
+  DZ: 3
+  FO: 3
+  MC: 3
+  SD: 3
+  BS: 2
+  CU: 2
+  KN: 2
+  ML: 2
+  MZ: 2
+  SM: 2
+  SR: 2
+  UY: 2
+  VG: 2
+  AD: 1
+  BB: 1
+  BM: 1
+  DJ: 1
+  EH: 1
+  ER: 1
+  GF: 1
+  GG: 1
+  GM: 1
+  GQ: 1
+  GU: 1
+  KP: 1
+  LC: 1
+  PG: 1
+  TD: 1
+  TN: 1
+  VI: 1
+  WS: 1
+  ZW: 1
+dead sample:
+  [AE HTTPError 403] Abu Dhabi Emirates (1080p) :: https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/emarat_tv/emarat_tv_hls_nd/index.m3u8
+  [AE HTTPError 403] Abu Dhabi Sports 1 (1080p) :: https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/abudhabi_sports_1/abudhabi_sports_1_hls_nd/index.m3u8
+  [AE HTTPError 403] Abu Dhabi Sports 2 (1080p) :: https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/abudhabi_sports_2/abudhabi_sports_2_hls_nd/index.m3u8
+  [AE HTTPError 403] Abu Dhabi TV (1080p) :: https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/abudhabi_tv/abudhabi_tv_hls_nd/index.m3u8
+  [AE HTTPError 403] Baynounah TV (1080p) :: https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/baynounah/baynounah_hls_nd/index.m3u8
+  [AE HTTPError 403] Majid (1080p) :: https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/majid/majid_hls_nd/index.m3u8
+  [AE HTTPError 403] National Geographic Abu Dhabi HD (1080p) :: https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/national_geo/national_geo_hls_nd/index.m3u8
+  [AE HTTPError 403] Yas TV (1080p) :: https://admn-live-cdn-lb.starzplayarabia.com/out/v1/admn_tv_enc/yas_1/yas_1_hls_nd/index.m3u8
+  [AF TimeoutError] Hewad TV (720p) [Not 24/7] :: http://51.210.199.58/hls/stream.m3u8
+  [AL HTTPError 403] Bang Bang (480p) :: https://digitalb-live.morescreens.com/DAL_1_004/playlist.m3u8?application_id=backoffice1&application_installation_id=1&a
+  [AL HTTPError 403] Cufo :: https://digitalb-live.morescreens.com/DAL_1_005/playlist.m3u8?application_id=backoffice1&application_installation_id=1&a
+  [AL URLError] IN TV :: https://envivo.bolivia-link.com:3580/live/intvlive.m3u8
+  [AL URLError] RTSH 1 (1080p) :: http://178.33.11.6:8696/live/rtsh1ott/playlist.m3u8
+  [AL URLError] RTSH 2 (1080p) :: http://178.33.11.6:8696/live/rtsh2/playlist.m3u8
+  [AL URLError] RTSH 24 (1080p) :: http://178.33.11.6:8696/live/rtsh24/playlist.m3u8
+  [AL URLError] RTSH Shqip (1080p) :: http://178.33.11.6:8696/live/rtshshqip/playlist.m3u8
+  [AL URLError] RTSH Sport (1080p) :: http://178.33.11.6:8696/live/rtshsport/playlist.m3u8
+  [AM URLError] Fast Sports (1080p) :: http://66.102.120.18:8000/play/a05f/index.m3u8
+  [AR HTTPError 403] Canal 13 Jujuy TV (720p) :: https://genexservicios.com:19360/canal13jujuy/canal13jujuy.m3u8
+  [AR URLError] Canal 13 San Luis :: https://stream.radiosmundiales.com:19360/sanluismas/sanluismas.m3u8
+  [CH TimeoutError] Canal+ (1080p) :: https://viamotionhsi.netplus.ch/live/eds/canalplusclair/browser-HLS8/canalplusclair.m3u8
+  [AR URLError] Fox Sports :: https://ott.udptv.com/stream/udptv/foxsports/master.m3u8?p=eeaf011ae6d8cdbf0200cc0234f54fdc95d7b5b158d22258efd49d7e36275
+  [VE URLError] GlobalTV (480p) [Not 24/7] :: https://streamtv.intervenhosting.net:3179/live/globaltvlive.m3u8
+  [AR URLError] Magic Kids (486p) :: https://magicstream.ddns.net/magicstream/stream.m3u8
+  [AR URLError] Much (720p) :: https://fl1.moveonjoy.com/MUCH/index.m3u8
+  [AR URLError] National Geographic Latin America South (1080p) :: http://38.183.182.166:8000/play/a0vd/index.m3u8
+  [AR HTTPError 404] Telecinco (1080p) :: https://videohd.live:19360/8016/8016.m3u8
+  [PK URLError] Venus HD (720p) :: http://103.250.28.74:8000/play/a04x/index.m3u8
+  [BR HTTPError 403] Xtrema Animal :: https://stmv6.voxtvhd.com.br/xtremaanimal/xtremaanimal/playlist.m3u8
+  [AT URLError] Balkan Radio Salzburg (480p) :: https://channel.streams.ovh:1936/balkanradiosalzburgtv/balkanradiosalzburgtv/playlist.m3u8
+  [CH TimeoutError] Comedy Central HD (1080p) :: https://viamotionhsi.netplus.ch/live/eds/comedycentral/browser-HLS8/comedycentral.m3u8
+  [CH TimeoutError] ORF 2 Tirol HD (720p) :: https://viamotionhsi.netplus.ch/live/eds/orf2/browser-dash/orf2.mpd
+  [AT URLError] P3tv (720p) [Not 24/7] :: http://p3-6.mov.at:1935/live/weekstream/master.m3u8
+  [AT URLError] Uppera Balkan (720p) [Geo-blocked] :: http://89.187.168.245:8080/live/sUPPERchannel2/index.m3u8
+  [CH TimeoutError] VOX (576p) [Geo-blocked] :: https://viamotionhsi.netplus.ch/live/eds/vox/browser-HLS8/vox.m3u8
+  [AU HTTPError 403] CBeebies :: https://x.canlitvapp.com/u-cbeebies/index.m3u8
+  [AU HTTPError 403] Channel 7 (720p) [Geo-blocked] :: https://npc.cdn.7livecloud.io/hls/live/SYD1/master.m3u8
+  [AU URLError] Crime + Investigation :: https://fl1.moveonjoy.com/Crime_and_Investigation_Network/index.m3u8
+  [AU URLError] History :: https://fl1.moveonjoy.com/history_channel/index.m3u8
+  [CH TimeoutError] One HD (1080p) :: https://viamotionhsi.netplus.ch/live/eds/onehd/browser-HLS8/onehd.m3u8
+  [AW HTTPError 404] Balchi TV (720p) :: https://rtmpcontrol.com:1936/balchitv/balchitv/playlist.m3u8
+  [AZ HTTPError 403] ARB 24 :: https://yayin2.canlitv.fun/live/arb24.stream/chunklist_w1040344254.m3u8
+  [AZ HTTPError 403] İdman TV :: http://109.205.166.68/server124/idman_az/index.m3u8
+  [MT HTTPError 401] Jazz Club (Radio) [Geo-blocked] :: http://80.79.6.221:25461/smash/public/25
+  [AZ HTTPError 403] Space TV :: http://109.205.166.68/server124/space_tv/index.m3u8
+  [AZ HTTPError 502] VIP HD :: https://www.tvkaista.net/stream-forwarder/get.php?x=AZ_VIP
+  [BA URLError] Alfa TV (480p) :: http://135.125.204.34:8081/tvstanici/4/playlist.m3u8
+  [BA URLError] BN TV (480p) :: https://rtvbn.tv:8080/live/index.m3u8
+  [BA URLError] RTV Glas Drine (404p) [Not 24/7] :: http://glasdrine.cutuk.net:8081/433ssdsw/GlasDrineSD/playlist.m3u8
+  [BA URLError] Sehara TV (720p) :: http://ip2.xxlservices.com:8081/seharaonline/live/playlist.m3u8
+  [BD TimeoutError] BTV Chattogram (1080p) :: https://www.btvlive.gov.bd/streams/ef8b8bbc-98b7-4ba7-a49d-a0adaf259d35/ES/a707f2dc-9704-413a-a67c-17c64a77c350/index.m3
+  [BD TimeoutError] BTV National (1080p) :: https://www.btvlive.gov.bd/streams/ef8b8bbc-98b7-4ba7-a49d-a0adaf259d35/ES/355ba051-9a60-48aa-adcf-5a6c64da8c5c/355ba051
+  [BD TimeoutError] BTV World (1080p) :: https://www.btvlive.gov.bd/streams/ef8b8bbc-98b7-4ba7-a49d-a0adaf259d35/ES/d96eb7f4-83c2-4472-9597-3568390a8ebf/d96eb7f4
+  [BD TimeoutError] Sangsad TV (1080p) :: https://www.btvlive.gov.bd/streams/ef8b8bbc-98b7-4ba7-a49d-a0adaf259d35/ES/9ee3b4f9-fd0a-47c5-a135-2575c5691613/9ee3b4f9
+  [CH TimeoutError] AB3 HD :: https://viamotionhsi.netplus.ch/live/eds/ab3/browser-HLS8/ab3.m3u8
+  [SN HTTPError 502] Bel'Afrika Media TV (1080p) :: https://goccn.cloud/hls/belafrikatv/index.m3u8
+  [CH TimeoutError] Disney Channel (576p) :: https://viamotionhsi.netplus.ch/live/eds/disneychannelde/browser-HLS8/disneychannelde.m3u8
+  [BE URLError] Japanim TV (1080p) :: https://foxkidstv.be:3369/stream/play.m3u8
+  [BE URLError] VTM (720p) :: https://dpp-live-events.medialaancdn.be/events/hls/aes/webstream1.m3u8
+  [BF TimeoutError] RTB2 Hauts-Basins :: https://edge20.vedge.infomaniak.com/livecast/ik:rtbguiriko-1/manifest.m3u8
