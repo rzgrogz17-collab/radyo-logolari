@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?><!-- DEFAULT LANGUAGE: English (used when device language has no translation) -->
+<resources>
+    <string name="app_name">RadioSphere</string>
+    <string name="splash_subtitle"></string>
+
+    <string name="section_all">🎙 All</string>
+    <string name="section_top">🔥 Top Charts</string>
+    <string name="section_favorites">❤️ Favorites</string>
+    <string name="section_genres">🎵 Genres</string>
+    <string name="section_countries">🌍 Countries</string>
+
+    <string name="search_hint">Search…</string>
+    <string name="search_clear">Clear</string>
+
+    <string name="now_playing">Now Playing</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="share">Share</string>
+    <string name="close">Close</string>
+    <string name="status_live">🔴 Live</string>
+    <string name="status_buffering">⏳ Loading…</string>
+    <string name="status_paused">Paused</string>
+    <string name="status_reconnecting">🔄 Reconnecting… (%d/5)</string>
+
+    <string name="mini_player_live">🔴 Live</string>
+    <string name="mini_player_paused">Paused</string>
+    <string name="mini_player_loading">⏳ Loading…</string>
+    <string name="mini_player_reconnecting">🔄 Reconnecting…</string>
+
+    <string name="favorite">Favorite</string>
+    <string name="added_to_favorites">Added to favorites ♥</string>
+    <string name="removed_from_favorites">Removed from favorites</string>
+    <string name="no_favorites">No favorites yet.\nTap ❤ on any station to add.</string>
+
+    <string name="sleep_timer">Sleep Timer</string>
+    <string name="sleep_timer_desc">Radio stops automatically after selected time</string>
+    <string name="timer_5min">5 min</string>
+    <string name="timer_10min">10 min</string>
+    <string name="timer_15min">15 min</string>
+    <string name="timer_30min">30 min</string>
+    <string name="timer_45min">45 min</string>
+    <string name="timer_60min">1 hour</string>
+    <string name="timer_90min">1.5 hours</string>
+    <string name="timer_120min">2 hours</string>
+    <string name="timer_cancel">Cancel Timer</string>
+    <string name="timer_set_msg">Radio will stop in %s ⏱</string>
+    <string name="timer_cancelled">Timer cancelled</string>
+    <string name="timer_finished">Sleep timer: Radio stopped 😴</string>
+    <string name="timer_remaining">⏱ %s</string>
+
+    <string name="notification_channel_name">Radio Player</string>
+    <string name="notification_channel_desc">Radio background playback notification</string>
+    <string name="notif_live">🔴 Live</string>
+    <string name="notif_paused">Paused</string>
+    <string name="notif_loading">Loading…</string>
+    <string name="notif_reconnecting">Reconnecting…</string>
+    <string name="notif_app_name">RadioSphere</string>
+
+    <string name="error_no_internet">No internet connection. Pull down to retry.</string>
+    <string name="error_timeout">Connection timed out. Please try again.</string>
+    <string name="error_load">Could not load stations. Pull down to retry.</string>
+    <string name="error_stream_unavailable">Stream is currently unavailable</string>
+    <string name="error_connection">Connection failed</string>
+    <string name="error_service_starting">Service starting…</string>
+    <string name="error_offline_cache">No internet connection. Showing last known station list.</string>
+
+    <string name="empty_result">No results found</string>
+    <string name="empty_result_sub">Try a different search term</string>
+    <string name="empty_stations">No stations found\n\nTap to retry</string>
+    <string name="no_history">No listening history yet</string>
+    <string name="most_listened">Most Listened</string>
+    <string name="play_count">▶ Played %d times</string>
+    <string name="play_count_first">▶ Play for the first time</string>
+
+    <string name="settings">Settings</string>
+    <string name="settings_appearance">APPEARANCE</string>
+    <string name="settings_dark_theme">🌙 Dark Theme</string>
+    <string name="settings_data">DATA</string>
+    <string name="settings_clear_history">🗑 Clear Listening History</string>
+    <string name="settings_clear_cache">🖼 Clear Logo Cache</string>
+    <string name="settings_about">ABOUT</string>
+    <string name="settings_app_name">📻 RadioSphere</string>
+    <string name="settings_history_cleared">Listening history cleared</string>
+    <string name="settings_cache_cleared">Cache cleared</string>
+    <string name="settings_other_apps">📱 Other Apps</string>
+    <string name="settings_privacy">🔒 Privacy Preferences</string>
+
+    <string name="widget_not_playing">Not playing</string>
+    <string name="widget_desc">RadioSphere Widget</string>
+    <string name="widget_live">🔴 Live</string>
+
+    <string name="countries">🌍 Countries</string>
+    <string name="station_count">%d stations</string>
+
+    <string name="retry">Retry</string>
+    <string name="loading">Loading…</string>
+    <string name="share_text" formatted="false">📻 Listening to %s!\n🌍 %s\n\nVia RadioSphere app.</string>
+
+    <string name="gdpr_title">Privacy Preferences</string>
+    <string name="gdpr_message">This app shows ads to remain free. We need your consent to show personalized ads.</string>
+    <string name="gdpr_accept">Accept and Continue</string>
+    <string name="gdpr_reject">Allow Basic Ads Only</string>
+    <string name="gdpr_settings">Privacy Settings</string>
+    <string name="ad_loading">Loading ad…</string>
+    <string name="most_listened_title">🔥 Most Listened</string>
+    <string name="most_listened_desc">Stations you listen to most on this device</string>
+    <string name="nav_home">Home</string>
+    <string name="stream_failed">Failed to load — Tap to retry</string>
+    <string name="service_starting">Service starting…</string>
+    <string name="error_with_message">Error: %s</string>
+    <string name="play_count_times">▶ Played %d times</string>
+    <string name="play_count_first_time">▶ Play for the first time</string>
+    <string name="consent_reset">Ad preferences reset. Restarting…</string>
+    <string name="btn_reset_consent">Reset Ad Preferences</string>
+    <string name="genre_pop">Pop</string>
+    <string name="genre_rock">Rock</string>
+    <string name="genre_news">News</string>
+    <string name="genre_jazz">Jazz</string>
+    <string name="genre_hiphop">Hip-Hop</string>
+    <string name="genre_electronic">Electronic</string>
+    <string name="genre_dance">Dance</string>
+    <string name="genre_classical">Classical</string>
+    <string name="genre_house">House</string>
+    <string name="genre_folk">Folk</string>
+    <string name="genre_talk">Talk</string>
+    <string name="share_via">Via RadioSphere app.</string>
+    <string name="rewind_15">Rewind 15 seconds</string>
+    <string name="rewind_15_short">15s</string>
+    <string name="save_recording">Save</string>
+    <string name="save_short">Save</string>
+    <string name="recording_short">REC</string>
+    <string name="live_badge">LIVE</string>
+    <string name="rewind_not_available">Live stream — rewind is not available</string>
+    <string name="recording_started">Recording started</string>
+    <string name="recording_saved">Saved to Music/RadioSphere: %s</string>
+    <string name="recording_failed">Could not save the stream</string>
+    <string name="recording_permission_needed">Storage permission is required to save audio</string>
+
+    <!-- Equalizer -->
+    <string name="equalizer">Equalizer</string>
+    <string name="bass_boost">Bass Boost</string>
+    <string name="eq_flat">Flat</string>
+    <string name="eq_rock">Rock</string>
+    <string name="eq_pop">Pop</string>
+    <string name="eq_hiphop">Hip-Hop</string>
+    <string name="eq_jazz">Jazz</string>
+    <string name="eq_classical">Classical</string>
+    <string name="eq_bass">Bass</string>
+    <string name="eq_vocal">Vocal</string>
+
+
+    <!-- Settings Contact -->
+    <string name="settings_contact_header">CONTACT</string>
+    <string name="settings_contact_email">✉️ Contact Us via Email</string>
+    <string name="settings_contact_subject">RadioSphere - Feedback</string>
+    <string name="settings_more">MORE</string>
+    <string name="settings_playback">PLAYBACK</string>
+    <string name="settings_dark_theme_desc">Use the dark RadioSphere look</string>
+    <string name="settings_resume_last">Play last station on launch</string>
+    <string name="settings_resume_last_desc">Automatically continue the station you were listening to</string>
+    <string name="settings_lock_controls">Lock screen controls</string>
+    <string name="settings_lock_controls_desc">Show skip / play buttons on the lock screen and in notifications</string>
+    <string name="settings_default_volume">Set volume when a station starts</string>
+    <string name="settings_default_volume_desc">Apply a preferred volume each time playback begins</string>
+    <string name="settings_volume_value">%d%%</string>
+    <string name="settings_data_saver">Data saver</string>
+    <string name="settings_data_saver_desc">Skip station logos and flags to use less data</string>
+    <string name="settings_backup">BACKUP</string>
+    <string name="settings_export">Export favorites &amp; history</string>
+    <string name="settings_export_desc">Save a JSON backup you can restore later</string>
+    <string name="settings_import">Import backup</string>
+    <string name="settings_import_desc">Merge favorites and play counts from a file</string>
+    <string name="settings_recordings">RECORDINGS</string>
+    <string name="settings_open_recordings">Open recordings folder</string>
+    <string name="settings_open_recordings_desc">Music / RadioSphere</string>
+    <string name="settings_clear_recordings">Delete saved recordings</string>
+    <string name="settings_clear_recordings_desc">Remove RadioSphere files from Music</string>
+    <string name="settings_rate">Rate RadioSphere</string>
+    <string name="settings_privacy_policy">Privacy</string>
+    <string name="settings_licenses">Open-source licenses</string>
+    <string name="settings_confirm_title">Are you sure?</string>
+    <string name="settings_confirm_history">Listening history on this device will be deleted.</string>
+    <string name="settings_confirm_cache">Cached station logos will be removed.</string>
+    <string name="settings_confirm_recordings">Saved RadioSphere recordings will be deleted.</string>
+    <string name="settings_exported">Backup saved</string>
+    <string name="settings_imported">Backup imported</string>
+    <string name="settings_import_failed">Could not read backup file</string>
+    <string name="settings_recordings_cleared">Recordings deleted</string>
+    <string name="settings_recordings_path">Saved in Music/RadioSphere</string>
+    <string name="settings_privacy_body">RadioSphere plays public radio streams, stores favorites and listen counts only on this device, and may show ads. Recordings you save stay in your Music folder. No account is required.</string>
+    <string name="settings_licenses_body">This app uses AndroidX, Material Components, Media3/ExoPlayer, OkHttp, Retrofit, Gson, Glide, Room, Hilt, and Google Cast. Their licenses apply as published by their authors.</string>
+    <string name="settings_theme_applied">Theme updated</string>
+
+    <string name="eq_on">ON</string>
+    <string name="eq_off">OFF</string>
+    <string name="eq_status_on">Equalizer is on</string>
+    <string name="eq_status_off">Equalizer is off</string>
+    <string name="eq_unavailable">Equalizer is not available until a station is playing on this device.</string>
+    <string name="eq_treble">Treble</string>
+    <string name="eq_surround">Surround</string>
+    <string name="eq_reset">Reset</string>
+    <string name="eq_save">Save preset</string>
+    <string name="eq_custom">Custom</string>
+    <string name="eq_preset_name_hint">Preset name</string>
+    <string name="eq_preset_saved">Preset saved — long-press to delete</string>
+
+    <string name="timer_n_min">%d min</string>
+    <string name="timer_start">Start timer</string>
+    <string name="timer_plus">Increase</string>
+    <string name="timer_minus">Decrease</string>
+    <string name="timer_plus_5">+5</string>
+    <string name="timer_minus_5">−5</string>
+    <string name="timer_plus_15">+15</string>
+    <string name="timer_fade">Fade out in the last 20 seconds</string>
+    <string name="timer_mute_instead">Mute instead of stopping</string>
+    <string name="timer_lock_hint">The timer keeps running if you lock the screen. Radio stops only when time is up.</string>
+    <string name="timer_will_stop">Stops when the ring reaches empty</string>
+    <string name="timer_pick">Choose a duration</string>
+
+</resources>

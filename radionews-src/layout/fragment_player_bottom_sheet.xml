@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <!-- Blur arka plan -->
+    <ImageView
+        android:id="@+id/ivBlurBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="Background"
+        android:scaleType="centerCrop" />
+
+    <!-- Koyu overlay -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_player_overlay" />
+
+    <!-- İçerik -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="vertical">
+
+        <!-- ── ÜST BAR ── -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:paddingHorizontal="16dp">
+
+            <ImageButton
+                android:id="@+id/btnClose"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Close"
+                android:src="@drawable/ic_arrow_down"
+                app:tint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/now_playing"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:id="@+id/btnSettings"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/settings"
+                android:src="@drawable/ic_settings"
+                app:tint="#FFFFFF" />
+
+        </RelativeLayout>
+
+        <!-- Logo: orta kart + sağ/sol komşu kenarları (kaydırma) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvStationIndex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:id="@+id/logoFrame"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="6dp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/logoPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipChildren="false"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="0dp" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <!-- Logo rewind/kaydet paneline yapışmasın -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <!-- Şarkı veya şarkıcı — radyo adının hemen üstü, kayan bant -->
+        <TextView
+            android:id="@+id/tvTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="28dp"
+            android:layout_marginBottom="2dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textColor="#1A1A2E"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <!-- Paylaş — radyo adı — kaydet -->
+        <LinearLayout
+            android:id="@+id/playbackScrubber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="8dp">
+
+            <ImageButton
+                android:id="@+id/btnShare"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_glass_button"
+                android:contentDescription="@string/share"
+                android:padding="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_share"
+                app:tint="#1A1A2E" />
+
+            <TextView
+                android:id="@+id/tvStationName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_weight="1"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="#1A1A2E"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/btnSave"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_glass_button"
+                android:contentDescription="@string/save_recording"
+                android:padding="9dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_record"
+                app:tint="#E01B3B" />
+        </LinearLayout>
+
+        <!-- ── SES SLIDER ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="24dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="Vol low"
+                android:src="@drawable/ic_volume_low"
+                app:tint="#ffffff" />
+
+            <SeekBar
+                android:id="@+id/seekBarVolume"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_weight="1"
+                android:max="100"
+                android:progress="70"
+                android:progressBackgroundTint="#334455"
+                android:progressTint="#FFFFFF"
+                android:thumb="@drawable/bg_volume_thumb" />
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="Vol high"
+                android:src="@drawable/ic_volume_high"
+                app:tint="#ffffff" />
+
+        </LinearLayout>
+
+        <!-- ── ANA KONTROLLER ── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="88dp"
+            android:layout_marginBottom="8dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <ImageButton
+                android:id="@+id/btnFavorite"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_glass_button"
+                android:contentDescription="@string/favorite"
+                android:padding="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_favorite_border"
+                app:tint="#FFFFFF" />
+
+            <ImageButton
+                android:id="@+id/btnPrevious"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/bg_control_button"
+                android:contentDescription="Previous"
+                android:src="@drawable/ic_skip_previous"
+                app:tint="#FFFFFF" />
+
+            <FrameLayout
+                android:layout_width="84dp"
+                android:layout_height="84dp"
+                android:layout_marginHorizontal="2dp">
+
+                <ImageButton
+                    android:id="@+id/btnPlayPause"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_play_button"
+                    android:contentDescription="Play/Pause"
+                    android:src="@drawable/ic_play_circle_large" />
+
+                <ProgressBar
+                    android:id="@+id/progressBuffering"
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:indeterminate="true"
+                    android:indeterminateDrawable="@drawable/bg_loading_ring"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <ImageButton
+                android:id="@+id/btnNext"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/bg_control_button"
+                android:contentDescription="Next"
+                android:src="@drawable/ic_skip_next"
+                app:tint="#FFFFFF" />
+
+            <ImageButton
+                android:id="@+id/btnEqualizerPlayer"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_glass_button"
+                android:contentDescription="Equalizer"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_player_equalizer"
+                app:tint="#1A1A2E" />
+
+        </LinearLayout>
+
+        <!-- ── BANNER REKLAM — sabit 50dp, nav bar üstünde tam görünür ── -->
+        <FrameLayout
+            android:id="@+id/playerBannerContainer"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="8dp"
+            android:minHeight="56dp"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+</FrameLayout>

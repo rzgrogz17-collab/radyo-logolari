@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_dark">#F3F4F8</color>
+    <color name="bg_surface">#FFFFFF</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="bg_card_playing">#F6F1E3</color>
+    <color name="bg_mini_player">#FFFFFF</color>
+    <color name="bg_overlay">#EEF0F4</color>
+
+    <color name="accent">#E91E63</color>
+    <color name="accent_dim">#F3F4F8</color>
+    <color name="accent_dark">#B0203E</color>
+    <color name="accent_light">#FF7B93</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="text_primary">#1A1A2E</color>
+    <color name="text_secondary">#5C6B7A</color>
+    <color name="text_hint">#8A96A3</color>
+    <color name="text_disabled">#B0B8C1</color>
+    <color name="text_live">#1A1A2E</color>
+    <color name="text_playing">#E91E63</color>
+
+    <color name="timer_active">#E91E63</color>
+    <color name="timer_text">#C2185B</color>
+    <color name="timer_countdown_red">#E53935</color>
+
+    <color name="tag_purple">#7B2FBE</color>
+    <color name="tag_green">#1A6B3C</color>
+    <color name="tag_orange">#B5451B</color>
+    <color name="tag_blue">#1A5276</color>
+    <color name="tag_yellow">#7D6608</color>
+    <color name="tag_navy">#2E4057</color>
+    <color name="tag_brown">#6E2C00</color>
+    <color name="tag_dark">#1A3A4A</color>
+
+    <color name="badge_gold">#C9A227</color>
+    <color name="badge_silver">#8A8F98</color>
+    <color name="badge_bronze">#CD7F32</color>
+    <color name="badge_default">#E8ECF1</color>
+    <color name="badge_text_dark">#1A1A2E</color>
+
+    <color name="bone_white">#3A3A40</color>
+
+    <color name="chip_selected_bg">#E91E63</color>
+    <color name="chip_unselected_bg">#EEF1F5</color>
+    <color name="chip_selected_text">#FFFFFF</color>
+    <color name="chip_unselected_text">#1A1A2E</color>
+
+    <color name="card_stroke">#E2E6EC</color>
+    <color name="divider">#E6E9EE</color>
+    <color name="list_separator">#E4DFD4</color>
+    <color name="mini_player_stroke">#E91E63</color>
+    <color name="search_bg">#F3F4F8</color>
+    <color name="search_stroke">#DDE2EA</color>
+
+    <color name="btn_control_bg">#EEF1F5</color>
+    <color name="btn_play_bg">#E91E63</color>
+    <color name="btn_icon">#1A1A2E</color>
+    <color name="btn_secondary_icon">#5C6B7A</color>
+
+    <color name="widget_bg">#E0FFFFFF</color>
+    <color name="widget_stroke">#D0D5DD</color>
+
+    <color name="colorPrimary">#E91E63</color>
+    <color name="colorPrimaryDark">#C2185B</color>
+    <color name="colorAccent">#E91E63</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorOnSurface">#1A1A2E</color>
+    <color name="colorBackground">#F3F4F8</color>
+    <color name="colorOnBackground">#1A1A2E</color>
+    <color name="colorError">#E91E63</color>
+    <color name="colorOnError">#FFFFFF</color>
+
+    <color name="splash_window_bg">#2E3D82</color>
+    <color name="timer_on_dark">#FFFFFF</color>
+    <color name="timer_chip_idle">#2C2C34</color>
+    <color name="on_dark_sheet">#FFFFFF</color>
+    <color name="on_dark_sheet_muted">#AABBCC</color>
+    <color name="favorite_empty">#2C2C34</color>
+
+    <color name="settings_desc">#5C6B7A</color>
+    <color name="settings_nav">#1A1A2E</color>
+    <color name="settings_section">#E01B3B</color>
+    <color name="switch_thumb_on">#E01B3B</color>
+    <color name="switch_thumb_off">#F4F4F6</color>
+</resources>
