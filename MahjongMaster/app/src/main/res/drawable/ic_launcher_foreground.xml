@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Soft drop shadow -->
+    <path
+        android:fillColor="#55000000"
+        android:pathData="M40,34h38a5,5 0,0 1,5 5v43a5,5 0,0 1,-5 5h-38a5,5 0,0 1,-5 -5v-43a5,5 0,0 1,5 -5z" />
+    <!-- Jade back / tile thickness -->
+    <path android:pathData="M38,31h36a5,5 0,0 1,5 5v45a5,5 0,0 1,-5 5h-36a5,5 0,0 1,-5 -5v-45a5,5 0,0 1,5 -5z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="79"
+                android:endY="86"
+                android:startX="33"
+                android:startY="31"
+                android:type="linear">
+                <item android:color="#FF2BB58F" android:offset="0.0" />
+                <item android:color="#FF0E6B52" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Ivory face -->
+    <path android:pathData="M35,26h36a5,5 0,0 1,5 5v44a5,5 0,0 1,-5 5h-36a5,5 0,0 1,-5 -5v-44a5,5 0,0 1,5 -5z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="53"
+                android:endY="80"
+                android:startX="53"
+                android:startY="26"
+                android:type="linear">
+                <item android:color="#FFFFFDF4" android:offset="0.0" />
+                <item android:color="#FFF1E6CC" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Gold rim -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M35,27.2h36a3.8,3.8 0,0 1,3.8 3.8v44a3.8,3.8 0,0 1,-3.8 3.8h-36a3.8,3.8 0,0 1,-3.8 -3.8v-44a3.8,3.8 0,0 1,3.8 -3.8z"
+        android:strokeWidth="1.4"
+        android:strokeColor="#FFD4A62A" />
+    <!-- 中 (Chun) glyph -->
+    <path
+        android:fillColor="#FFC62828"
+        android:fillType="evenOdd"
+        android:pathData="M40,43h26a2,2 0,0 1,2 2v14a2,2 0,0 1,-2 2h-26a2,2 0,0 1,-2 -2v-14a2,2 0,0 1,2 -2zM43.5,47v10h19v-10z" />
+    <path
+        android:fillColor="#FFC62828"
+        android:pathData="M51,33.5h4a0.8,0.8 0,0 1,0.8 0.8v37.4a0.8,0.8 0,0 1,-0.8 0.8h-4a0.8,0.8 0,0 1,-0.8 -0.8v-37.4a0.8,0.8 0,0 1,0.8 -0.8z" />
+    <!-- Glossy highlight -->
+    <path
+        android:fillColor="#40FFFFFF"
+        android:pathData="M35,26h36a5,5 0,0 1,5 5v6c-12,3 -34,3 -46,0v-6a5,5 0,0 1,5 -5z" />
+</vector>
