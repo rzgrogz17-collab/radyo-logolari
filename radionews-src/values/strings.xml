@@ -3,11 +3,11 @@
     <string name="app_name">RadioSphere</string>
     <string name="splash_subtitle"></string>
 
-    <string name="section_all">🎙 All</string>
-    <string name="section_top">🔥 Top Charts</string>
-    <string name="section_favorites">❤️ Favorites</string>
-    <string name="section_genres">🎵 Genres</string>
-    <string name="section_countries">🌍 Countries</string>
+    <string name="section_all">All</string>
+    <string name="section_top">Popular</string>
+    <string name="section_favorites">Favorites</string>
+    <string name="section_genres">Genres</string>
+    <string name="section_countries">Countries</string>
 
     <string name="search_hint">Search…</string>
     <string name="search_clear">Clear</string>
@@ -72,7 +72,7 @@
     <string name="empty_stations">No stations found\n\nTap to retry</string>
     <string name="no_history">No listening history yet</string>
     <string name="most_listened">Most Listened</string>
-    <string name="play_count">▶ Played %d times</string>
+    <string name="play_count">Listened %d times</string>
     <string name="play_count_first">▶ Play for the first time</string>
 
     <string name="settings">Settings</string>
@@ -111,7 +111,7 @@
     <string name="stream_failed">Failed to load — Tap to retry</string>
     <string name="service_starting">Service starting…</string>
     <string name="error_with_message">Error: %s</string>
-    <string name="play_count_times">▶ Played %d times</string>
+    <string name="play_count_times">Listened %d times</string>
     <string name="play_count_first_time">▶ Play for the first time</string>
     <string name="consent_reset">Ad preferences reset. Restarting…</string>
     <string name="btn_reset_consent">Reset Ad Preferences</string>

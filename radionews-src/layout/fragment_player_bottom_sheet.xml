@@ -111,7 +111,7 @@
         <!-- Logo rewind/kaydet paneline yapışmasın -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="16dp" />
+            android:layout_height="8dp" />
 
         <!-- Şarkı veya şarkıcı — radyo adının hemen üstü, kayan bant -->
         <TextView
@@ -128,7 +128,7 @@
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:textColor="#1A1A2E"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:visibility="gone" />
 
         <!-- Paylaş — radyo adı — kaydet -->

@@ -74,7 +74,8 @@ class SectionListFragment : Fragment() {
             HomeFragment.SECTION_ALL -> {
                 stationAdapter = StationAdapter(
                     onStationClick = { mainActivity?.playStation(it) },
-                    onFavoriteClick = { viewModel.toggleFavorite(it) }
+                    onFavoriteClick = { viewModel.toggleFavorite(it) },
+                    rowStyle = StationAdapter.RowStyle.NAME_ONLY
                 )
                 recyclerView.adapter = stationAdapter
                 viewModel.filterByCategory(MainViewModel.CATEGORY_ALL)
@@ -83,7 +84,8 @@ class SectionListFragment : Fragment() {
             HomeFragment.SECTION_FAVORITES -> {
                 stationAdapter = StationAdapter(
                     onStationClick = { mainActivity?.playStation(it) },
-                    onFavoriteClick = { viewModel.toggleFavorite(it) }
+                    onFavoriteClick = { viewModel.toggleFavorite(it) },
+                    rowStyle = StationAdapter.RowStyle.NAME_ONLY
                 )
                 recyclerView.adapter = stationAdapter
             }
@@ -100,7 +102,8 @@ class SectionListFragment : Fragment() {
             HomeFragment.SECTION_GENRES -> {
                 stationAdapter = StationAdapter(
                     onStationClick = { mainActivity?.playStation(it) },
-                    onFavoriteClick = { viewModel.toggleFavorite(it) }
+                    onFavoriteClick = { viewModel.toggleFavorite(it) },
+                    rowStyle = StationAdapter.RowStyle.NAME_AND_GENRE
                 )
                 recyclerView.adapter = stationAdapter
                 // "Tümü" sekmesinden bağımsız kendi filtresini kullanır
