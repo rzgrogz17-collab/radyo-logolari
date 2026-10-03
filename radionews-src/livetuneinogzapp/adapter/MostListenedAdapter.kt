@@ -94,7 +94,7 @@ class MostListenedAdapter(
             b.tvRank.setTextColor(if (rank <= 3) Color.parseColor("#0A0A1A") else Color.WHITE)
 
             b.tvStationName.text = station.name
-            b.tvCountry.text = if (station.country.isNotBlank()) "🌍 ${station.country}" else ""
+            b.tvCountry.text = station.country
 
             b.tvPlayCount.text = if (playCount > 0)
                 ctx.getString(R.string.play_count_times, playCount)

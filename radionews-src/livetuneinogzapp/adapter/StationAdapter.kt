@@ -17,8 +17,18 @@ import com.globalradio.livetuneinogzapp.utils.StationImages
 
 class StationAdapter(
     private val onStationClick: (RadioStation) -> Unit,
-    private val onFavoriteClick: (RadioStation) -> Unit
+    private val onFavoriteClick: (RadioStation) -> Unit,
+    private val rowStyle: RowStyle = RowStyle.FULL
 ) : ListAdapter<RadioStation, StationAdapter.VH>(DIFF) {
+
+    enum class RowStyle {
+        /** Ülke istasyonları: isim, ülke ve tür. */
+        FULL,
+        /** Tümü ve Favoriler: yalnızca radyo adı. */
+        NAME_ONLY,
+        /** Türler: radyo adı ve altında tür; ülke yok. */
+        NAME_AND_GENRE
+    }
 
     private var playingId: String? = null
 
@@ -68,8 +78,24 @@ class StationAdapter(
 
         fun bind(s: RadioStation) {
             b.tvStationName.text = s.name
-            b.tvCountry.text = if (s.country.isNotBlank()) s.country else ""
-            buildTagPills(s)
+            when (rowStyle) {
+                RowStyle.NAME_ONLY -> {
+                    b.tvCountry.visibility = View.GONE
+                    b.tvCountry.text = ""
+                    b.tagContainer.visibility = View.GONE
+                    b.tagContainer.removeAllViews()
+                }
+                RowStyle.NAME_AND_GENRE -> {
+                    b.tvCountry.visibility = View.GONE
+                    b.tvCountry.text = ""
+                    buildTagPills(s)
+                }
+                RowStyle.FULL -> {
+                    b.tvCountry.visibility = View.VISIBLE
+                    b.tvCountry.text = if (s.country.isNotBlank()) s.country else ""
+                    buildTagPills(s)
+                }
+            }
             updateFavIconPublic(s.isFavorite)
             loadLogo(s)
             updatePlaying(s, s.id == playingId)
