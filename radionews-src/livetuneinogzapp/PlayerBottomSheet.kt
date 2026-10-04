@@ -4,10 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.Drawable
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
+import android.graphics.drawable.GradientDrawable
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
@@ -36,8 +33,6 @@ import androidx.media3.common.util.UnstableApi
 import com.globalradio.livetuneinogzapp.service.RadioPlayerService
 import com.globalradio.livetuneinogzapp.utils.AppSettings
 import com.globalradio.livetuneinogzapp.utils.FavoriteIcon
-import com.globalradio.livetuneinogzapp.utils.LogoAmbientDrawable
-import com.globalradio.livetuneinogzapp.utils.LogoColorRange
 import com.globalradio.livetuneinogzapp.viewmodel.MainViewModel
 
 @UnstableApi
@@ -58,7 +53,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     private var recordingObserved = false
     private var liveEdgePosition = 0L
     private var lastProgressStationId: String? = null
-    private var glowTarget: CustomTarget<Bitmap>? = null
 
     private val writePermLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -170,6 +164,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         ensureServiceObservers()
         loadBannerAd()
         observeStationCatalog()
+        buildColorPalette()
 
         // Başlangıç UI — serviste çalan istasyon öncelikli
         (radioService?.currentStation ?: currentStation)?.let { updateUI(it) }
@@ -692,7 +687,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         binding.tvStationName.text = station.name
         binding.tvStationName.isSelected = true
         bindScrollingLabel(binding.tvStationName, station.name)
-        applyLogoGlow(station)
+        applyPanelColor()
         renderTrackLine(radioService?.nowPlayingTitle?.value)
         val fav = isFavoriteNow(station.id)
         station.isFavorite = fav
@@ -740,46 +735,61 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         applyFrostedBackground()
     }
 
-    private fun applyLogoGlow(station: RadioStation) {
-        if (_binding == null) return
-        glowTarget?.let { target ->
-            runCatching { Glide.with(this).clear(target) }
-        }
-        glowTarget = null
-        val enabled = AppSettings(requireContext()).logoColorGlow && station.hasValidFavicon()
-        if (!enabled) {
-            binding.logoColorWash.visibility = View.GONE
-            binding.logoColorWash.background = null
-            return
-        }
-        val target = object : CustomTarget<Bitmap>() {
-            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                if (_binding == null || !AppSettings(requireContext()).logoColorGlow) return
-                binding.logoColorWash.background = LogoAmbientDrawable(LogoColorRange.extract(resource))
-                binding.logoColorWash.visibility = View.VISIBLE
+    private fun buildColorPalette() {
+        if (_binding == null || binding.playerPalette.childCount > 0) return
+        val density = resources.displayMetrics.density
+        val size = (28f * density).toInt()
+        val gap = (8f * density).toInt()
+        AppSettings.PANEL_PALETTE.forEach { color ->
+            val dot = android.view.View(requireContext())
+            val lp = android.widget.LinearLayout.LayoutParams(size, size)
+            lp.marginEnd = gap
+            dot.layoutParams = lp
+            dot.background = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setColor(color)
             }
+            dot.setOnClickListener {
+                AppSettings(requireContext()).playerPanelColor = color
+                applyPanelColor()
+                if (::logoPagerAdapter.isInitialized) logoPagerAdapter.notifyDataSetChanged()
+            }
+            binding.playerPalette.addView(dot)
+        }
+        applyPanelColor()
+    }
 
-            override fun onLoadCleared(placeholder: Drawable?) {
-                if (_binding == null) return
-                binding.logoColorWash.visibility = View.GONE
-                binding.logoColorWash.background = null
-            }
+    private fun applyPanelColor() {
+        if (!isAdded || _binding == null) return
+        val color = AppSettings(requireContext()).playerPanelColor
+        val density = resources.displayMetrics.density
+        val selected = (2f * density).toInt()
+        binding.ivBlurBackground.visibility = View.GONE
+        binding.playerScrim.setBackgroundColor(color)
+        binding.logoColorWash.visibility = View.GONE
+        binding.logoColorWash.background = null
+        binding.root.setBackgroundColor(color)
+        binding.tvStationName.setTextColor(Color.WHITE)
+        binding.tvTags.setTextColor(Color.WHITE)
+        binding.tvStationIndex.setTextColor(Color.WHITE)
+        for (i in 0 until binding.playerPalette.childCount) {
+            val dot = binding.playerPalette.getChildAt(i)
+            val swatch = AppSettings.PANEL_PALETTE.getOrNull(i) ?: continue
+            (dot.background as? GradientDrawable)?.setStroke(
+                if (swatch == color) selected else 0,
+                Color.WHITE
+            )
         }
-        glowTarget = target
-        Glide.with(this).asBitmap().load(station.favicon).into(target)
     }
 
     override fun onResume() {
         super.onResume()
-        (radioService?.currentStation ?: currentStation)?.let { applyLogoGlow(it) }
+        applyPanelColor()
+        if (::logoPagerAdapter.isInitialized) logoPagerAdapter.notifyDataSetChanged()
     }
 
     private fun applyFrostedBackground() {
-        if (!isAdded || _binding == null) return
-        binding.root.setBackgroundColor(Color.parseColor("#EBF0FA"))
-        binding.tvStationName.setTextColor(Color.parseColor("#1A1A2E"))
-        binding.tvTags.setTextColor(Color.parseColor("#1A1A2E"))
-        binding.tvStationIndex.setTextColor(Color.WHITE)
+        applyPanelColor()
     }
 
     private fun loadBannerAd() {
@@ -828,10 +838,6 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             binding.btnSave.clearAnimation()
         }
         volumeHandler.removeCallbacks(volumeRunnable)
-        glowTarget?.let { target ->
-            runCatching { Glide.with(this).clear(target) }
-        }
-        glowTarget = null
         super.onDestroyView()
         _binding = null
     }

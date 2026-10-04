@@ -1,9 +1,12 @@
 package com.globalradio.livetuneinogzapp.adapter
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.globalradio.livetuneinogzapp.utils.AppSettings
 import com.globalradio.livetuneinogzapp.utils.StationImages
 import com.globalradio.livetuneinogzapp.databinding.ItemLogoPagerBinding
 import com.globalradio.livetuneinogzapp.model.RadioStation
@@ -53,6 +56,10 @@ class LogoPagerAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(station: RadioStation) {
+            val dark = AppSettings.isDarkColor(AppSettings(binding.root.context).playerPanelColor)
+            val density = binding.root.resources.displayMetrics.density
+            binding.logoCard.strokeWidth = if (dark) (1.5f * density).toInt() else 0
+            binding.logoCard.setStrokeColor(ColorStateList.valueOf(Color.WHITE))
             if (station.hasValidFavicon()) {
                 StationImages.loadLogo(binding.ivPagerLogo, station.favicon)
             } else {
