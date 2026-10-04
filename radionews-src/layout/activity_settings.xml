@@ -71,6 +71,24 @@
                         android:textColor="@color/settings_desc"
                         android:textSize="12sp" />
 
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        app:thumbTint="@color/switch_thumb"
+                        app:useMaterialThemeColors="false"
+                        android:id="@+id/switchLogoGlow"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="10dp"
+                        android:text="@string/settings_logo_glow"
+                        android:textColor="@color/text_primary"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="8dp"
+                        android:text="@string/settings_logo_glow_desc"
+                        android:textColor="@color/settings_desc"
+                        android:textSize="12sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

@@ -15,14 +15,12 @@
         android:background="@drawable/bg_logo_float_shadow" />
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/logoCard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
         app:cardPreventCornerOverlap="false"
-        app:strokeColor="#FFFFFF"
         app:strokeWidth="0dp">
 
         <ImageView

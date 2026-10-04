@@ -14,9 +14,8 @@
         android:contentDescription="Background"
         android:scaleType="centerCrop" />
 
-    <!-- Koyu overlay. Seçilen panel rengi bunu kaplar. -->
+    <!-- Koyu overlay -->
     <View
-        android:id="@+id/playerScrim"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_player_overlay" />
@@ -114,23 +113,6 @@
 
             </FrameLayout>
 
-            <HorizontalScrollView
-                android:id="@+id/paletteScroll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:paddingHorizontal="16dp"
-                android:scrollbars="none">
-
-                <LinearLayout
-                    android:id="@+id/playerPalette"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal" />
-
-            </HorizontalScrollView>
-
         </LinearLayout>
 
         <!-- Logo rewind/kaydet paneline yapışmasın -->
@@ -152,7 +134,7 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:textColor="#FFFFFF"
+            android:textColor="#1A1A2E"
             android:textSize="18sp"
             android:visibility="gone" />
 
@@ -196,7 +178,7 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:textColor="#FFFFFF"
+                android:textColor="#1A1A2E"
                 android:textSize="21sp"
                 android:textStyle="bold" />
 

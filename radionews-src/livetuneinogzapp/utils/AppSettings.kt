@@ -17,10 +17,10 @@ class AppSettings(context: Context) {
         get() = p.getBoolean(KEY_DARK, true)
         set(value) = p.edit().putBoolean(KEY_DARK, value).apply()
 
-    /** Büyük oynatıcı panelinin seçilen rengi. */
-    var playerPanelColor: Int
-        get() = p.getInt(KEY_PANEL_COLOR, DEFAULT_PANEL_COLOR)
-        set(value) = p.edit().putInt(KEY_PANEL_COLOR, value).apply()
+    /** Açıkken büyük oynatıcı, logo renklerini arka plana yansıtır. */
+    var logoColorGlow: Boolean
+        get() = p.getBoolean(KEY_LOGO_GLOW, false)
+        set(value) = p.edit().putBoolean(KEY_LOGO_GLOW, value).apply()
 
     var resumeLastStation: Boolean
         get() = p.getBoolean(KEY_RESUME, false)
@@ -88,29 +88,7 @@ class AppSettings(context: Context) {
     companion object {
         private const val PREFS = "app_settings"
         private const val KEY_DARK = "dark_theme"
-        private const val KEY_PANEL_COLOR = "player_panel_color"
-        const val DEFAULT_PANEL_COLOR = 0xFF000000.toInt()
-        val PANEL_PALETTE = intArrayOf(
-            0xFF000000.toInt(),
-            0xFF1C1C1F.toInt(),
-            0xFF2E3D82.toInt(),
-            0xFF0E4D3A.toInt(),
-            0xFF1565C0.toInt(),
-            0xFF7B2FBE.toInt(),
-            0xFFE01B3B.toInt(),
-            0xFFC47B2B.toInt(),
-            0xFF00695C.toInt(),
-            0xFF4E342E.toInt(),
-            0xFF37474F.toInt(),
-            0xFFF6F1E3.toInt()
-        )
-
-        fun isDarkColor(color: Int): Boolean {
-            val r = android.graphics.Color.red(color) / 255.0
-            val g = android.graphics.Color.green(color) / 255.0
-            val b = android.graphics.Color.blue(color) / 255.0
-            return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 0.45
-        }
+        private const val KEY_LOGO_GLOW = "logo_color_glow"
         private const val KEY_RESUME = "resume_last"
         private const val KEY_LOCK = "lock_controls"
         private const val KEY_APPLY_VOL = "apply_vol"

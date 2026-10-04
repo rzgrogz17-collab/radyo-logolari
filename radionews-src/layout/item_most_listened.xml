@@ -23,15 +23,15 @@
         android:id="@+id/rowHighlight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:orientation="vertical">
 
-        <!-- Asıl satır içeriği. Yuvarlak zemin çizgiyle aynı noktada biter, kenara yapışmaz. -->
+        <!-- Asıl satır içeriği -->
         <LinearLayout
             android:id="@+id/rowBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:gravity="center_vertical"
@@ -180,8 +180,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
             android:background="@color/list_separator" />
 
     </LinearLayout>
