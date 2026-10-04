@@ -78,6 +78,8 @@
     <string name="settings">Ayarlar</string>
     <string name="settings_appearance">GÖRÜNÜM</string>
     <string name="settings_dark_theme">🌙 Koyu Tema</string>
+    <string name="settings_logo_glow">Logo rengi yansıması</string>
+    <string name="settings_logo_glow_desc">Açıkken büyük oynatıcıda logo renkleri arka plana yansır. Kapalıyken görünüm aynı kalır.</string>
     <string name="settings_data">VERİ</string>
     <string name="settings_clear_history">🗑 Dinleme Geçmişini Temizle</string>
     <string name="settings_clear_cache">🖼 Logo Önbelleğini Temizle</string>

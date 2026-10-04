@@ -78,6 +78,8 @@
     <string name="settings">Settings</string>
     <string name="settings_appearance">APPEARANCE</string>
     <string name="settings_dark_theme">🌙 Dark Theme</string>
+    <string name="settings_logo_glow">Logo color glow</string>
+    <string name="settings_logo_glow_desc">When on, the big player background reflects the logo colors. When off, the player stays as it is.</string>
     <string name="settings_data">DATA</string>
     <string name="settings_clear_history">🗑 Clear Listening History</string>
     <string name="settings_clear_cache">🖼 Clear Logo Cache</string>

@@ -13,6 +13,7 @@ import com.globalradio.livetuneinogzapp.R
 import com.globalradio.livetuneinogzapp.databinding.ItemStationBinding
 import com.globalradio.livetuneinogzapp.model.RadioStation
 import com.globalradio.livetuneinogzapp.utils.FavoriteIcon
+import com.globalradio.livetuneinogzapp.utils.PlayingRowDrawable
 import com.globalradio.livetuneinogzapp.utils.StationImages
 
 class StationAdapter(
@@ -114,9 +115,12 @@ class StationAdapter(
                 if (playing) ctx.getColor(R.color.accent) else ctx.getColor(R.color.text_primary)
             )
             b.cardRoot.setCardBackgroundColor(ctx.getColor(R.color.bg_card))
-            b.rowHighlight.setBackgroundColor(
-                ctx.getColor(if (playing) R.color.bg_card_playing else R.color.bg_card)
-            )
+            b.rowHighlight.setBackgroundColor(ctx.getColor(R.color.bg_card))
+            b.rowBody.background = if (playing) {
+                PlayingRowDrawable.create(ctx, ctx.getColor(R.color.bg_card_playing))
+            } else {
+                null
+            }
         }
 
         private fun buildTagPills(s: RadioStation) {

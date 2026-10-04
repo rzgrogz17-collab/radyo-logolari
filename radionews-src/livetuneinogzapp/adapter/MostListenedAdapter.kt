@@ -12,6 +12,7 @@ import com.globalradio.livetuneinogzapp.R
 import com.globalradio.livetuneinogzapp.databinding.ItemMostListenedBinding
 import com.globalradio.livetuneinogzapp.model.RadioStation
 import com.globalradio.livetuneinogzapp.utils.FavoriteIcon
+import com.globalradio.livetuneinogzapp.utils.PlayingRowDrawable
 import com.globalradio.livetuneinogzapp.utils.StationImages
 
 class MostListenedAdapter(
@@ -130,9 +131,12 @@ class MostListenedAdapter(
 
             // Oynatılıyor vurgusu
             b.root.setCardBackgroundColor(ctx.getColor(R.color.bg_card))
-            b.rowHighlight.setBackgroundColor(
-                ctx.getColor(if (isPlaying) R.color.bg_card_playing else R.color.bg_card)
-            )
+            b.rowHighlight.setBackgroundColor(ctx.getColor(R.color.bg_card))
+            b.rowBody.background = if (isPlaying) {
+                PlayingRowDrawable.create(ctx, ctx.getColor(R.color.bg_card_playing))
+            } else {
+                null
+            }
             b.tvStationName.setTextColor(
                 ctx.getColor(if (isPlaying) R.color.text_playing else R.color.text_primary)
             )

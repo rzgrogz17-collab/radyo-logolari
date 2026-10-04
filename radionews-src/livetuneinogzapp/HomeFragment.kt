@@ -69,6 +69,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.btnSettings.setOnClickListener { mainActivity?.openSettings() }
         CastManager.attachButton(requireContext(), binding.btnCast)
+        stripTabIcons()
         setupViewPager()
         setupTabButtons()
         setupSearch()
@@ -110,6 +111,24 @@ class HomeFragment : Fragment() {
                 }
             }
         })
+    }
+
+    /** Sekme yazısındaki ikonları her dilde kaldırır. */
+    private fun stripTabIcons() {
+        listOf(
+            binding.btnSectionAll,
+            binding.btnSectionTopChart,
+            binding.btnSectionFavorites,
+            binding.btnSectionGenres,
+            binding.btnSectionCountries
+        ).forEach { btn ->
+            btn.text = btn.text?.toString().orEmpty()
+                .filter { ch ->
+                    ch.isLetterOrDigit() || ch.isWhitespace() || ch == '-' || ch == '\'' || ch == '’' || ch == '&'
+                }
+                .replace(Regex("\\s+"), " ")
+                .trim()
+        }
     }
 
     // ── Tab Butonları ─────────────────────────────────────────────────────────

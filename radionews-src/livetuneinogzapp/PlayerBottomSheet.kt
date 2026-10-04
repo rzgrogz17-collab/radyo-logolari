@@ -4,6 +4,10 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.Drawable
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
@@ -30,7 +34,10 @@ import com.globalradio.livetuneinogzapp.model.PlayerState
 import com.globalradio.livetuneinogzapp.model.RadioStation
 import androidx.media3.common.util.UnstableApi
 import com.globalradio.livetuneinogzapp.service.RadioPlayerService
+import com.globalradio.livetuneinogzapp.utils.AppSettings
 import com.globalradio.livetuneinogzapp.utils.FavoriteIcon
+import com.globalradio.livetuneinogzapp.utils.LogoAmbientDrawable
+import com.globalradio.livetuneinogzapp.utils.LogoColorRange
 import com.globalradio.livetuneinogzapp.viewmodel.MainViewModel
 
 @UnstableApi
@@ -51,6 +58,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
     private var recordingObserved = false
     private var liveEdgePosition = 0L
     private var lastProgressStationId: String? = null
+    private var glowTarget: CustomTarget<Bitmap>? = null
 
     private val writePermLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -684,6 +692,7 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         binding.tvStationName.text = station.name
         binding.tvStationName.isSelected = true
         bindScrollingLabel(binding.tvStationName, station.name)
+        applyLogoGlow(station)
         renderTrackLine(radioService?.nowPlayingTitle?.value)
         val fav = isFavoriteNow(station.id)
         station.isFavorite = fav
@@ -729,6 +738,40 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
         binding.ivBlurBackground.setImageDrawable(null)
         binding.ivBlurBackground.visibility = android.view.View.GONE
         applyFrostedBackground()
+    }
+
+    private fun applyLogoGlow(station: RadioStation) {
+        if (_binding == null) return
+        glowTarget?.let { target ->
+            runCatching { Glide.with(this).clear(target) }
+        }
+        glowTarget = null
+        val enabled = AppSettings(requireContext()).logoColorGlow && station.hasValidFavicon()
+        if (!enabled) {
+            binding.logoColorWash.visibility = View.GONE
+            binding.logoColorWash.background = null
+            return
+        }
+        val target = object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                if (_binding == null || !AppSettings(requireContext()).logoColorGlow) return
+                binding.logoColorWash.background = LogoAmbientDrawable(LogoColorRange.extract(resource))
+                binding.logoColorWash.visibility = View.VISIBLE
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+                if (_binding == null) return
+                binding.logoColorWash.visibility = View.GONE
+                binding.logoColorWash.background = null
+            }
+        }
+        glowTarget = target
+        Glide.with(this).asBitmap().load(station.favicon).into(target)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (radioService?.currentStation ?: currentStation)?.let { applyLogoGlow(it) }
     }
 
     private fun applyFrostedBackground() {
@@ -785,6 +828,10 @@ class PlayerBottomSheet : BottomSheetDialogFragment() {
             binding.btnSave.clearAnimation()
         }
         volumeHandler.removeCallbacks(volumeRunnable)
+        glowTarget?.let { target ->
+            runCatching { Glide.with(this).clear(target) }
+        }
+        glowTarget = null
         super.onDestroyView()
         _binding = null
     }

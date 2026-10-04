@@ -17,6 +17,11 @@ class AppSettings(context: Context) {
         get() = p.getBoolean(KEY_DARK, true)
         set(value) = p.edit().putBoolean(KEY_DARK, value).apply()
 
+    /** Açıkken büyük oynatıcı, logo renklerini arka plana yansıtır. */
+    var logoColorGlow: Boolean
+        get() = p.getBoolean(KEY_LOGO_GLOW, false)
+        set(value) = p.edit().putBoolean(KEY_LOGO_GLOW, value).apply()
+
     var resumeLastStation: Boolean
         get() = p.getBoolean(KEY_RESUME, false)
         set(value) = p.edit().putBoolean(KEY_RESUME, value).apply()
@@ -83,6 +88,7 @@ class AppSettings(context: Context) {
     companion object {
         private const val PREFS = "app_settings"
         private const val KEY_DARK = "dark_theme"
+        private const val KEY_LOGO_GLOW = "logo_color_glow"
         private const val KEY_RESUME = "resume_last"
         private const val KEY_LOCK = "lock_controls"
         private const val KEY_APPLY_VOL = "apply_vol"
