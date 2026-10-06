@@ -1,6 +1,9 @@
 package com.globalradio.livetuneinogzapp.viewmodel
 
 import android.app.Application
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,6 +19,7 @@ import com.globalradio.livetuneinogzapp.utils.StationListOrganizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -98,57 +102,77 @@ class MainViewModel @Inject constructor(
     fun loadStations() {
         if (_isLoading.value == true) return
         viewModelScope.launch {
-            _isLoading.postValue(true)
-            _error.postValue(null)
+            _isLoading.value = true
+            val started = SystemClock.elapsedRealtime()
+            val cached = runCatching { repository.getCachedStations() }.getOrNull()
+            if (!cached.isNullOrEmpty()) {
+                applyLoadedStations(cached)
+                _isLoading.value = false
+            }
 
-            var attempt = 0
             var success = false
-
-            while (attempt < 3 && !success) {
-                if (attempt > 0) delay(2000L * attempt)
-
+            var lastError: Throwable? = null
+            var attempt = 0
+            while (attempt < 2 && !success) {
+                if (attempt > 0) delay(1000)
                 repository.getStations()
                     .onSuccess { stations ->
-                        applyLoadedStations(stations)
-                        success = true
-                    }
-                    .onFailure { e ->
-                        attempt++
-                        if (attempt >= 3) {
-                            val cached = repository.getCachedStations()
-                            val ctx = getApplication<Application>()
-                            if (!cached.isNullOrEmpty()) {
-                                applyLoadedStations(cached)
-                                success = true
-                                _error.postValue(ctx.getString(R.string.error_offline_cache))
-                            } else {
-                                val msg = e.message ?: ""
-                                _error.postValue(
-                                    when {
-                                        msg.contains("Unable to resolve host", ignoreCase = true) ||
-                                                msg.contains("No address", ignoreCase = true) ||
-                                                msg.contains("UnknownHost", ignoreCase = true) ->
-                                            ctx.getString(R.string.error_no_internet)
-
-                                        msg.contains("timeout", ignoreCase = true) ->
-                                            ctx.getString(R.string.error_timeout)
-
-                                        else ->
-                                            ctx.getString(R.string.error_load)
-                                    }
-                                )
-                            }
+                        if (stations.isNotEmpty()) {
+                            applyLoadedStations(stations)
+                            success = true
+                            _error.value = null
                         }
                     }
+                    .onFailure { lastError = it }
+                attempt++
             }
-            _isLoading.postValue(false)
+
+            if (!success && isRealOffline(lastError)) {
+                val wait = 5_000L - (SystemClock.elapsedRealtime() - started)
+                if (wait > 0) delay(wait)
+                if (isCurrentlyOffline()) {
+                    val ctx = getApplication<Application>()
+                    _error.value = ctx.getString(
+                        if (!cached.isNullOrEmpty()) R.string.error_offline_cache
+                        else R.string.error_no_internet
+                    )
+                }
+            }
+            _isLoading.value = false
         }
     }
 
+    private fun isCurrentlyOffline(): Boolean {
+        return try {
+            val cm = getApplication<Application>()
+                .getSystemService(ConnectivityManager::class.java) ?: return true
+            val network = cm.activeNetwork ?: return true
+            val caps = cm.getNetworkCapabilities(network) ?: return true
+            !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    private fun isRealOffline(error: Throwable?): Boolean {
+        if (isCurrentlyOffline()) return true
+        if (error is UnknownHostException) return true
+        val msg = error?.message ?: return false
+        return msg.contains("Unable to resolve host", ignoreCase = true) ||
+            msg.contains("No address", ignoreCase = true) ||
+            msg.contains("UnknownHost", ignoreCase = true)
+    }
+
     private fun applyLoadedStations(stations: List<RadioStation>) {
+        if (stations.isEmpty()) return
+        val snapshot = stations.toList()
         dataLoaded = true
-        _allStations.postValue(stations)
-        searchCache = stations.map { s ->
+        try {
+            _allStations.value = snapshot
+        } catch (_: Exception) {
+            _allStations.postValue(snapshot)
+        }
+        searchCache = snapshot.map { s ->
             StationSearchCache(
                 id = s.id,
                 nameLower = s.name.lowercase(),
@@ -157,10 +181,10 @@ class MainViewModel @Inject constructor(
                 countryTokens = tokenize(s.country)
             )
         }
-        buildCountries(stations)
-        updateAllSection(stations)
-        updateGenreSection(stations)
-        updateFavorites(stations)
+        buildCountries(snapshot)
+        updateAllSection(snapshot)
+        updateGenreSection(snapshot)
+        updateFavorites(snapshot)
         refreshMostListened()
     }
 

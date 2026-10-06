@@ -54,7 +54,7 @@ class SectionListFragment : Fragment() {
         }
         recyclerView = RecyclerView(requireContext()).apply {
             layoutManager = LinearLayoutManager(requireContext())
-            setHasFixedSize(true)
+            setHasFixedSize(false)
             setItemViewCacheSize(20)
             isNestedScrollingEnabled = true
             overScrollMode = View.OVER_SCROLL_NEVER
@@ -146,7 +146,7 @@ class SectionListFragment : Fragment() {
         // Tümü bölümü → allSectionStations (arama filtreli, türden bağımsız TÜM istasyonlar)
         if (sectionType == HomeFragment.SECTION_ALL) {
             viewModel.allSectionStations.observe(viewLifecycleOwner) { stations ->
-                stationAdapter?.submitList(stations)
+                stationAdapter?.submitList(stations.toList())
             }
         }
 
