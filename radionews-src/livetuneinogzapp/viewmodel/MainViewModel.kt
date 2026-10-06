@@ -1,9 +1,6 @@
 package com.globalradio.livetuneinogzapp.viewmodel
 
 import android.app.Application
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,16 +10,12 @@ import com.globalradio.livetuneinogzapp.model.CountrySummary
 import com.globalradio.livetuneinogzapp.model.PlayerState
 import com.globalradio.livetuneinogzapp.model.RadioStation
 import com.globalradio.livetuneinogzapp.repository.StationRepository
-import com.globalradio.livetuneinogzapp.utils.CountryFlags
 import com.globalradio.livetuneinogzapp.utils.ListenHistoryManager
 import com.globalradio.livetuneinogzapp.utils.LocaleCountryMapper
 import com.globalradio.livetuneinogzapp.utils.StationListOrganizer
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.yield
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -97,8 +90,6 @@ class MainViewModel @Inject constructor(
     // İngilizce (fallback) ülkeler kullanılır. "Tümü" sıralamasında ve
     // "Ülkeler" listesinde en üste alınacak ülkeleri belirler.
     private var priorityCountries: List<String> = emptyList()
-    private var showedFullList = false
-    private var offlineNoticeJob: Job? = null
 
     init {
         loadStations()
@@ -108,110 +99,49 @@ class MainViewModel @Inject constructor(
         if (_isLoading.value == true) return
         viewModelScope.launch {
             _isLoading.postValue(true)
-            offlineNoticeJob?.cancel()
-            var fetched = false
-            val started = SystemClock.elapsedRealtime()
-            val cached = repository.getCachedStations()
+            _error.postValue(null)
 
-            if (!cached.isNullOrEmpty()) {
-                publishHomeThenRest(cached)
-                _isLoading.postValue(false)
-            }
-            if (isCurrentlyOffline()) {
-                scheduleOfflineNotice(started, !cached.isNullOrEmpty()) { fetched }
-            }
+            var attempt = 0
+            var success = false
 
-            repository.getStations()
-                .onSuccess { stations ->
-                    fetched = true
-                    offlineNoticeJob?.cancel()
-                    _error.postValue(null)
-                    publishHomeThenRest(stations)
-                }
-                .onFailure { error ->
-                    if (isOfflineFailure(error)) {
-                        scheduleOfflineNotice(started, !cached.isNullOrEmpty()) { fetched }
-                    } else {
-                        offlineNoticeJob?.cancel()
+            while (attempt < 3 && !success) {
+                if (attempt > 0) delay(2000L * attempt)
+
+                repository.getStations()
+                    .onSuccess { stations ->
+                        applyLoadedStations(stations)
+                        success = true
                     }
-                }
-            _isLoading.postValue(false)
-        }
-    }
+                    .onFailure { e ->
+                        attempt++
+                        if (attempt >= 3) {
+                            val cached = repository.getCachedStations()
+                            val ctx = getApplication<Application>()
+                            if (!cached.isNullOrEmpty()) {
+                                applyLoadedStations(cached)
+                                success = true
+                                _error.postValue(ctx.getString(R.string.error_offline_cache))
+                            } else {
+                                val msg = e.message ?: ""
+                                _error.postValue(
+                                    when {
+                                        msg.contains("Unable to resolve host", ignoreCase = true) ||
+                                                msg.contains("No address", ignoreCase = true) ||
+                                                msg.contains("UnknownHost", ignoreCase = true) ->
+                                            ctx.getString(R.string.error_no_internet)
 
-    /**
-     * Tümü önce cihaz dilindeki ülkenin istasyonlarını gösterir.
-     * Kalan ülkeler bir sonraki karede, eldeki hızda eklenir.
-     */
-    private suspend fun publishHomeThenRest(stations: List<RadioStation>) {
-        ensurePriority(stations)
-        val home = homeCountryStations(stations)
-        if (!showedFullList && home.isNotEmpty() && home.size < stations.size) {
-            applyLoadedStations(home)
-            yield()
-        }
-        applyLoadedStations(stations)
-        showedFullList = true
-    }
+                                        msg.contains("timeout", ignoreCase = true) ->
+                                            ctx.getString(R.string.error_timeout)
 
-    private fun ensurePriority(stations: List<RadioStation>) {
-        priorityCountries = StationListOrganizer.resolveEffectiveCountries(
-            stations = stations,
-            deviceCountries = LocaleCountryMapper.getDeviceCountries(),
-            fallbackCountries = LocaleCountryMapper.getFallbackCountries()
-        )
-    }
-
-    private fun homeCountryStations(stations: List<RadioStation>): List<RadioStation> {
-        val device = LocaleCountryMapper.getDeviceCountries()
-        val target = device.firstOrNull { name ->
-            val key = CountryFlags.groupKey(name)
-            stations.any {
-                it.country.equals(name, ignoreCase = true) ||
-                    CountryFlags.groupKey(it.country, it.countryCode) == key
+                                        else ->
+                                            ctx.getString(R.string.error_load)
+                                    }
+                                )
+                            }
+                        }
+                    }
             }
-        } ?: priorityCountries.firstOrNull() ?: return emptyList()
-        val key = CountryFlags.groupKey(target)
-        return stations.filter {
-            it.country.equals(target, ignoreCase = true) ||
-                CountryFlags.groupKey(it.country, it.countryCode) == key
-        }
-    }
-
-    private fun isCurrentlyOffline(): Boolean {
-        val cm = getApplication<Application>().getSystemService(ConnectivityManager::class.java)
-            ?: return true
-        val network = cm.activeNetwork ?: return true
-        val caps = cm.getNetworkCapabilities(network) ?: return true
-        return !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-    }
-
-    private fun isOfflineFailure(error: Throwable): Boolean {
-        if (isCurrentlyOffline()) return true
-        if (error is UnknownHostException) return true
-        val msg = error.message ?: return false
-        return msg.contains("Unable to resolve host", ignoreCase = true) ||
-            msg.contains("No address", ignoreCase = true) ||
-            msg.contains("UnknownHost", ignoreCase = true)
-    }
-
-    private fun scheduleOfflineNotice(
-        startedAt: Long,
-        hasCache: Boolean,
-        alreadyFetched: () -> Boolean
-    ) {
-        if (offlineNoticeJob?.isActive == true) return
-        offlineNoticeJob = viewModelScope.launch {
-            val wait = OFFLINE_NOTICE_DELAY_MS - (SystemClock.elapsedRealtime() - startedAt)
-            if (wait > 0) delay(wait)
-            if (alreadyFetched()) return@launch
-            if (!isCurrentlyOffline()) return@launch
-            val ctx = getApplication<Application>()
-            _error.postValue(
-                ctx.getString(
-                    if (hasCache) R.string.error_offline_cache else R.string.error_no_internet
-                )
-            )
+            _isLoading.postValue(false)
         }
     }
 
@@ -481,6 +411,5 @@ class MainViewModel @Inject constructor(
         // \p{L} ve \p{N} Unicode uyumludur; Türkçe (ı, ş, ğ, ö, ü, ç) ve diğer
         // dillerin harfleriyle de doğru çalışır.
         private val TOKEN_SPLIT_REGEX = Regex("[^\\p{L}\\p{N}]+")
-        private const val OFFLINE_NOTICE_DELAY_MS = 5_000L
     }
 }
