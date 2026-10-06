@@ -16,6 +16,7 @@ import com.globalradio.livetuneinogzapp.repository.StationRepository
 import com.globalradio.livetuneinogzapp.utils.ListenHistoryManager
 import com.globalradio.livetuneinogzapp.utils.LocaleCountryMapper
 import com.globalradio.livetuneinogzapp.utils.StationListOrganizer
+import com.globalradio.livetuneinogzapp.utils.StationsAssetLoader
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -104,6 +105,11 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             val started = SystemClock.elapsedRealtime()
+            val bundled = StationsAssetLoader.load(getApplication())
+            if (bundled.isNotEmpty()) {
+                applyLoadedStations(bundled)
+                _isLoading.value = false
+            }
             val cached = runCatching { repository.getCachedStations() }.getOrNull()
             if (!cached.isNullOrEmpty()) {
                 applyLoadedStations(cached)
