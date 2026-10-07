@@ -325,7 +325,6 @@ let PlayState = {
         {
             this.selectedShape.endDrag();
             if(R.sfx.error) R.sfx.error.play();
-            this.blinkSelector();
             if(this.tutorial != null) this.tutorial.start();
         }
         
@@ -407,13 +406,6 @@ let PlayState = {
             if (x + ext.right > limRight) x = limRight - ext.right;
         }
         return { x: x, y: y };
-    },
-
-    blinkSelector: function()
-    {
-        if (!this.selectorImage) return;
-        this.selectorImage.alpha = 0.45;
-        game.add.tween(this.selectorImage).to({ alpha: 1 }, 180, Phaser.Easing.Quadratic.Out, true);
     },
 
     hideGhost: function()
@@ -600,8 +592,9 @@ let PlayState = {
         }
         for (let i = 0; i < this.shapes.length; i++)
         {
+            if (this.shapes[i].state && R.tintFor) this.shapes[i].tintColor = R.tintFor(this.shapes[i].state);
             let quads = this.shapes[i].quads;
-            let tint = this.shapes[i].tintColor || 0xffffff;
+            let tint = this.shapes[i].tintColor || 0xffc56a;
             for (let q = 0; q < quads.length; q++)
             {
                 quads[q].loadTexture(R.quad);

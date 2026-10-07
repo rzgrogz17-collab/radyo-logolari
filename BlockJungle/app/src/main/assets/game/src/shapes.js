@@ -232,8 +232,7 @@ Shape.prototype = {
     setState: function(state)
     {
         this.state = state;
-        let span = state.length * 3 + (state[0] ? state[0].length : 1);
-        this.tintColor = R.blockTints[span % R.blockTints.length];
+        this.tintColor = R.tintFor ? R.tintFor(state) : 0xffc56a;
 
         let i = this.quads.length;
         while(i--) this.quads[i].exists = false;

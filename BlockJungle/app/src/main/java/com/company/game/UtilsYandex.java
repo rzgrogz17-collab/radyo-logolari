@@ -253,7 +253,7 @@ public class UtilsYandex {
                 FrameLayout.LayoutParams.WRAP_CONTENT,
                 Gravity.CENTER_HORIZONTAL);
         slot.addView(bannerAd, lp);
-        slot.setVisibility(View.VISIBLE);
+        slot.setVisibility(View.GONE);
 
         slot.post(new Runnable() {
             @Override
@@ -268,6 +268,12 @@ public class UtilsYandex {
                     @Override
                     public void onAdLoaded() {
                         Log.d(TAG, "Banner loaded");
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                slot.setVisibility(View.VISIBLE);
+                            }
+                        });
                     }
 
                     @Override

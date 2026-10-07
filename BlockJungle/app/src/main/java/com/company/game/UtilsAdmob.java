@@ -213,7 +213,7 @@ public class UtilsAdmob {
                         FrameLayout.LayoutParams.WRAP_CONTENT,
                         Gravity.CENTER_HORIZONTAL);
                 slot.addView(mAdView, lp);
-                slot.setVisibility(View.VISIBLE);
+                slot.setVisibility(View.GONE);
 
                 Bundle extras = new Bundle();
                 extras.putString("npa", gdpr_personalized_ads());
@@ -225,7 +225,13 @@ public class UtilsAdmob {
         mAdView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FrameLayout ready = activity.findViewById(R.id.ad_container);
+                        if (ready != null) ready.setVisibility(View.VISIBLE);
+                    }
+                });
             }
 
             @Override

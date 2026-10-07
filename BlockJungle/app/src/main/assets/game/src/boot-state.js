@@ -7,7 +7,7 @@ let BootState = {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;       
         game.scale.pageAlignHorizontally = true;
-        game.scale.pageAlignVertically = true;
+        game.scale.pageAlignVertically = false;
 
         if(!game.device.desktop)
         {            
@@ -59,7 +59,7 @@ let BootState = {
         R.gameHeight = R.BASE_GAME_HEIGHT;
 
         game.scale.pageAlignHorizontally = true;
-        game.scale.pageAlignVertically = true;
+        game.scale.pageAlignVertically = false;
         game.scale.setGameSize(R.BASE_GAME_WIDTH, R.gameHeight);        
     },
 

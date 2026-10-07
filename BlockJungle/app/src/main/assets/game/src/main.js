@@ -44,7 +44,25 @@ R.locale = (function ()
     return 'en';
 })();
 
-R.blockTints = [0xff4d4d, 0xff8a1e, 0xffd23a, 0x3dce5a, 0x3eb6ff, 0x9b6bff, 0xff5eab];
+R.woodTints = [0xffe3b0, 0xffc56a, 0xf09a45, 0xffb483, 0xe7c07a, 0xffd48a, 0xd08a48];
+R.vividTints = [0xff2424, 0xff7800, 0xffe000, 0x1ad85a, 0x1aa6ff, 0xb43dff, 0xff3a98];
+R.blockTints = R.woodTints;
+
+R.tintFor = function(state)
+{
+    let palette = (R.playerData && R.playerData.theme === 1) ? R.vividTints : R.woodTints;
+    let span = 0;
+    let filled = 0;
+    if (state)
+    {
+        span = state.length * 3 + (state[0] ? state[0].length : 1);
+        for (let j = 0; j < state.length; j++)
+        {
+            for (let i = 0; i < state[j].length; i++) if (state[j][i] === 1) filled++;
+        }
+    }
+    return palette[(span + filled) % palette.length];
+};
 
 //
 let startGame = function()

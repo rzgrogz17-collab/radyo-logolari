@@ -102,6 +102,8 @@ Well.prototype = {
         }
         
         //
+        if (typeof frame === 'number') this.lastTint = frame;
+
         let i = this.addingCells.length;
         while(i--)
         {
@@ -172,9 +174,11 @@ Well.prototype = {
     removeRow: function(j)
     {
         let row = this.cells[j];
+        let tint = this.lastTint;
         let i = row.length;
         while(i--)
         {
+            if (typeof tint === 'number') row[i].tint = tint;
             row[i].qBody.launch();
             this.bodies.push(row[i].qBody);            
         }
@@ -186,9 +190,11 @@ Well.prototype = {
 
     removeCol: function(j)
     {     
+        let tint = this.lastTint;
         let i = this.rows;
         while(i--)
         {
+            if (typeof tint === 'number') this.cells[i][j].tint = tint;
             this.cells[i][j].qBody.launch();
             this.bodies.push(this.cells[i][j].qBody);            
         }
