@@ -132,8 +132,10 @@ R.ui = {
     {
         let btn = game.add.button(x, y, 'gui', callback, context, 'btn_big_play', 'btn_big_play', 'btn_big_play_pressed', 'btn_big_play');
         btn.anchor.set(0.5);
+        btn.inputEnabled = true;
         if(R.sfx.button) btn.setDownSound(R.sfx.button);
         if(group) group.add(btn);
+        return btn;
     },
 
     createTextButton: function(x, y, group, callback, context, string)

@@ -7,7 +7,7 @@ let BootState = {
         game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
         game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;       
         game.scale.pageAlignHorizontally = true;
-        game.scale.pageAlignVertically = false;
+        game.scale.pageAlignVertically = true;
 
         if(!game.device.desktop)
         {            
@@ -52,12 +52,14 @@ let BootState = {
     resizeGame: function()
     {        
         let wh = window.innerHeight;      
-        R.prevWindowHeight = wh;        
+        R.prevWindowHeight = wh;
 
-        let s = (R.BASE_GAME_HEIGHT + R.BANNER_HEIGHT) / parseInt(game.canvas.style.height);       
+        // The ad banner is outside the WebView. Keep the scene at its real height
+        // so the start button stays on screen instead of being pushed under the banner.
+        R.gameHeight = R.BASE_GAME_HEIGHT;
 
-        R.gameHeight = R.BASE_GAME_HEIGHT + parseInt(R.BANNER_HEIGHT * s + 0.5);       
-
+        game.scale.pageAlignHorizontally = true;
+        game.scale.pageAlignVertically = true;
         game.scale.setGameSize(R.BASE_GAME_WIDTH, R.gameHeight);        
     },
 
