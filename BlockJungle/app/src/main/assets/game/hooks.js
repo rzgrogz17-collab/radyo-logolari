@@ -28,7 +28,7 @@ var gradle = { log: function(val){val && console.log( gradle.isMobile && (typeof
                 break;
 
         case 'button_pause':
-                gradle.showInter();
+                // Pause opens the menu only. No AdMob or Yandex ad here.
                 break;
 				
 		case 'button_home':

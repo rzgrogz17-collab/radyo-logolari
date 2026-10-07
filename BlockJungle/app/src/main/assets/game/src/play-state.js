@@ -333,6 +333,82 @@ let PlayState = {
         this.hideGhost();
     },
 
+    shapeExtents: function(shape)
+    {
+        let scale = shape.parent.scale.x || 1;
+        let half = quadSize * scale * 0.5;
+        let minX = 0;
+        let maxX = 0;
+        let minY = 0;
+        let maxY = 0;
+        let any = false;
+        for (let i = 0; i < shape.quads.length; i++)
+        {
+            let quad = shape.quads[i];
+            if (!quad.exists) continue;
+            if (!any)
+            {
+                minX = maxX = quad.x;
+                minY = maxY = quad.y;
+                any = true;
+            }
+            else
+            {
+                if (quad.x < minX) minX = quad.x;
+                if (quad.x > maxX) maxX = quad.x;
+                if (quad.y < minY) minY = quad.y;
+                if (quad.y > maxY) maxY = quad.y;
+            }
+        }
+        return {
+            left: minX * scale - half,
+            right: maxX * scale + half,
+            top: minY * scale - half,
+            bottom: maxY * scale + half
+        };
+    },
+
+    clampDraggedShape: function(shape, x, y)
+    {
+        let ext = this.shapeExtents(shape);
+        let board = { left: 31, top: 127, right: 607, bottom: 703 };
+        let tray = { left: 48, top: 838, right: 596, bottom: 1046 };
+        let pieceTop = y + ext.top;
+        let pieceBottom = y + ext.bottom;
+
+        if (pieceBottom > tray.bottom) y = tray.bottom - ext.bottom;
+        if (y + ext.top < board.top) y = board.top - ext.top;
+
+        pieceTop = y + ext.top;
+        pieceBottom = y + ext.bottom;
+        let overBoard = pieceTop < board.bottom;
+        let overTray = pieceBottom > tray.top;
+        let limLeft = tray.left;
+        let limRight = tray.right;
+        if (overBoard && overTray)
+        {
+            limLeft = Math.max(board.left, tray.left);
+            limRight = Math.min(board.right, tray.right);
+        }
+        else if (overBoard)
+        {
+            limLeft = board.left;
+            limRight = board.right;
+        }
+
+        let width = ext.right - ext.left;
+        if (width >= limRight - limLeft)
+        {
+            x = (limLeft + limRight) * 0.5 - (ext.left + ext.right) * 0.5;
+        }
+        else
+        {
+            if (x + ext.left < limLeft) x = limLeft - ext.left;
+            if (x + ext.right > limRight) x = limRight - ext.right;
+        }
+        return { x: x, y: y };
+    },
+
     blinkSelector: function()
     {
         if (!this.selectorImage) return;
@@ -463,7 +539,8 @@ let PlayState = {
         if(this.selectedShape)
         {
             var input = game.input.activePointer;
-            this.selectedShape.setPosition(this.inputPointOffset.x + input.x, this.inputPointOffset.y + input.y);
+            var dragged = this.clampDraggedShape(this.selectedShape, this.inputPointOffset.x + input.x, this.inputPointOffset.y + input.y);
+            this.selectedShape.setPosition(dragged.x, dragged.y);
             this.updateGhost();
         }
         else if (!this.pauseGroup.visible && !this.gameoverGroup.visible && !this.continueGroup.visible)
@@ -512,13 +589,24 @@ let PlayState = {
         {
             for (let r = 0; r < this.well.rows; r++)
             {
-                for (let c = 0; c < this.well.cols; c++) this.well.cells[r][c].loadTexture(R.quad);
+                for (let c = 0; c < this.well.cols; c++)
+                {
+                    let cell = this.well.cells[r][c];
+                    let tint = cell.tint;
+                    cell.loadTexture(R.quad);
+                    if (tint) cell.tint = tint;
+                }
             }
         }
         for (let i = 0; i < this.shapes.length; i++)
         {
             let quads = this.shapes[i].quads;
-            for (let q = 0; q < quads.length; q++) quads[q].loadTexture(R.quad);
+            let tint = this.shapes[i].tintColor || 0xffffff;
+            for (let q = 0; q < quads.length; q++)
+            {
+                quads[q].loadTexture(R.quad);
+                quads[q].tint = tint;
+            }
         }
         if (this.ghosts)
         {

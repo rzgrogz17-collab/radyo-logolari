@@ -7,6 +7,12 @@ let LoadState = {
     sfx_key: null,
     tips: null,
     tipIndex: 0,
+    shownAt: 0,
+    fileProgress: 0,
+    filesReady: false,
+    entered: false,
+    enterScheduled: false,
+    minLoadMs: 3000,
 
     //
     init: function()
@@ -56,7 +62,13 @@ let LoadState = {
         }
         
         //
+        this.shownAt = Date.now();
+        this.fileProgress = 0;
+        this.filesReady = false;
+        this.entered = false;
+        this.enterScheduled = false;
         this.createEnvironment();
+        game.time.events.loop(40, this.paintProgress, this);
 
         if (gradle && gradle.event_ext) gradle.event_ext('hide_splash');
 
@@ -115,12 +127,20 @@ let LoadState = {
     //
     fileComplete: function(progress, cacheKey, success, totalLoaded, totalFiles)
     {
-        if (!this.loadingBarFull) return;
-        this.loadingBarFull.cropRect.width = 315 * progress * 0.01;
-        this.loadingBarFull.updateCrop();
+        this.fileProgress = progress;
+        this.paintProgress();
+    },
 
+    paintProgress: function()
+    {
+        if (!this.loadingBarFull || this.entered) return;
+        let timeProgress = Math.min(100, ((Date.now() - this.shownAt) / this.minLoadMs) * 100);
+        let shown = this.filesReady ? timeProgress : Math.min(this.fileProgress, timeProgress);
+        shown = Math.max(0, Math.min(100, shown));
+        this.loadingBarFull.cropRect.width = 315 * shown * 0.01;
+        this.loadingBarFull.updateCrop();
         let word = R.locale === 'tr' ? 'Yükleniyor' : (R.locale === 'ru' ? 'Загрузка' : 'Loading');
-        if (this.loadText) this.loadText.setText(word + '  ' + progress + '%');
+        if (this.loadText) this.loadText.setText(word + '  ' + Math.floor(shown) + '%');
     },
 
     //
@@ -145,8 +165,30 @@ let LoadState = {
 
         //
         R.loadGame();
+        this.filesReady = true;
+        this.paintProgress();
+        this.tryEnterMenu();
+    },
 
-        //
+    tryEnterMenu: function()
+    {
+        if (this.entered || !this.filesReady) return;
+        let wait = this.minLoadMs - (Date.now() - this.shownAt);
+        if (wait > 16)
+        {
+            if (!this.enterScheduled)
+            {
+                this.enterScheduled = true;
+                game.time.events.add(wait, function()
+                {
+                    this.enterScheduled = false;
+                    this.tryEnterMenu();
+                }, this);
+            }
+            return;
+        }
+        this.entered = true;
+        this.paintProgress();
         game.state.start('menu');
     }
 };
