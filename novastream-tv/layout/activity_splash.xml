@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/activity_splash.xml -->
+<!--
+    Havalı, animasyonlu giriş (splash) ekranı.
+    Görsel durum (başlangıçta gizli/şeffaf) SADECE animasyon nesnelerinin
+    "fillBefore" davranışıyla sağlanır (bkz. SplashActivity.kt); bu yüzden
+    burada android:alpha="0" GİBİ statik bir gizleme KULLANILMAZ — aksi
+    halde View'in gerçek alpha özelliği ile animasyonun çizim alpha'sı
+    çarpılır ve öğeler kalıcı olarak görünmez kalır.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/splash_gradient_bg">
+
+    <!-- Logonun arkasındaki yumuşak parıltı -->
+    <ImageView
+        android:id="@+id/splashGlow"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="96dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/splash_logo_glow" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="36dp">
+
+        <ImageView
+            android:id="@+id/splashLogo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/ic_launcher" />
+
+        <TextView
+            android:id="@+id/splashTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.02"
+            android:text="NovaStream"
+            android:textColor="#FFFFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/splashTagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Live TV Experience"
+            android:textColor="#CCFFFFFF"
+            android:textSize="13sp" />
+
+        <ProgressBar
+            android:id="@+id/splashProgress"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="40dp"
+            android:indeterminateTint="@color/splash_accent" />
+
+        <TextView
+            android:id="@+id/splashLoadingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Loading"
+            android:textColor="#B3FFFFFF"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</FrameLayout>

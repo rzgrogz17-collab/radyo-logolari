@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFFFFFFF</color>
+    <color name="purple_500">#FFFFFFFF</color>
+    <color name="purple_700">#FFFFFFFF</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="splash_background">#16294D</color>
+    <color name="diamond_black">#1A1C20</color>
+
+    <!-- Yeni "havalı" splash screen için gradyan / parıltı / vurgu renkleri -->
+    <color name="splash_gradient_top">#0E1A33</color>
+    <color name="splash_gradient_mid">#16294D</color>
+    <color name="splash_gradient_bottom">#4A85C4</color>
+    <color name="splash_glow">#664F91D1</color>
+    <color name="splash_accent">#FFC94B</color>
+    </resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    res/drawable/splash_gradient_bg.xml
+    Splash ekranının arka planı: koyu lacivertten canlı maviye geçen,
+    "havalı" bir köşegen gradyan. android:angle 45'in katı olmak
+    zorundadır (GradientDrawable kısıtı), bu yüzden 135 kullanılır.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="135"
+        android:startColor="@color/splash_gradient_top"
+        android:centerColor="@color/splash_gradient_mid"
+        android:endColor="@color/splash_gradient_bottom"
+        android:centerY="0.6" />
+</shape>
