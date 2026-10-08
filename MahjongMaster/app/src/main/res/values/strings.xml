@@ -1,0 +1,121 @@
+<resources>
+    <string name="app_name">Mahjong Classic Game</string>
+
+    <string name="game_title">MAHJONG\nMASTER</string>
+    <string name="level_text">LEVEL</string>
+    <string name="score_text">SCORE</string>
+    <string name="remaining_text">PAIRS</string>
+    <string name="highscore_text">Best</string>
+    <string name="time_text">TIME</string>
+
+    <string name="btn_new">New</string>
+    <string name="btn_hint">Hint</string>
+    <string name="btn_mix">Mix</string>
+    <string name="btn_mode">Mode</string>
+    <string name="btn_music">Music</string>
+    <string name="btn_undo">Undo</string>
+    <string name="btn_pause">Pause</string>
+
+    <string name="win_stars">⭐ ⭐ ⭐</string>
+    <string name="win_congrats">CONGRATULATIONS!</string>
+    <string name="win_score_prefix">Score:</string>
+    <string name="win_next_level">NEXT LEVEL ▶</string>
+    <string name="win_new_record">🏆 NEW RECORD!</string>
+    <string name="win_time_line">Time %1$s  ·  Bonus +%2$s</string>
+    <string name="win_combo_line">Best combo ×%1$d</string>
+
+    <string name="dialog_new_game_title">New Game</string>
+    <string name="dialog_new_game_msg">Are you sure you want to start a new game? Your current progress will be lost.</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+
+    <string name="deadlock_title">No Moves Left!</string>
+    <string name="deadlock_msg">There are no matching pairs available. You can shuffle the tiles or start a new game.</string>
+    <string name="deadlock_shuffle">Shuffle</string>
+    <string name="deadlock_banner">No free pairs — tap Mix</string>
+
+    <string name="no_hints_title">Out of Hints</string>
+    <string name="no_hints_msg">You have used all your hints. Watch a short ad to get 3 more hints.</string>
+    <string name="no_shuffles_title">Out of Shuffles</string>
+    <string name="no_shuffles_msg">You have used all your shuffles. Watch a short ad to get 10 more shuffles.</string>
+    <string name="watch_ad_btn">Watch Ad</string>
+
+    <string name="no_internet_msg">Please check your internet connection</string>
+    <string name="ad_not_ready_msg">Ad not ready, please try again</string>
+    <string name="hint_no_match_msg">No matching pairs visible. Try shuffling!</string>
+
+    <string name="rescue_title">Unsolvable Layout</string>
+    <string name="rescue_msg">This arrangement seems locked. Would you like to start a new game?</string>
+    <string name="rescue_btn">New Game</string>
+    <string name="rescue_cancel">Cancel</string>
+
+    <string name="loading">loading</string>
+    <string name="home_tagline">Match the free tiles. Build combos. Clear the table.</string>
+    <string name="home_play">PLAY</string>
+    <string name="home_continue">CONTINUE</string>
+    <string name="home_new_game">NEW GAME</string>
+    <string name="home_continue_hint">Level %1$d  ·  %2$d pairs left  ·  %3$s pts</string>
+    <string name="home_settings">Settings</string>
+    <string name="home_stats">Stats</string>
+    <string name="home_how_to">How to play</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_music">Music</string>
+    <string name="settings_sfx">Sound effects</string>
+    <string name="settings_haptics">Haptic feedback</string>
+    <string name="settings_dim">Dim blocked tiles</string>
+    <string name="settings_dim_sub">Covered tiles stay darker so free tiles pop</string>
+    <string name="settings_highlight">Glow matching pairs</string>
+    <string name="settings_highlight_sub">Free matching tiles breathe with a gold rim</string>
+    <string name="settings_theme">Table theme</string>
+    <string name="settings_tiles">Tile style</string>
+    <string name="settings_privacy">Privacy options</string>
+
+    <string name="theme_jade">Jade</string>
+    <string name="theme_midnight">Midnight</string>
+    <string name="theme_sakura">Sakura</string>
+    <string name="theme_lacquer">Lacquer</string>
+    <string name="theme_ocean">Ocean</string>
+    <string name="tile_ivory">Ivory</string>
+    <string name="tile_onyx">Onyx</string>
+
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_medium">Medium</string>
+    <string name="difficulty_hard">Hard</string>
+
+    <string name="stats_title">Statistics</string>
+    <string name="stats_levels">Tables cleared</string>
+    <string name="stats_matches">Pairs matched</string>
+    <string name="stats_best_combo">Best combo</string>
+    <string name="stats_fastest">Fastest table</string>
+    <string name="stats_play_time">Time played</string>
+    <string name="stats_stars">Stars earned</string>
+    <string name="stats_three_star">Perfect (3★) tables</string>
+    <string name="stats_hints">Hints used</string>
+    <string name="stats_shuffles">Shuffles used</string>
+    <string name="stats_highest">Highest level</string>
+
+    <string name="pause_title">Paused</string>
+    <string name="pause_resume">Resume</string>
+    <string name="pause_restart">Restart table</string>
+    <string name="pause_home">Home</string>
+
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_skip">Skip</string>
+    <string name="tutorial_done">Let\'s play</string>
+    <string name="tutorial_1_title">Match identical tiles</string>
+    <string name="tutorial_1_body">Tap two free tiles of the same suit and number. They fly together and leave the table.</string>
+    <string name="tutorial_2_title">Only free tiles count</string>
+    <string name="tutorial_2_body">A tile is free when nothing sits on it, and at least one of its left or right sides is open.</string>
+    <string name="tutorial_3_title">Hints, mixes and ads</string>
+    <string name="tutorial_3_body">Hints and shuffles are limited. When you run out, watch a short ad to refill — or Mix in an emergency if the ad cannot load.</string>
+    <string name="tutorial_4_title">Combos and stars</string>
+    <string name="tutorial_4_body">Chain matches for a combo bonus. Finish under par time for 3 stars. Next level plays after a short interstitial ad.</string>
+
+    <!-- Google AdMob — resmi TEST ID\'leri. Yayınlamadan önce kendi AdMob ID\'lerinizle değiştirin.
+         AdMob konsolunda GDPR mesajı (Privacy & messaging) oluşturmayı unutmayın. -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="admob_banner_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_interstitial_id" translatable="false">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="admob_rewarded_id" translatable="false">ca-app-pub-3940256099942544/5224354917</string>
+</resources>

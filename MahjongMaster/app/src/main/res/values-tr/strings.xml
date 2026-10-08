@@ -1,0 +1,114 @@
+<resources>
+    <string name="app_name">Mahjong Klasik Oyunu</string>
+
+    <string name="game_title">MAHJONG\nMASTER</string>
+    <string name="level_text">SEVİYE</string>
+    <string name="score_text">SKOR</string>
+    <string name="remaining_text">ÇİFT</string>
+    <string name="highscore_text">Rekor</string>
+    <string name="time_text">SÜRE</string>
+
+    <string name="btn_new">Yeni</string>
+    <string name="btn_hint">İpucu</string>
+    <string name="btn_mix">Karıştır</string>
+    <string name="btn_mode">Mod</string>
+    <string name="btn_music">Müzik</string>
+    <string name="btn_undo">Geri</string>
+    <string name="btn_pause">Duraklat</string>
+
+    <string name="win_stars">⭐ ⭐ ⭐</string>
+    <string name="win_congrats">TEBRİKLER!</string>
+    <string name="win_score_prefix">Skor:</string>
+    <string name="win_next_level">SONRAKİ SEVİYE ▶</string>
+    <string name="win_new_record">🏆 YENİ REKOR!</string>
+    <string name="win_time_line">Süre %1$s  ·  Bonus +%2$s</string>
+    <string name="win_combo_line">En iyi combo ×%1$d</string>
+
+    <string name="dialog_new_game_title">Yeni Oyun</string>
+    <string name="dialog_new_game_msg">Yeni oyuna başlamak istediğinize emin misiniz? Mevcut ilerlemeniz silinecek.</string>
+    <string name="dialog_yes">Evet</string>
+    <string name="dialog_no">Hayır</string>
+
+    <string name="deadlock_title">Hamle Kalmadı!</string>
+    <string name="deadlock_msg">Eşleşen açık çift yok. Taşları karıştırabilir veya yeni oyuna başlayabilirsiniz.</string>
+    <string name="deadlock_shuffle">Karıştır</string>
+    <string name="deadlock_banner">Açık çift yok — Karıştır’a dokunun</string>
+
+    <string name="no_hints_title">İpucu Bitti</string>
+    <string name="no_hints_msg">Tüm ipuçlarınızı kullandınız. 3 ipucu daha almak için kısa bir reklam izleyin.</string>
+    <string name="no_shuffles_title">Karıştırma Bitti</string>
+    <string name="no_shuffles_msg">Tüm karıştırma haklarınız bitti. 10 hak daha almak için kısa bir reklam izleyin.</string>
+    <string name="watch_ad_btn">Reklam İzle</string>
+
+    <string name="no_internet_msg">Lütfen internet bağlantınızı kontrol edin</string>
+    <string name="ad_not_ready_msg">Reklam henüz hazır değil, tekrar deneyin</string>
+    <string name="hint_no_match_msg">Açıkta eşleşen çift yok. Karıştırmayı deneyin!</string>
+
+    <string name="rescue_title">Çözülemeyen Dizilim</string>
+    <string name="rescue_msg">Bu yerleşim kilitlenmiş görünüyor. Yeni bir oyuna başlamak ister misiniz?</string>
+    <string name="rescue_btn">Yeni Oyun</string>
+    <string name="rescue_cancel">Vazgeç</string>
+
+    <string name="loading">yükleniyor</string>
+    <string name="home_tagline">Açık taşları eşleştir. Combo yap. Masayı temizle.</string>
+    <string name="home_play">OYNA</string>
+    <string name="home_continue">DEVAM</string>
+    <string name="home_new_game">YENİ OYUN</string>
+    <string name="home_continue_hint">Seviye %1$d  ·  %2$d çift kaldı  ·  %3$s puan</string>
+    <string name="home_settings">Ayarlar</string>
+    <string name="home_stats">İstatistik</string>
+    <string name="home_how_to">Nasıl oynanır</string>
+
+    <string name="settings_title">Ayarlar</string>
+    <string name="settings_music">Müzik</string>
+    <string name="settings_sfx">Ses efektleri</string>
+    <string name="settings_haptics">Titreşim</string>
+    <string name="settings_dim">Kilitli taşları soldur</string>
+    <string name="settings_dim_sub">Kapalı taşlar koyu kalır, açık taşlar öne çıkar</string>
+    <string name="settings_highlight">Eşleşen çiftleri parlat</string>
+    <string name="settings_highlight_sub">Açık eşleşen taşlar altın hale ile nefes alır</string>
+    <string name="settings_theme">Masa teması</string>
+    <string name="settings_tiles">Taş stili</string>
+    <string name="settings_privacy">Gizlilik seçenekleri</string>
+
+    <string name="theme_jade">Yeşim</string>
+    <string name="theme_midnight">Gece</string>
+    <string name="theme_sakura">Sakura</string>
+    <string name="theme_lacquer">Lake</string>
+    <string name="theme_ocean">Okyanus</string>
+    <string name="tile_ivory">Fildişi</string>
+    <string name="tile_onyx">Oniks</string>
+
+    <string name="difficulty_easy">Kolay</string>
+    <string name="difficulty_medium">Orta</string>
+    <string name="difficulty_hard">Zor</string>
+
+    <string name="stats_title">İstatistikler</string>
+    <string name="stats_levels">Bitirilen masalar</string>
+    <string name="stats_matches">Eşleşen çiftler</string>
+    <string name="stats_best_combo">En iyi combo</string>
+    <string name="stats_fastest">En hızlı masa</string>
+    <string name="stats_play_time">Oynama süresi</string>
+    <string name="stats_stars">Kazanılan yıldız</string>
+    <string name="stats_three_star">Mükemmel (3★) masalar</string>
+    <string name="stats_hints">Kullanılan ipucu</string>
+    <string name="stats_shuffles">Kullanılan karıştırma</string>
+    <string name="stats_highest">En yüksek seviye</string>
+
+    <string name="pause_title">Duraklatıldı</string>
+    <string name="pause_resume">Devam et</string>
+    <string name="pause_restart">Masayı yenile</string>
+    <string name="pause_home">Ana menü</string>
+
+    <string name="tutorial_next">İleri</string>
+    <string name="tutorial_skip">Atla</string>
+    <string name="tutorial_done">Haydi oynayalım</string>
+    <string name="tutorial_1_title">Aynı taşları eşleştir</string>
+    <string name="tutorial_1_body">Aynı türden iki açık taşa dokunun. Taşlar havada birleşir ve masadan kalkar.</string>
+    <string name="tutorial_2_title">Yalnızca serbest taşlar</string>
+    <string name="tutorial_2_body">Bir taşın üstünde başka taş olmamalı ve sol veya sağ yanlarından en az biri açık olmalıdır.</string>
+    <string name="tutorial_3_title">İpucu, karıştırma ve reklam</string>
+    <string name="tutorial_3_body">İpucu ve karıştırma hakları sınırlıdır. Bitince kısa bir reklam izleyerek yenileyin — reklam yüklenmezse acil bir karıştırma hakkı verilir.</string>
+    <string name="tutorial_4_title">Combo ve yıldızlar</string>
+    <string name="tutorial_4_body">Ardışık eşleşmeler combo bonusu verir. Par sürenin altında bitirirseniz 3 yıldız alırsınız. Sonraki seviye kısa bir geçiş reklamından sonra açılır.</string>
+</resources>

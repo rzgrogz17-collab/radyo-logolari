@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Marka renkleri — YENİ: cam (glassmorphism) sahne temasıyla uyumlu jade/zümrüt tonu -->
+    <color name="brand_splash_bg">#0E4438</color>
+    <color name="brand_green_light">#26A69A</color>
+    <color name="brand_green_dark">#004D40</color>
+</resources>

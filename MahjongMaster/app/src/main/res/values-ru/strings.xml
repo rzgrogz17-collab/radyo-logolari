@@ -1,0 +1,114 @@
+<resources>
+    <string name="app_name">Mahjong Классическая игра</string>
+
+    <string name="game_title">MAHJONG\nMASTER</string>
+    <string name="level_text">УРОВЕНЬ</string>
+    <string name="score_text">СЧЁТ</string>
+    <string name="remaining_text">ПАРЫ</string>
+    <string name="highscore_text">Рекорд</string>
+    <string name="time_text">ВРЕМЯ</string>
+
+    <string name="btn_new">Новая</string>
+    <string name="btn_hint">Подсказка</string>
+    <string name="btn_mix">Перемешать</string>
+    <string name="btn_mode">Режим</string>
+    <string name="btn_music">Музыка</string>
+    <string name="btn_undo">Отмена</string>
+    <string name="btn_pause">Пауза</string>
+
+    <string name="win_stars">⭐ ⭐ ⭐</string>
+    <string name="win_congrats">ПОЗДРАВЛЯЕМ!</string>
+    <string name="win_score_prefix">Счёт:</string>
+    <string name="win_next_level">СЛЕДУЮЩИЙ УРОВЕНЬ ▶</string>
+    <string name="win_new_record">🏆 НОВЫЙ РЕКОРД!</string>
+    <string name="win_time_line">Время %1$s  ·  Бонус +%2$s</string>
+    <string name="win_combo_line">Лучшее комбо ×%1$d</string>
+
+    <string name="dialog_new_game_title">Новая игра</string>
+    <string name="dialog_new_game_msg">Начать новую игру? Текущий прогресс будет потерян.</string>
+    <string name="dialog_yes">Да</string>
+    <string name="dialog_no">Нет</string>
+
+    <string name="deadlock_title">Ходов нет!</string>
+    <string name="deadlock_msg">Свободных пар нет. Перемешайте кости или начните новую игру.</string>
+    <string name="deadlock_shuffle">Перемешать</string>
+    <string name="deadlock_banner">Нет свободных пар — нажмите «Перемешать»</string>
+
+    <string name="no_hints_title">Подсказки закончились</string>
+    <string name="no_hints_msg">Вы использовали все подсказки. Посмотрите короткую рекламу, чтобы получить ещё 3.</string>
+    <string name="no_shuffles_title">Перемешивания закончились</string>
+    <string name="no_shuffles_msg">Вы использовали все перемешивания. Посмотрите короткую рекламу, чтобы получить ещё 10.</string>
+    <string name="watch_ad_btn">Смотреть рекламу</string>
+
+    <string name="no_internet_msg">Проверьте подключение к интернету</string>
+    <string name="ad_not_ready_msg">Реклама ещё не готова, попробуйте снова</string>
+    <string name="hint_no_match_msg">Свободных пар нет. Попробуйте перемешать!</string>
+
+    <string name="rescue_title">Неразрешимая раскладка</string>
+    <string name="rescue_msg">Эта раскладка, кажется, заблокирована. Начать новую игру?</string>
+    <string name="rescue_btn">Новая игра</string>
+    <string name="rescue_cancel">Отмена</string>
+
+    <string name="loading">загрузка</string>
+    <string name="home_tagline">Собирайте свободные пары. Делайте комбо. Очистите стол.</string>
+    <string name="home_play">ИГРАТЬ</string>
+    <string name="home_continue">ПРОДОЛЖИТЬ</string>
+    <string name="home_new_game">НОВАЯ ИГРА</string>
+    <string name="home_continue_hint">Уровень %1$d  ·  пар осталось: %2$d  ·  %3$s очков</string>
+    <string name="home_settings">Настройки</string>
+    <string name="home_stats">Статистика</string>
+    <string name="home_how_to">Как играть</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="settings_music">Музыка</string>
+    <string name="settings_sfx">Звуковые эффекты</string>
+    <string name="settings_haptics">Вибрация</string>
+    <string name="settings_dim">Затемнять закрытые кости</string>
+    <string name="settings_dim_sub">Закрытые кости темнее, свободные выделяются</string>
+    <string name="settings_highlight">Подсветка пар</string>
+    <string name="settings_highlight_sub">Свободные парные кости мягко светятся золотом</string>
+    <string name="settings_theme">Тема стола</string>
+    <string name="settings_tiles">Стиль костей</string>
+    <string name="settings_privacy">Параметры конфиденциальности</string>
+
+    <string name="theme_jade">Нефрит</string>
+    <string name="theme_midnight">Полночь</string>
+    <string name="theme_sakura">Сакура</string>
+    <string name="theme_lacquer">Лак</string>
+    <string name="theme_ocean">Океан</string>
+    <string name="tile_ivory">Слоновая кость</string>
+    <string name="tile_onyx">Оникс</string>
+
+    <string name="difficulty_easy">Лёгкий</string>
+    <string name="difficulty_medium">Средний</string>
+    <string name="difficulty_hard">Сложный</string>
+
+    <string name="stats_title">Статистика</string>
+    <string name="stats_levels">Очищенные столы</string>
+    <string name="stats_matches">Собранные пары</string>
+    <string name="stats_best_combo">Лучшее комбо</string>
+    <string name="stats_fastest">Самый быстрый стол</string>
+    <string name="stats_play_time">Время в игре</string>
+    <string name="stats_stars">Заработанные звёзды</string>
+    <string name="stats_three_star">Идеальные (3★) столы</string>
+    <string name="stats_hints">Использовано подсказок</string>
+    <string name="stats_shuffles">Использовано перемешиваний</string>
+    <string name="stats_highest">Максимальный уровень</string>
+
+    <string name="pause_title">Пауза</string>
+    <string name="pause_resume">Продолжить</string>
+    <string name="pause_restart">Начать стол заново</string>
+    <string name="pause_home">В меню</string>
+
+    <string name="tutorial_next">Далее</string>
+    <string name="tutorial_skip">Пропустить</string>
+    <string name="tutorial_done">Начать игру</string>
+    <string name="tutorial_1_title">Собирайте одинаковые кости</string>
+    <string name="tutorial_1_body">Нажмите две свободные кости одной масти и значения. Они взлетают навстречу и уходят со стола.</string>
+    <string name="tutorial_2_title">Только свободные кости</string>
+    <string name="tutorial_2_body">Кость свободна, если на ней ничего не лежит и хотя бы одна сторона — слева или справа — открыта.</string>
+    <string name="tutorial_3_title">Подсказки, перемешивание и реклама</string>
+    <string name="tutorial_3_body">Подсказки и перемешивания ограничены. Когда они кончатся, посмотрите короткую рекламу, чтобы пополнить запас. Если реклама не загрузится, выдаётся аварийное перемешивание.</string>
+    <string name="tutorial_4_title">Комбо и звёзды</string>
+    <string name="tutorial_4_body">Цепочки пар дают комбо-бонус. Уложитесь в контрольное время — получите 3 звезды. Следующий уровень откроется после короткой межстраничной рекламы.</string>
+</resources>
