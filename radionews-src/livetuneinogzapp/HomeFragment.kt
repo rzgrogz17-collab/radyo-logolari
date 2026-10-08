@@ -34,11 +34,6 @@ class HomeFragment : Fragment() {
     private var currentSection = SECTION_ALL
     private var sectionFragments = arrayOfNulls<SectionListFragment>(SECTION_COUNT)
 
-    private val genres = listOf(
-        "Pop", "Rock", "news", "Jazz", "Hip-Hop",
-        "Electronic", "Dance", "Classical", "House", "Folk", "80s", "90s", "Talk"
-    )
-
     companion object {
         const val SECTION_ALL = 0
         const val SECTION_TOP = 1
@@ -74,6 +69,7 @@ class HomeFragment : Fragment() {
         setupTabButtons()
         setupSearch()
         observeLoading()
+        viewModel.listCountry.observe(viewLifecycleOwner) { buildGenreChips() }
     }
 
     // ── ViewPager2 ────────────────────────────────────────────────────────────
@@ -228,9 +224,16 @@ class HomeFragment : Fragment() {
         else -> tag
     }
 
+    private var chipCountry: String? = null
+
     private fun buildGenreChips() {
-        if (binding.chipGroupGenres.childCount > 0) return
-        genres.forEach { genre ->
+        val country = viewModel.listCountry.value.orEmpty()
+        val countryGenres = viewModel.genresForSelectedCountry()
+        if (chipCountry == country && binding.chipGroupGenres.childCount > 0) return
+        chipCountry = country
+        binding.chipGroupGenres.removeAllViews()
+        if (countryGenres.isEmpty()) return
+        countryGenres.forEach { genre ->
             val chip = Chip(requireContext()).apply {
                 text = genreLabel(genre)
                 isCheckable = true
@@ -248,7 +251,6 @@ class HomeFragment : Fragment() {
             binding.chipGroupGenres.addView(chip)
         }
         (binding.chipGroupGenres.getChildAt(0) as? Chip)?.isChecked = true
-        viewModel.filterGenre(genres[0])
     }
 
     // ── Arama (anında, büyük/küçük harf duyarsız, "başlangıç eşleşmesi") ─────

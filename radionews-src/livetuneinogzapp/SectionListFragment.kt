@@ -33,11 +33,6 @@ class SectionListFragment : Fragment() {
 
     private val sectionType get() = arguments?.getInt(ARG_SECTION, 0) ?: 0
 
-    private val genres = listOf(
-        "Pop", "Rock", "News", "Haber", "Jazz", "Hip-Hop",
-        "Electronic", "Dance", "Classical", "House", "Folk", "80s", "90s", "Talk"
-    )
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -106,12 +101,12 @@ class SectionListFragment : Fragment() {
                     rowStyle = StationAdapter.RowStyle.NAME_AND_GENRE
                 )
                 recyclerView.adapter = stationAdapter
-                // "Tümü" sekmesinden bağımsız kendi filtresini kullanır
-                viewModel.filterGenre(genres[0])
+                viewModel.genresForSelectedCountry().firstOrNull()?.let { viewModel.filterGenre(it) }
             }
 
             HomeFragment.SECTION_COUNTRIES -> {
                 countryAdapter = CountryAdapter { country ->
+                    viewModel.selectCountry(country.name, country.isoCode)
                     startActivity(
                         Intent(requireContext(), CountryStationsActivity::class.java)
                             .putExtra(CountryStationsActivity.EXTRA_COUNTRY, country.name)
