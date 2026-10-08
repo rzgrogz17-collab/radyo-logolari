@@ -33,11 +33,6 @@ class SectionListFragment : Fragment() {
 
     private val sectionType get() = arguments?.getInt(ARG_SECTION, 0) ?: 0
 
-    private val genres = listOf(
-        "Pop", "Rock", "News", "Haber", "Jazz", "Hip-Hop",
-        "Electronic", "Dance", "Classical", "House", "Folk", "80s", "90s", "Talk"
-    )
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,7 +49,7 @@ class SectionListFragment : Fragment() {
         }
         recyclerView = RecyclerView(requireContext()).apply {
             layoutManager = LinearLayoutManager(requireContext())
-            setHasFixedSize(true)
+            setHasFixedSize(false)
             setItemViewCacheSize(20)
             isNestedScrollingEnabled = true
             overScrollMode = View.OVER_SCROLL_NEVER
@@ -74,7 +69,8 @@ class SectionListFragment : Fragment() {
             HomeFragment.SECTION_ALL -> {
                 stationAdapter = StationAdapter(
                     onStationClick = { mainActivity?.playStation(it) },
-                    onFavoriteClick = { viewModel.toggleFavorite(it) }
+                    onFavoriteClick = { viewModel.toggleFavorite(it) },
+                    rowStyle = StationAdapter.RowStyle.NAME_ONLY
                 )
                 recyclerView.adapter = stationAdapter
                 viewModel.filterByCategory(MainViewModel.CATEGORY_ALL)
@@ -83,7 +79,8 @@ class SectionListFragment : Fragment() {
             HomeFragment.SECTION_FAVORITES -> {
                 stationAdapter = StationAdapter(
                     onStationClick = { mainActivity?.playStation(it) },
-                    onFavoriteClick = { viewModel.toggleFavorite(it) }
+                    onFavoriteClick = { viewModel.toggleFavorite(it) },
+                    rowStyle = StationAdapter.RowStyle.NAME_ONLY
                 )
                 recyclerView.adapter = stationAdapter
             }
@@ -100,15 +97,16 @@ class SectionListFragment : Fragment() {
             HomeFragment.SECTION_GENRES -> {
                 stationAdapter = StationAdapter(
                     onStationClick = { mainActivity?.playStation(it) },
-                    onFavoriteClick = { viewModel.toggleFavorite(it) }
+                    onFavoriteClick = { viewModel.toggleFavorite(it) },
+                    rowStyle = StationAdapter.RowStyle.NAME_AND_GENRE
                 )
                 recyclerView.adapter = stationAdapter
-                // "Tümü" sekmesinden bağımsız kendi filtresini kullanır
-                viewModel.filterGenre(genres[0])
+                viewModel.genresForSelectedCountry().firstOrNull()?.let { viewModel.filterGenre(it) }
             }
 
             HomeFragment.SECTION_COUNTRIES -> {
                 countryAdapter = CountryAdapter { country ->
+                    viewModel.selectCountry(country.name, country.isoCode)
                     startActivity(
                         Intent(requireContext(), CountryStationsActivity::class.java)
                             .putExtra(CountryStationsActivity.EXTRA_COUNTRY, country.name)
@@ -143,7 +141,7 @@ class SectionListFragment : Fragment() {
         // Tümü bölümü → allSectionStations (arama filtreli, türden bağımsız TÜM istasyonlar)
         if (sectionType == HomeFragment.SECTION_ALL) {
             viewModel.allSectionStations.observe(viewLifecycleOwner) { stations ->
-                stationAdapter?.submitList(stations)
+                stationAdapter?.submitList(stations.toList())
             }
         }
 

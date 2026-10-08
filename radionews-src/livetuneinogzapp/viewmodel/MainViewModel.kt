@@ -1,6 +1,9 @@
 package com.globalradio.livetuneinogzapp.viewmodel
 
 import android.app.Application
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,12 +13,15 @@ import com.globalradio.livetuneinogzapp.model.CountrySummary
 import com.globalradio.livetuneinogzapp.model.PlayerState
 import com.globalradio.livetuneinogzapp.model.RadioStation
 import com.globalradio.livetuneinogzapp.repository.StationRepository
+import com.globalradio.livetuneinogzapp.utils.CountryFlags
 import com.globalradio.livetuneinogzapp.utils.ListenHistoryManager
 import com.globalradio.livetuneinogzapp.utils.LocaleCountryMapper
 import com.globalradio.livetuneinogzapp.utils.StationListOrganizer
+import com.globalradio.livetuneinogzapp.utils.StationsAssetLoader
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -90,6 +96,11 @@ class MainViewModel @Inject constructor(
     // İngilizce (fallback) ülkeler kullanılır. "Tümü" sıralamasında ve
     // "Ülkeler" listesinde en üste alınacak ülkeleri belirler.
     private var priorityCountries: List<String> = emptyList()
+    private var selectedCountryName: String? = null
+    private var selectedCountryCode: String? = null
+    private var userPickedCountry = false
+    private val _listCountry = MutableLiveData("")
+    val listCountry: LiveData<String> = _listCountry
 
     init {
         loadStations()
@@ -98,57 +109,82 @@ class MainViewModel @Inject constructor(
     fun loadStations() {
         if (_isLoading.value == true) return
         viewModelScope.launch {
-            _isLoading.postValue(true)
-            _error.postValue(null)
+            _isLoading.value = true
+            val started = SystemClock.elapsedRealtime()
+            val bundled = StationsAssetLoader.load(getApplication())
+            if (bundled.isNotEmpty()) {
+                applyLoadedStations(bundled)
+                _isLoading.value = false
+            }
+            val cached = runCatching { repository.getCachedStations() }.getOrNull()
+            if (!cached.isNullOrEmpty()) {
+                applyLoadedStations(cached)
+                _isLoading.value = false
+            }
 
-            var attempt = 0
             var success = false
-
-            while (attempt < 3 && !success) {
-                if (attempt > 0) delay(2000L * attempt)
-
+            var lastError: Throwable? = null
+            var attempt = 0
+            while (attempt < 2 && !success) {
+                if (attempt > 0) delay(1000)
                 repository.getStations()
                     .onSuccess { stations ->
-                        applyLoadedStations(stations)
-                        success = true
-                    }
-                    .onFailure { e ->
-                        attempt++
-                        if (attempt >= 3) {
-                            val cached = repository.getCachedStations()
-                            val ctx = getApplication<Application>()
-                            if (!cached.isNullOrEmpty()) {
-                                applyLoadedStations(cached)
-                                success = true
-                                _error.postValue(ctx.getString(R.string.error_offline_cache))
-                            } else {
-                                val msg = e.message ?: ""
-                                _error.postValue(
-                                    when {
-                                        msg.contains("Unable to resolve host", ignoreCase = true) ||
-                                                msg.contains("No address", ignoreCase = true) ||
-                                                msg.contains("UnknownHost", ignoreCase = true) ->
-                                            ctx.getString(R.string.error_no_internet)
-
-                                        msg.contains("timeout", ignoreCase = true) ->
-                                            ctx.getString(R.string.error_timeout)
-
-                                        else ->
-                                            ctx.getString(R.string.error_load)
-                                    }
-                                )
-                            }
+                        if (stations.isNotEmpty()) {
+                            applyLoadedStations(stations)
+                            success = true
+                            _error.value = null
                         }
                     }
+                    .onFailure { lastError = it }
+                attempt++
             }
-            _isLoading.postValue(false)
+
+            if (!success && isRealOffline(lastError)) {
+                val wait = 5_000L - (SystemClock.elapsedRealtime() - started)
+                if (wait > 0) delay(wait)
+                if (isCurrentlyOffline()) {
+                    val ctx = getApplication<Application>()
+                    _error.value = ctx.getString(
+                        if (!cached.isNullOrEmpty()) R.string.error_offline_cache
+                        else R.string.error_no_internet
+                    )
+                }
+            }
+            _isLoading.value = false
         }
     }
 
+    private fun isCurrentlyOffline(): Boolean {
+        return try {
+            val cm = getApplication<Application>()
+                .getSystemService(ConnectivityManager::class.java) ?: return true
+            val network = cm.activeNetwork ?: return true
+            val caps = cm.getNetworkCapabilities(network) ?: return true
+            !caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    private fun isRealOffline(error: Throwable?): Boolean {
+        if (isCurrentlyOffline()) return true
+        if (error is UnknownHostException) return true
+        val msg = error?.message ?: return false
+        return msg.contains("Unable to resolve host", ignoreCase = true) ||
+            msg.contains("No address", ignoreCase = true) ||
+            msg.contains("UnknownHost", ignoreCase = true)
+    }
+
     private fun applyLoadedStations(stations: List<RadioStation>) {
+        if (stations.isEmpty()) return
+        val snapshot = stations.toList()
         dataLoaded = true
-        _allStations.postValue(stations)
-        searchCache = stations.map { s ->
+        try {
+            _allStations.value = snapshot
+        } catch (_: Exception) {
+            _allStations.postValue(snapshot)
+        }
+        searchCache = snapshot.map { s ->
             StationSearchCache(
                 id = s.id,
                 nameLower = s.name.lowercase(),
@@ -157,10 +193,10 @@ class MainViewModel @Inject constructor(
                 countryTokens = tokenize(s.country)
             )
         }
-        buildCountries(stations)
-        updateAllSection(stations)
-        updateGenreSection(stations)
-        updateFavorites(stations)
+        buildCountries(snapshot)
+        updateAllSection(snapshot)
+        updateGenreSection(snapshot)
+        updateFavorites(snapshot)
         refreshMostListened()
     }
 
@@ -184,8 +220,10 @@ class MainViewModel @Inject constructor(
         // updateGenreSection) — bu sayede her zaman TÜM istasyonları temsil eder
         // ve cihaz diline göre öncelik sıralaması bütün listeye uygulanır.
         var result: List<RadioStation> =
-            if (currentCategory == CATEGORY_FAVORITES) stations.filter { it.isFavorite }
-            else stations
+            stations.filter { inSelectedCountry(it) }
+        if (currentCategory == CATEGORY_FAVORITES) {
+            result = result.filter { it.isFavorite }
+        }
 
         if (currentQuery.isNotEmpty()) {
             val qLower = currentQuery.lowercase()
@@ -209,7 +247,9 @@ class MainViewModel @Inject constructor(
                         { it.name.lowercase() }
                     ))
         } else {
-            result = StationListOrganizer.sortByPriorityCountry(result, priorityCountries)
+            result = result.sortedWith(
+                compareByDescending<RadioStation> { it.votes }.thenBy { it.name.lowercase() }
+            )
         }
 
         try {
@@ -271,10 +311,12 @@ class MainViewModel @Inject constructor(
 
     private fun updateGenreSection(stations: List<RadioStation>) {
         if (currentGenre.isEmpty()) return
-        var result = stations.filter { st ->
-            st.getTagList().any { tag -> tag.equals(currentGenre, ignoreCase = true) }
-        }
-        result = StationListOrganizer.sortByPriorityCountry(result, priorityCountries)
+        val result = stations.filter { st ->
+            inSelectedCountry(st) &&
+                st.getTagList().any { tag -> tag.equals(currentGenre, ignoreCase = true) }
+        }.sortedWith(
+            compareByDescending<RadioStation> { it.votes }.thenBy { it.name.lowercase() }
+        )
         try {
             _genreSectionStations.value = result
         } catch (_: Exception) {
@@ -352,9 +394,75 @@ class MainViewModel @Inject constructor(
             fallbackCountries = LocaleCountryMapper.getFallbackCountries()
         )
         priorityCountries = effectiveCountries
+        if (!userPickedCountry) {
+            val device = LocaleCountryMapper.getDeviceCountries()
+            val match = device.firstOrNull { name ->
+                stations.any { sameCountry(it, name, null) }
+            } ?: effectiveCountries.firstOrNull()
+            if (!match.isNullOrBlank()) {
+                selectedCountryName = match
+                selectedCountryCode = CountryFlags.resolveIso(match)
+            }
+        }
+        publishListCountry()
 
         val summaries = StationListOrganizer.buildCountrySummaries(stations, effectiveCountries)
         _countrySummaries.postValue(summaries)
+    }
+
+    fun selectCountry(name: String, code: String?) {
+        if (name.isBlank()) return
+        userPickedCountry = true
+        selectedCountryName = name
+        selectedCountryCode = code?.takeIf { it.isNotBlank() } ?: CountryFlags.resolveIso(name)
+        val stations = _allStations.value ?: return
+        updateAllSection(stations)
+        updateGenreSection(stations)
+        publishListCountry()
+    }
+
+    fun genresForSelectedCountry(): List<String> {
+        val tags = _allStations.value.orEmpty()
+            .asSequence()
+            .filter { inSelectedCountry(it) }
+            .flatMap { it.getTagList().asSequence() }
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .toList()
+        if (tags.isEmpty()) return emptyList()
+        val present = PREFERRED_GENRES.filter { pref ->
+            tags.any { it.equals(pref, ignoreCase = true) }
+        }
+        if (present.isNotEmpty()) return present
+        return tags.groupingBy { it.lowercase() }.eachCount()
+            .entries
+            .sortedByDescending { it.value }
+            .take(12)
+            .map { it.key }
+    }
+
+    private fun inSelectedCountry(station: RadioStation): Boolean =
+        sameCountry(station, selectedCountryName, selectedCountryCode)
+
+    private fun sameCountry(station: RadioStation, name: String?, code: String?): Boolean {
+        if (name.isNullOrBlank() && code.isNullOrBlank()) return true
+        val stationKey = CountryFlags.groupKey(station.country, station.countryCode)
+        val targetKey = when {
+            !code.isNullOrBlank() -> CountryFlags.groupKey(name.orEmpty(), code)
+            !name.isNullOrBlank() -> CountryFlags.groupKey(name)
+            else -> ""
+        }
+        if (targetKey.isNotBlank() && stationKey == targetKey) return true
+        return !name.isNullOrBlank() && station.country.equals(name, ignoreCase = true)
+    }
+
+    private fun publishListCountry() {
+        val label = selectedCountryName.orEmpty()
+        try {
+            if (_listCountry.value != label) _listCountry.value = label
+        } catch (_: Exception) {
+            _listCountry.postValue(label)
+        }
     }
 
     fun updatePlayerState(state: PlayerState) {
@@ -411,5 +519,9 @@ class MainViewModel @Inject constructor(
         // \p{L} ve \p{N} Unicode uyumludur; Türkçe (ı, ş, ğ, ö, ü, ç) ve diğer
         // dillerin harfleriyle de doğru çalışır.
         private val TOKEN_SPLIT_REGEX = Regex("[^\\p{L}\\p{N}]+")
+        private val PREFERRED_GENRES = listOf(
+            "Pop", "Rock", "News", "Haber", "Jazz", "Hip-Hop",
+            "Electronic", "Dance", "Classical", "House", "Folk", "Talk", "Hits"
+        )
     }
 }

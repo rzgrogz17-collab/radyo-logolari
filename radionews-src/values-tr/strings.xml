@@ -3,11 +3,11 @@
     <string name="app_name">RadioSphere</string>
     <string name="splash_subtitle"></string>
 
-    <string name="section_all">🎙 Tümü</string>
-    <string name="section_top">🔥 Popüler</string>
-    <string name="section_favorites">❤️ Favoriler</string>
-    <string name="section_genres">🎵 Türler</string>
-    <string name="section_countries">🌍 Ülkeler</string>
+    <string name="section_all">Tümü</string>
+    <string name="section_top">Popüler</string>
+    <string name="section_favorites">Favoriler</string>
+    <string name="section_genres">Türler</string>
+    <string name="section_countries">Ülkeler</string>
 
     <string name="search_hint">Ara…</string>
     <string name="search_clear">Temizle</string>
@@ -72,12 +72,14 @@
     <string name="empty_stations">İstasyon bulunamadı\n\nYeniden denemek için dokunun</string>
     <string name="no_history">Henüz dinleme geçmişi yok</string>
     <string name="most_listened">En Çok Dinlenenler</string>
-    <string name="play_count">▶ %d kez çalındı</string>
+    <string name="play_count">%d kez dinledin</string>
     <string name="play_count_first">▶ İlk kez çal</string>
 
     <string name="settings">Ayarlar</string>
     <string name="settings_appearance">GÖRÜNÜM</string>
     <string name="settings_dark_theme">🌙 Koyu Tema</string>
+    <string name="settings_logo_glow">Logo rengi yansıması</string>
+    <string name="settings_logo_glow_desc">Açıkken büyük oynatıcıda logo renkleri arka plana yansır. Kapalıyken görünüm aynı kalır.</string>
     <string name="settings_data">VERİ</string>
     <string name="settings_clear_history">🗑 Dinleme Geçmişini Temizle</string>
     <string name="settings_clear_cache">🖼 Logo Önbelleğini Temizle</string>
@@ -111,7 +113,7 @@
     <string name="stream_failed">Yüklenemedi — Yeniden denemek için dokunun</string>
     <string name="service_starting">Servis başlatılıyor…</string>
     <string name="error_with_message">Hata: %s</string>
-    <string name="play_count_times">▶ %d kez çalındı</string>
+    <string name="play_count_times">%d kez dinledin</string>
     <string name="play_count_first_time">▶ İlk kez çal</string>
     <string name="consent_reset">Reklam tercihleri sıfırlandı. Yeniden başlatılıyor…</string>
     <string name="btn_reset_consent">Reklam Tercihlerini Sıfırla</string>

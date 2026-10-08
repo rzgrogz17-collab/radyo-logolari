@@ -6,7 +6,12 @@ import android.os.Bundle
 import com.globalradio.livetuneinogzapp.network.RetrofitClient
 import com.globalradio.livetuneinogzapp.utils.SleepTimerManager
 import com.globalradio.livetuneinogzapp.utils.AppSettings
+import com.onesignal.OneSignal
+import com.onesignal.debug.LogLevel
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @HiltAndroidApp
 class RadyoApplication : Application() {
@@ -15,6 +20,7 @@ class RadyoApplication : Application() {
         AppSettings.applyNightMode(this)
         super.onCreate()
         RetrofitClient.init(context = this)
+        startOneSignal()
 
         // Uyku zamanlayıcısı süresi bitince ödüllü reklam gösterebilmek için
         // o anda ön planda olan Activity'yi takip eder.
@@ -33,5 +39,15 @@ class RadyoApplication : Application() {
             override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
             override fun onActivityDestroyed(activity: Activity) {}
         })
+    }
+
+    private fun startOneSignal() {
+        val appId = getString(R.string.onesignal_app_id).trim()
+        if (appId.isEmpty() || appId == "YOUR_ONESIGNAL_APP_ID") return
+        OneSignal.Debug.logLevel = LogLevel.WARN
+        OneSignal.initWithContext(this, appId)
+        CoroutineScope(Dispatchers.IO).launch {
+            OneSignal.Notifications.requestPermission(true)
+        }
     }
 }

@@ -20,6 +20,13 @@
         android:layout_height="match_parent"
         android:background="@drawable/bg_player_overlay" />
 
+    <!-- Logo renklerinin arka plana yansıması. Anahtar kapalıyken gizli kalır. -->
+    <View
+        android:id="@+id/logoColorWash"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <!-- İçerik -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -111,7 +118,7 @@
         <!-- Logo rewind/kaydet paneline yapışmasın -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="16dp" />
+            android:layout_height="8dp" />
 
         <!-- Şarkı veya şarkıcı — radyo adının hemen üstü, kayan bant -->
         <TextView
@@ -128,7 +135,7 @@
             android:scrollHorizontally="true"
             android:singleLine="true"
             android:textColor="#1A1A2E"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:visibility="gone" />
 
         <!-- Paylaş — radyo adı — kaydet -->

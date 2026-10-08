@@ -52,6 +52,7 @@
     <color name="mini_player_stroke">#E91E63</color>
     <color name="search_bg">#F3F4F8</color>
     <color name="search_stroke">#DDE2EA</color>
+    <color name="search_hint">#8A96A3</color>
 
     <color name="btn_control_bg">#EEF1F5</color>
     <color name="btn_play_bg">#E91E63</color>

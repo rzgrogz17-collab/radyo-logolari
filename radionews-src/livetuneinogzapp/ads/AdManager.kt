@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import com.globalradio.livetuneinogzapp.R
 import com.yandex.mobile.ads.banner.BannerAdEventListener
 import com.yandex.mobile.ads.banner.BannerAdSize
 import com.yandex.mobile.ads.banner.BannerAdView
@@ -214,8 +215,13 @@ object AdManager {
      */
     fun onStationClicked(activity: Activity) {
         clickCount++
-        Log.d(TAG, "Station click: $clickCount")
-        if (clickCount % INTERSTITIAL_EVERY_N == 0) {
+        val every = activity.resources.getString(R.string.interstitial_every_n)
+            .trim()
+            .toIntOrNull()
+            ?.coerceAtLeast(1)
+            ?: INTERSTITIAL_EVERY_N
+        Log.d(TAG, "Station click: $clickCount / $every")
+        if (clickCount % every == 0) {
             showInterstitial(activity)
         }
     }

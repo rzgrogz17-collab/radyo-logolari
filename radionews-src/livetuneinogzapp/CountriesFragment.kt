@@ -32,6 +32,7 @@ class CountriesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = CountryAdapter { country ->
+            viewModel.selectCountry(country.name, country.isoCode)
             val intent = Intent(requireContext(), CountryStationsActivity::class.java).apply {
                 putExtra(CountryStationsActivity.EXTRA_COUNTRY, country.name)
                 putExtra(CountryStationsActivity.EXTRA_COUNTRY_CODE, country.isoCode)

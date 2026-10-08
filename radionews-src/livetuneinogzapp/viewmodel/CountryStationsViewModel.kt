@@ -57,7 +57,10 @@ class CountryStationsViewModel(application: Application) : AndroidViewModel(appl
         return all.filter { st ->
             st.country.equals(country, ignoreCase = true) ||
                 (iso != null && CountryFlags.resolveIso(st.country, st.countryCode) == iso)
-        }
+        }.sortedWith(
+            compareByDescending<RadioStation> { it.votes }
+                .thenBy { it.name.lowercase() }
+        )
     }
 
     fun updateStations(stations: List<RadioStation>) {

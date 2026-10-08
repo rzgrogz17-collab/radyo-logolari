@@ -17,7 +17,9 @@ data class RadioStation(
         alternate = ["countryCode", "country_code", "iso", "iso2"]
     ) val countryCode: String = "",
     @SerializedName("tags")        val tags: String = "",
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    @SerializedName(value = "votes", alternate = ["clickcount", "clickCount"])
+    val votes: Int = 0
 ) : Parcelable {
     /** Oynatma URL'si – url_resolved öncelikli, yoksa url kullanılır */
     fun getStreamUrl(): String =

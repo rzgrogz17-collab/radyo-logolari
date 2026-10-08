@@ -112,6 +112,7 @@ class SettingsActivity : AppCompatActivity() {
             binding.tvVersion.text = "v1.0"
         }
         binding.switchDarkTheme.isChecked = settings.darkTheme
+        binding.switchLogoGlow.isChecked = settings.logoColorGlow
         binding.switchResumeLast.isChecked = settings.resumeLastStation
         binding.switchLockControls.isChecked = settings.lockScreenControls
         binding.switchDefaultVolume.isChecked = settings.applyDefaultVolume
@@ -127,6 +128,9 @@ class SettingsActivity : AppCompatActivity() {
             settings.darkTheme = checked
             settings.applyNightMode()
             recreate()
+        }
+        binding.switchLogoGlow.setOnCheckedChangeListener { _, checked ->
+            settings.logoColorGlow = checked
         }
         binding.switchResumeLast.setOnCheckedChangeListener { _, checked ->
             settings.resumeLastStation = checked
