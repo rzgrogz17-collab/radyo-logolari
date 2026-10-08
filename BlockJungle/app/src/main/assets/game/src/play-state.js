@@ -100,7 +100,8 @@ let PlayState = {
             this.ghosts.push(ghost);
         }
 
-        this.shapeStates = new ShapeStates();        
+        this.shapeStates = new ShapeStates();
+        R.tutorialUniform = !R.playerData.tutorialCompleted;
 
         this.placeX[0] = 115;
         this.placeX[1] = game.width / 2;
@@ -147,13 +148,16 @@ let PlayState = {
         R.ui.buttonsEnabled(this.pauseGroup, false);
 
         //
-        let pauseRing = game.add.graphics(568, 52);
-        pauseRing.lineStyle(4, 0xffffff, 0.95);
-        pauseRing.drawCircle(0, 0, 78);
+        let pauseBox = game.add.bitmapData(84, 86);
+        pauseBox.ctx.strokeStyle = '#ffffff';
+        pauseBox.ctx.lineWidth = 3;
+        pauseBox.ctx.strokeRect(2, 2, 80, 82);
+        let pauseFrame = game.add.image(568, 52, pauseBox);
+        pauseFrame.anchor.set(0.5);
         let btn = game.add.button(568, 52, 'gui', this.showPauseMenu, this, 'btn_pause', 'btn_pause', 'btn_pause_pressed', 'btn_pause');
         btn.anchor.set(0.5);
         this.buttonPause = btn;
-        this.pauseRing = pauseRing;
+        this.pauseFrame = pauseFrame;
 
         //game over
         group = game.add.group();
@@ -209,6 +213,7 @@ let PlayState = {
             this.tutorial = new R.Tutorial(this.well, this.shapes);
             for(let i = 0; i < 3; ++i) this.shapes[i].setState(this.shapeStates.state[this.tutorial.states[i].shapeIdx]);
             this.tutorial.start();
+            this.paintTutorialBoard();
             this.skipLabel = R.createText(320, 758, 28, (R.strings && R.strings.skip_tutorial) || 'Skip', '#ffe08a', true, 4);
             this.skipLabel.inputEnabled = true;
             this.skipLabel.events.onInputDown.add(this.onSkipTutorial, this);
@@ -216,6 +221,19 @@ let PlayState = {
         else
         {
             this.countGame();
+        }
+    },
+
+    paintTutorialBoard: function()
+    {
+        if (!this.well || !R.tutorialUniform) return;
+        let tint = R.tintFor([]);
+        for (let r = 0; r < this.well.rows; r++)
+        {
+            for (let c = 0; c < this.well.cols; c++)
+            {
+                if (this.well.cells[r][c].exists) this.well.cells[r][c].tint = tint;
+            }
         }
     },
 
@@ -241,6 +259,7 @@ let PlayState = {
         this.tutorial = null;
         tut.destroy();
         if (this.well) this.well.reset();
+        R.tutorialUniform = false;
         R.score = 0;
         this.displayScore = 0;
         if (this.labelScore) this.labelScore.text = '0';
@@ -257,6 +276,7 @@ let PlayState = {
             let shape = this.shapes[i];
             if (shape.isExists())
             {
+                shape.setState(shape.state);
                 shape.setPosition(shape.startX, shape.startY);
                 shape.parent.scale.set(quadScaleMin);
                 shape.readyForDrag = true;
@@ -484,7 +504,11 @@ let PlayState = {
     {
         if(this.tutorial != null)
         {
-            if(++this.tutorial.step < 3) this.tutorial.start();
+            if(++this.tutorial.step < 3)
+            {
+                this.tutorial.start();
+                this.paintTutorialBoard();
+            }
             else this.finishTutorial();
         }
 

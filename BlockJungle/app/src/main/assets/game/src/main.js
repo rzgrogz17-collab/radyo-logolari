@@ -45,9 +45,10 @@ R.locale = (function ()
 })();
 
 R.woodTints = [0xfff8ee, 0xfff1dc, 0xffe8c8, 0xfff6e4, 0xf8e6c4, 0xffefd4, 0xfffaf2];
-R.vividTints = [0xff3a6a, 0xff8a2a, 0xffd23a, 0x3dce6a, 0x4eb6ff, 0xc46bff, 0xff5ea8];
+R.vividTints = [0xe7a0b0, 0xe8b48a, 0xe6d08a, 0x8ec9a4, 0x8eb8dc, 0xc4a6dc, 0xe7a8c4];
 R.blockTints = R.woodTints;
-R.cubeVisual = 0.9;
+R.cubeVisual = 0.94;
+R.tutorialUniform = false;
 
 R.isWoodMode = function()
 {
@@ -61,6 +62,7 @@ R.cubeKey = function()
 
 R.tintFor = function(state)
 {
+    if (R.tutorialUniform) return (R.isWoodMode() ? R.woodTints : R.vividTints)[0];
     let palette = R.isWoodMode() ? R.woodTints : R.vividTints;
     let span = 0;
     let filled = 0;
