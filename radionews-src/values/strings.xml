@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?><!-- DEFAULT LANGUAGE: English (used when device language has no translation) -->
 <resources>
     <string name="app_name">RadioSphere</string>
+    <!-- OneSignal panelindeki App ID. Boş veya YOUR_ONESIGNAL_APP_ID ise bildirim başlamaz. -->
+    <string name="onesignal_app_id" translatable="false">YOUR_ONESIGNAL_APP_ID</string>
+    <!-- Geçiş reklamı kaç radyo tıklamasında bir açılsın. Örnek: 3 -->
+    <string name="interstitial_every_n" translatable="false">10</string>
     <string name="splash_subtitle"></string>
 
     <string name="section_all">All</string>
