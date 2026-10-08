@@ -1,0 +1,18 @@
+﻿{
+  "title": "Block Jungle",
+  "tagline": "Clear the jungle. Beat your best.",
+  "score_label": "SCORE",
+  "best_label": "BEST",
+  "combo": "COMBO",
+  "best_combo": "BEST COMBO",
+  "games": "GAMES",
+  "new_record": "NEW RECORD",
+  "no_moves_left": "No Moves Left",
+  "remove_3_moves": "",
+  "watch_video": "",
+  "cancel": "",
+  "skip_tutorial": "Skip",
+  "drag_hint": "Drag a piece onto the board",
+  "final_score": "Score",
+  "loading": "Loading"
+}

@@ -1,0 +1,513 @@
+{
+    "frames": [{
+        "filename": "REWARD",
+        "frame": {
+            "x": 0,
+            "y": 0,
+            "w": 563,
+            "h": 522
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 563,
+            "h": 522
+        },
+        "sourceSize": {
+            "w": 563,
+            "h": 522
+        }
+    }, {
+        "filename": "btn_big_play",
+        "frame": {
+            "x": 573,
+            "y": 0,
+            "w": 221,
+            "h": 221
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 221,
+            "h": 221
+        },
+        "sourceSize": {
+            "w": 221,
+            "h": 221
+        }
+    }, {
+        "filename": "btn_big_play_pressed",
+        "frame": {
+            "x": 573,
+            "y": 231,
+            "w": 209,
+            "h": 209
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 209,
+            "h": 209
+        },
+        "sourceSize": {
+            "w": 209,
+            "h": 209
+        }
+    }, {
+        "filename": "btn_home",
+        "frame": {
+            "x": 804,
+            "y": 525,
+            "w": 228,
+            "h": 74
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 228,
+            "h": 74
+        },
+        "sourceSize": {
+            "w": 228,
+            "h": 74
+        }
+    }, {
+        "filename": "btn_home_pressed",
+        "frame": {
+            "x": 573,
+            "y": 612,
+            "w": 216,
+            "h": 70
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 216,
+            "h": 70
+        },
+        "sourceSize": {
+            "w": 216,
+            "h": 70
+        }
+    }, {
+        "filename": "btn_lamp_off",
+        "frame": {
+            "x": 804,
+            "y": 355,
+            "w": 233,
+            "h": 75
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 233,
+            "h": 75
+        },
+        "sourceSize": {
+            "w": 233,
+            "h": 75
+        }
+    }, {
+        "filename": "btn_lamp_off_pressed",
+        "frame": {
+            "x": 573,
+            "y": 450,
+            "w": 221,
+            "h": 71
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 221,
+            "h": 71
+        },
+        "sourceSize": {
+            "w": 221,
+            "h": 71
+        }
+    }, {
+        "filename": "btn_lamp_on",
+        "frame": {
+            "x": 804,
+            "y": 440,
+            "w": 233,
+            "h": 75
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 233,
+            "h": 75
+        },
+        "sourceSize": {
+            "w": 233,
+            "h": 75
+        }
+    }, {
+        "filename": "btn_lamp_on_pressed",
+        "frame": {
+            "x": 573,
+            "y": 531,
+            "w": 221,
+            "h": 71
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 221,
+            "h": 71
+        },
+        "sourceSize": {
+            "w": 221,
+            "h": 71
+        }
+    }, {
+        "filename": "btn_pause",
+        "frame": {
+            "x": 573,
+            "y": 984,
+            "w": 67,
+            "h": 69
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 67,
+            "h": 69
+        },
+        "sourceSize": {
+            "w": 67,
+            "h": 69
+        }
+    }, {
+        "filename": "btn_pause_pressed",
+        "frame": {
+            "x": 650,
+            "y": 984,
+            "w": 64,
+            "h": 59
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 64,
+            "h": 59
+        },
+        "sourceSize": {
+            "w": 64,
+            "h": 59
+        }
+    }, {
+        "filename": "btn_small_play",
+        "frame": {
+            "x": 804,
+            "y": 609,
+            "w": 228,
+            "h": 74
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 228,
+            "h": 74
+        },
+        "sourceSize": {
+            "w": 228,
+            "h": 74
+        }
+    }, {
+        "filename": "btn_small_play_pressed",
+        "frame": {
+            "x": 573,
+            "y": 692,
+            "w": 216,
+            "h": 70
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 216,
+            "h": 70
+        },
+        "sourceSize": {
+            "w": 216,
+            "h": 70
+        }
+    }, {
+        "filename": "btn_sound_off",
+        "frame": {
+            "x": 804,
+            "y": 693,
+            "w": 228,
+            "h": 74
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 228,
+            "h": 74
+        },
+        "sourceSize": {
+            "w": 228,
+            "h": 74
+        }
+    }, {
+        "filename": "btn_sound_off_pressed",
+        "frame": {
+            "x": 804,
+            "y": 777,
+            "w": 228,
+            "h": 74
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 228,
+            "h": 74
+        },
+        "sourceSize": {
+            "w": 228,
+            "h": 74
+        }
+    }, {
+        "filename": "btn_sound_on",
+        "frame": {
+            "x": 804,
+            "y": 861,
+            "w": 228,
+            "h": 74
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 228,
+            "h": 74
+        },
+        "sourceSize": {
+            "w": 228,
+            "h": 74
+        }
+    }, {
+        "filename": "btn_sound_on_pressed",
+        "frame": {
+            "x": 804,
+            "y": 945,
+            "w": 228,
+            "h": 74
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 228,
+            "h": 74
+        },
+        "sourceSize": {
+            "w": 228,
+            "h": 74
+        }
+    }, {
+        "filename": "button",
+        "frame": {
+            "x": 804,
+            "y": 92,
+            "w": 249,
+            "h": 80
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 249,
+            "h": 80
+        },
+        "sourceSize": {
+            "w": 249,
+            "h": 80
+        }
+    }, {
+        "filename": "button_pressed",
+        "frame": {
+            "x": 804,
+            "y": 269,
+            "w": 237,
+            "h": 76
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 237,
+            "h": 76
+        },
+        "sourceSize": {
+            "w": 237,
+            "h": 76
+        }
+    }, {
+        "filename": "button_cancel",
+        "frame": {
+            "x": 804,
+            "y": 0,
+            "w": 250,
+            "h": 82
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 250,
+            "h": 82
+        },
+        "sourceSize": {
+            "w": 250,
+            "h": 82
+        }
+    }, {
+        "filename": "button_cancel_pressed",
+        "frame": {
+            "x": 804,
+            "y": 182,
+            "w": 238,
+            "h": 77
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 238,
+            "h": 77
+        },
+        "sourceSize": {
+            "w": 238,
+            "h": 77
+        }
+    }, {
+        "filename": "curtain",
+        "frame": {
+            "x": 573,
+            "y": 878,
+            "w": 64,
+            "h": 96
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 64,
+            "h": 96
+        },
+        "sourceSize": {
+            "w": 64,
+            "h": 96
+        }
+    }, {
+        "filename": "finger",
+        "frame": {
+            "x": 573,
+            "y": 772,
+            "w": 111,
+            "h": 96
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 111,
+            "h": 96
+        },
+        "sourceSize": {
+            "w": 111,
+            "h": 96
+        }
+    }, {
+        "filename": "panel",
+        "frame": {
+            "x": 0,
+            "y": 532,
+            "w": 563,
+            "h": 522
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 563,
+            "h": 522
+        },
+        "sourceSize": {
+            "w": 563,
+            "h": 522
+        }
+    }, {
+        "filename": "tut_circle",
+        "frame": {
+            "x": 724,
+            "y": 984,
+            "w": 58,
+            "h": 58
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 58,
+            "h": 58
+        },
+        "sourceSize": {
+            "w": 58,
+            "h": 58
+        }
+    }],
+    "meta": {
+        "app": "https://www.leshylabs.com/apps/sstool/",
+        "version": "Leshy SpriteSheet Tool v0.8.4",
+        "image": "spritesheet.png",
+        "size": {
+            "w": 1054,
+            "h": 1054
+        },
+        "scale": 1
+    }
+}

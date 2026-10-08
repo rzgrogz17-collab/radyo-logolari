@@ -1,0 +1,18 @@
+{
+  "title": "Block Jungle",
+  "tagline": "Очисти джунгли. Побей рекорд.",
+  "score_label": "СЧЁТ",
+  "best_label": "РЕКОРД",
+  "combo": "КОМБО",
+  "best_combo": "ЛУЧШЕЕ КОМБО",
+  "games": "ИГРЫ",
+  "new_record": "НОВЫЙ РЕКОРД",
+  "no_moves_left": "Ходов больше нет",
+  "remove_3_moves": "",
+  "watch_video": "",
+  "cancel": "",
+  "skip_tutorial": "Пропустить",
+  "drag_hint": "Перетащи фигуру на поле",
+  "final_score": "Счёт",
+  "loading": "Загрузка"
+}

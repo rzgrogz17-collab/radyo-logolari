@@ -1,0 +1,18 @@
+{
+  "title": "Block Jungle",
+  "tagline": "Ormanı temizle. Rekorunu geç.",
+  "score_label": "SKOR",
+  "best_label": "EN İYİ",
+  "combo": "KOMBO",
+  "best_combo": "EN İYİ KOMBO",
+  "games": "OYUN",
+  "new_record": "YENİ REKOR",
+  "no_moves_left": "Hamle Kalmadı",
+  "remove_3_moves": "",
+  "watch_video": "",
+  "cancel": "",
+  "skip_tutorial": "Geç",
+  "drag_hint": "Taşı tahtaya sürükle",
+  "final_score": "Skor",
+  "loading": "Yükleniyor"
+}
