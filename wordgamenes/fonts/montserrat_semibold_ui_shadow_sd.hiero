@@ -1,0 +1,35 @@
+font.name=Arial
+font.size=20
+font.bold=false
+font.italic=false
+font.gamma=1.8
+font.mono=false
+
+font2.file=D:\Programlama\KelimeDiller\Fonts\ttf\Montserrat-SemiBold.ttf
+font2.use=true
+
+pad.top=2
+pad.right=1
+pad.bottom=2
+pad.left=1
+pad.advance.x=-2
+pad.advance.y=-2
+
+glyph.native.rendering=false
+glyph.page.width=512
+glyph.page.height=128
+glyph.text=1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!;%:?*()_+-=.,/|'@#$€&{}[]ığüşöçßãâáàäæéèêëœìíîïòóôõúùûñ¿¡ĞÜŞİÖÇẞÃÂÁÀÄÆÉÈÊËŒÌÍÎÏÒÓÔÕÚÙÛÑ₺£₽₴¥₩ƏəŸÿŐőŰűАӘБДЕФГҒХІЙЖКЛМНҺИŊҢОӨПҚРСШТУҰҮВЫЗаәбдефгғхійжклмнһиŋңоөѲѳпқрсштуұүвызŪūЁЦЧЩьъЭЮЯёцчщэюяŽžŇňÝýĄĆĘŁŃŚŹŻąćęłńśźżØøÅåŠšԱՆՈՏՑԻՐԿՇՍԼՒԺՄԽՋՉՓԵՊՅՀՎՌՃԶՔՂԾՁԲԳԴԹԸՕևՖԷ՛՜՞დიპლომრტუა«»¾ӮӢҲҶЪЎЌЬČŤĽĎŔЄЇҐĖĮėįųčĒĪĀĢĻŅĶēāīļģņķĐđðÐþÞҘҠҪ
+
+render_type=0
+
+effect.class=com.badlogic.gdx.tools.hiero.unicodefont.effects.ShadowEffect
+effect.Color=000000
+effect.Opacity=0.6
+effect.X distance=1.0
+effect.Y distance=1.0
+effect.Blur kernel size=0
+effect.Blur passes=1
+
+effect.class=com.badlogic.gdx.tools.hiero.unicodefont.effects.ColorEffect
+effect.Color=ffffff
+
