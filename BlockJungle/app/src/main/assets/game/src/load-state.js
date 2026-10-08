@@ -93,10 +93,10 @@ let LoadState = {
 
         let cx = game.world.centerX;
 
-        let logo = game.add.image(320, 430, 'loading', 'logo');
+        let logo = game.add.image(320, 380, 'open_logo');
         logo.anchor.set(0.5);
-        game.add.tween(logo).to({ y: 418 }, 900, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
-        game.add.tween(logo.scale).to({ x: 1.04, y: 1.04 }, 900, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
+        logo.scale.set(280 / logo.width);
+        game.add.tween(logo).to({ y: 368 }, 900, Phaser.Easing.Sinusoidal.InOut, true, 0, -1, true);
 
         this.loadingBarFull = game.add.image(cx - 149, 560, 'loading', 'bar_full');
         let cropRect = new Phaser.Rectangle(0, 0, 0, 53);

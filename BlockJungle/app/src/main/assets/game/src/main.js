@@ -47,6 +47,7 @@ R.locale = (function ()
 R.woodTints = [0xfff8ee, 0xfff1dc, 0xffe8c8, 0xfff6e4, 0xf8e6c4, 0xffefd4, 0xfffaf2];
 R.vividTints = [0xff3a6a, 0xff8a2a, 0xffd23a, 0x3dce6a, 0x4eb6ff, 0xc46bff, 0xff5ea8];
 R.blockTints = R.woodTints;
+R.cubeVisual = 0.9;
 
 R.isWoodMode = function()
 {

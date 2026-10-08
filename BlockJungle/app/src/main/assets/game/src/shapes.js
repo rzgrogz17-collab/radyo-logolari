@@ -204,6 +204,7 @@ let Shape = function(nQuads, startX, startY)
     {        
         this.quads[i] = game.add.image(0, 0, R.quad);
         this.quads[i].anchor.set(0.5);
+        this.quads[i].scale.set(R.cubeVisual || 0.9);
         let edge = game.add.image(0, 0, 'quad_bone');
         edge.anchor.set(0.5);
         edge.visible = false;
@@ -285,6 +286,7 @@ Shape.prototype = {
                     q.x = x;
                     q.y = y;
                     q.loadTexture(R.cubeKey());
+                    q.scale.set(R.cubeVisual || 0.9);
                     q.exists = true;
                     q.tint = this.tintColor || 0xfff6e8;
                     if (q.boneEdge)

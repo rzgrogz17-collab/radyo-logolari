@@ -13,6 +13,7 @@ var Well = function(left, top, rows, cols, padding, parentState, saveLast3Moves)
     for(var i = 0; i < this.n; ++i)
     {
         var quad = game.add.image(0, 0, R.quad);
+        quad.scale.set(R.cubeVisual || 0.9);
         quad.exists = false;
         var edge = game.add.image(0, 0, 'quad_bone');
         edge.anchor.set(0.5);
@@ -367,7 +368,7 @@ R.Body.prototype = {
         this.quad.position.x = this.wellPosition.x;
         this.quad.position.y = this.wellPosition.y;
         this.quad.rotation = 0;
-        this.quad.scale.set(1);
+        this.quad.scale.set(R.cubeVisual || 0.9);
         this.quad.exists = false;
 
         return false;

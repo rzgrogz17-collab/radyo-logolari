@@ -38,7 +38,13 @@ let BootState = {
 
         let gameContainer = document.getElementById(game.parent);
         gameContainer.style.width = ww + 'px';
-        gameContainer.style.height = wh + 'px';        
+        gameContainer.style.height = wh + 'px';
+        if (game.canvas)
+        {
+            game.canvas.style.position = 'absolute';
+            game.canvas.style.top = '0px';
+            game.canvas.style.marginTop = '0px';
+        }
     },
 
     //
@@ -66,6 +72,7 @@ let BootState = {
     //
     preload: function()
     {
+        game.load.image('open_logo', 'assets/open_logo.png');
         game.load.atlas('loading', 'assets/loading.png', 'assets/loading.json');
     },
 

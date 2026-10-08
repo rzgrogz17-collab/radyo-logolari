@@ -80,9 +80,9 @@ let PlayState = {
 
         this.gridImage = game.add.image(21, 115, 'grid_' + theme);
         this.selectorImage = game.add.image(21, 815, 'selector_' + theme);
-        this.scoreImageL = game.add.image(113, 20, 'score_' + theme);
-        this.scoreImageR = game.add.image(367, 20, 'score_' + theme);
-        game.add.image(263, 10, 'trone');
+        this.scoreImageL = game.add.image(113, 28, 'score_' + theme);
+        this.scoreImageR = game.add.image(367, 28, 'score_' + theme);
+        game.add.image(263, 16, 'trone');
         game.add.image(0, 1000, 'parrot');
         this.bg = this.gridImage;
 
@@ -93,6 +93,7 @@ let PlayState = {
         {
             let ghost = game.add.image(0, 0, R.quad);
             ghost.anchor.set(0.5);
+            ghost.scale.set(R.cubeVisual || 0.9);
             ghost.visible = false;
             ghost.alpha = 0.38;
             this.well.grid.add(ghost);
@@ -122,11 +123,11 @@ let PlayState = {
         this.recordShown = false;
         let strings = R.strings || {};
 
-        R.createText(176, 58, 13, strings.score_label || 'SCORE', '#ffe7a3', true, 3);
-        R.createText(432, 58, 13, strings.best_label || 'BEST', '#ffe7a3', true, 3);
-        this.labelTotalScore = R.createText(432, 36, 28, this.bestAtStart.toString(), '#e0b45b');
-        this.labelScore = R.createText(176, 36, 28, '0', '#e0b45b');
-        this.labelCombo = R.createText(320, 68, 14, '', '#fff4c2', true, 3);
+        R.createText(176, 64, 13, strings.score_label || 'SCORE', '#ffe7a3', true, 3);
+        R.createText(432, 64, 13, strings.best_label || 'BEST', '#ffe7a3', true, 3);
+        this.labelTotalScore = R.createText(432, 44, 28, this.bestAtStart.toString(), '#e0b45b');
+        this.labelScore = R.createText(176, 44, 28, '0', '#e0b45b');
+        this.labelCombo = R.createText(320, 74, 14, '', '#fff4c2', true, 3);
 
         //GUI
         //pause
@@ -146,9 +147,13 @@ let PlayState = {
         R.ui.buttonsEnabled(this.pauseGroup, false);
 
         //
-        let btn = game.add.button(568, 40, 'gui', this.showPauseMenu, this, 'btn_pause', 'btn_pause', 'btn_pause_pressed', 'btn_pause');
+        let pauseRing = game.add.graphics(568, 52);
+        pauseRing.lineStyle(4, 0xffffff, 0.95);
+        pauseRing.drawCircle(0, 0, 78);
+        let btn = game.add.button(568, 52, 'gui', this.showPauseMenu, this, 'btn_pause', 'btn_pause', 'btn_pause_pressed', 'btn_pause');
         btn.anchor.set(0.5);
         this.buttonPause = btn;
+        this.pauseRing = pauseRing;
 
         //game over
         group = game.add.group();
@@ -586,6 +591,7 @@ let PlayState = {
                     let cell = this.well.cells[r][c];
                     let tint = cell.tint;
                     cell.loadTexture(R.quad);
+                    cell.scale.set(R.cubeVisual || 0.9);
                     if (tint) cell.tint = tint;
                     if (cell.boneEdge)
                     {
@@ -603,6 +609,7 @@ let PlayState = {
             for (let q = 0; q < quads.length; q++)
             {
                 quads[q].loadTexture(R.quad);
+                quads[q].scale.set(R.cubeVisual || 0.9);
                 quads[q].tint = tint;
                 if (quads[q].boneEdge)
                 {
@@ -613,7 +620,11 @@ let PlayState = {
         }
         if (this.ghosts)
         {
-            for (let g = 0; g < this.ghosts.length; g++) this.ghosts[g].loadTexture(R.quad);
+            for (let g = 0; g < this.ghosts.length; g++)
+            {
+                this.ghosts[g].loadTexture(R.quad);
+                this.ghosts[g].scale.set(R.cubeVisual || 0.9);
+            }
         }
 
         if (gradle && gradle.change_background) gradle.change_background('assets/bg_play_' + theme + '.jpg');
