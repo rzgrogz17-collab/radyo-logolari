@@ -75,7 +75,7 @@ R.ui = {
     onThemeButton: function()
     {
 		R.playerData.theme = 1 - R.playerData.theme;
-        R.quad = R.playerData.theme === 1 ? 'quad_1' : 'quad_0';
+        R.quad = R.cubeKey();
         R.savePlayerData();
 
         let frameNormal = R.playerData.theme === 0 ? 'btn_lamp_on' : 'btn_lamp_off';

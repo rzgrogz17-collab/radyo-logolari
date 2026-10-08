@@ -122,11 +122,11 @@ let PlayState = {
         this.recordShown = false;
         let strings = R.strings || {};
 
-        R.createText(176, 96, 16, strings.score_label || 'SCORE', '#ffe7a3', true, 3);
-        R.createText(432, 96, 16, strings.best_label || 'BEST', '#ffe7a3', true, 3);
-        this.labelTotalScore = R.createText(432, 45, 40, this.bestAtStart.toString(), '#e0b45b');
-        this.labelScore = R.createText(176, 45, 40, '0', '#e0b45b');
-        this.labelCombo = R.createText(320, 96, 18, '', '#fff4c2', true, 3);
+        R.createText(176, 58, 13, strings.score_label || 'SCORE', '#ffe7a3', true, 3);
+        R.createText(432, 58, 13, strings.best_label || 'BEST', '#ffe7a3', true, 3);
+        this.labelTotalScore = R.createText(432, 36, 28, this.bestAtStart.toString(), '#e0b45b');
+        this.labelScore = R.createText(176, 36, 28, '0', '#e0b45b');
+        this.labelCombo = R.createText(320, 68, 14, '', '#fff4c2', true, 3);
 
         //GUI
         //pause
@@ -146,7 +146,7 @@ let PlayState = {
         R.ui.buttonsEnabled(this.pauseGroup, false);
 
         //
-        let btn = game.add.button(576, 47, 'gui', this.showPauseMenu, this, 'btn_pause', 'btn_pause', 'btn_pause_pressed', 'btn_pause');
+        let btn = game.add.button(568, 40, 'gui', this.showPauseMenu, this, 'btn_pause', 'btn_pause', 'btn_pause_pressed', 'btn_pause');
         btn.anchor.set(0.5);
         this.buttonPause = btn;
 
@@ -575,7 +575,7 @@ let PlayState = {
         if (this.selectorImage) this.selectorImage.loadTexture('selector' + suffix);
         if (this.scoreImageL) this.scoreImageL.loadTexture('score' + suffix);
         if (this.scoreImageR) this.scoreImageR.loadTexture('score' + suffix);
-        R.quad = theme === 1 ? 'quad_1' : 'quad_0';
+        R.quad = R.cubeKey();
 
         if (this.well)
         {
@@ -587,6 +587,11 @@ let PlayState = {
                     let tint = cell.tint;
                     cell.loadTexture(R.quad);
                     if (tint) cell.tint = tint;
+                    if (cell.boneEdge)
+                    {
+                        cell.boneEdge.visible = cell.exists && !R.isWoodMode();
+                        cell.boneEdge.tint = 0xffffff;
+                    }
                 }
             }
         }
@@ -599,6 +604,11 @@ let PlayState = {
             {
                 quads[q].loadTexture(R.quad);
                 quads[q].tint = tint;
+                if (quads[q].boneEdge)
+                {
+                    quads[q].boneEdge.visible = quads[q].exists && !R.isWoodMode();
+                    quads[q].boneEdge.tint = 0xffffff;
+                }
             }
         }
         if (this.ghosts)

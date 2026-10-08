@@ -32,7 +32,7 @@ var gradle = { log: function(val){val && console.log( gradle.isMobile && (typeof
                 break;
 				
 		case 'button_home':
-			gradle.checkInterval() && gradle.showInter(); // <-- we check the interval if ok we show interstitial
+			// Returning home does not show an ad. The rewarded ad is only offered when no moves remain.
 			break;
 						
 		case 'reward':

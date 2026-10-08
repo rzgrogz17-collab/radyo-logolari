@@ -204,6 +204,11 @@ let Shape = function(nQuads, startX, startY)
     {        
         this.quads[i] = game.add.image(0, 0, R.quad);
         this.quads[i].anchor.set(0.5);
+        let edge = game.add.image(0, 0, 'quad_bone');
+        edge.anchor.set(0.5);
+        edge.visible = false;
+        this.quads[i].addChild(edge);
+        this.quads[i].boneEdge = edge;
         this.parent.addChild(new R.QuadShadow(this.quads[i], this));
         this.parent.addChild(this.quads[i]);
     }
@@ -235,7 +240,11 @@ Shape.prototype = {
         this.tintColor = R.tintFor ? R.tintFor(state) : 0xffc56a;
 
         let i = this.quads.length;
-        while(i--) this.quads[i].exists = false;
+        while(i--)
+        {
+            this.quads[i].exists = false;
+            if (this.quads[i].boneEdge) this.quads[i].boneEdge.visible = false;
+        }
         
         this.buildShape(quadPadding);      
 
@@ -275,8 +284,14 @@ Shape.prototype = {
                     q = this.quads[idxQuad];
                     q.x = x;
                     q.y = y;
+                    q.loadTexture(R.cubeKey());
                     q.exists = true;
-                    q.tint = this.tintColor || 0xffffff;
+                    q.tint = this.tintColor || 0xfff6e8;
+                    if (q.boneEdge)
+                    {
+                        q.boneEdge.visible = !R.isWoodMode();
+                        q.boneEdge.tint = 0xffffff;
+                    }
                     if(maxX < x) maxX = x;
                     if(maxY < y) maxY = y;
                     ++idxQuad;

@@ -43,6 +43,8 @@ let LoadState = {
 
         game.load.image('quad_0', 'assets/quad_0.png');
         game.load.image('quad_1', 'assets/quad_1.png');
+        game.load.image('quad_wood', 'assets/quad_wood.png');
+        game.load.image('quad_bone', 'assets/quad_bone.png');
 
         game.load.image('quad_shadow', 'assets/quad_shadow.png');
 
@@ -252,6 +254,6 @@ R.loadGame = function()
     if (typeof R.playerData.gamesPlayed !== 'number' || isNaN(R.playerData.gamesPlayed)) R.playerData.gamesPlayed = 0;
     if (R.playerData.theme !== 0 && R.playerData.theme !== 1) R.playerData.theme = 0;
 
-    R.quad = R.playerData.theme === 1 ? 'quad_1' : 'quad_0';
+    R.quad = R.cubeKey ? R.cubeKey() : (R.playerData.theme === 1 ? 'quad_wood' : 'quad_0');
     if (game && game.sound) game.sound.mute = R.playerData.muted;
 };

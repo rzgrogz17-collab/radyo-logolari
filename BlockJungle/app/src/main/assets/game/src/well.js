@@ -13,7 +13,12 @@ var Well = function(left, top, rows, cols, padding, parentState, saveLast3Moves)
     for(var i = 0; i < this.n; ++i)
     {
         var quad = game.add.image(0, 0, R.quad);
-        quad.exists = false;        
+        quad.exists = false;
+        var edge = game.add.image(0, 0, 'quad_bone');
+        edge.anchor.set(0.5);
+        edge.visible = false;
+        quad.addChild(edge);
+        quad.boneEdge = edge;
         grid.add(quad);        
     }
 
@@ -275,6 +280,15 @@ Well.prototype = {
 
     update: function()
     {
+        let wood = R.isWoodMode && R.isWoodMode();
+        for (let r = 0; r < this.rows; r++)
+        {
+            for (let c = 0; c < this.cols; c++)
+            {
+                let cell = this.cells[r][c];
+                if (cell.boneEdge) cell.boneEdge.visible = cell.exists && !wood;
+            }
+        }
         let removingQuads = this.bodies.length > 0;
         if(removingQuads)
         {

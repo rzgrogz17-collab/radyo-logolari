@@ -44,13 +44,23 @@ R.locale = (function ()
     return 'en';
 })();
 
-R.woodTints = [0xffe3b0, 0xffc56a, 0xf09a45, 0xffb483, 0xe7c07a, 0xffd48a, 0xd08a48];
-R.vividTints = [0xff2424, 0xff7800, 0xffe000, 0x1ad85a, 0x1aa6ff, 0xb43dff, 0xff3a98];
+R.woodTints = [0xfff8ee, 0xfff1dc, 0xffe8c8, 0xfff6e4, 0xf8e6c4, 0xffefd4, 0xfffaf2];
+R.vividTints = [0xff3a6a, 0xff8a2a, 0xffd23a, 0x3dce6a, 0x4eb6ff, 0xc46bff, 0xff5ea8];
 R.blockTints = R.woodTints;
+
+R.isWoodMode = function()
+{
+    return !!(R.playerData && R.playerData.theme === 1);
+};
+
+R.cubeKey = function()
+{
+    return R.isWoodMode() ? 'quad_wood' : 'quad_0';
+};
 
 R.tintFor = function(state)
 {
-    let palette = (R.playerData && R.playerData.theme === 1) ? R.vividTints : R.woodTints;
+    let palette = R.isWoodMode() ? R.woodTints : R.vividTints;
     let span = 0;
     let filled = 0;
     if (state)
